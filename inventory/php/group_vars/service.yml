@@ -1,0 +1,7 @@
+jumphost0: jumphost0.ams3.do.php.backend.lol
+jumphost1: jumphost1.nyc1.do.php.backend.lol
+service0: service0.ams3.do.php.backend.lol
+service1: service1.ams3.do.php.backend.lol
+serviceip0: 10.110.0.3
+serviceip1: 10.110.0.4
+jumphost: "{{ host | default('jumphost0.ams3.do.php.backend.lol') }}"

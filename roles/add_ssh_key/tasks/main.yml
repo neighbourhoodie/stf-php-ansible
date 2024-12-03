@@ -1,0 +1,34 @@
+- name: Add user - check google auth path param
+  fail:
+    msg: "Please provide a username for the new user"
+  when: username is undefined
+
+- name: Check if users ssh_key exists in repo
+  local_action:
+    module: stat
+    path: "{{role_path}}/templates/ssh_keys/{{ username }}"
+  register: ssh_key
+  vars:
+    ansible_become: false
+#   delegate_to: localhost
+
+- name: Fail if there is no ssh_key for the new user
+  fail:
+    msg: "Please add the user's public ssh key to roles/add_GA_file/templates/ssh_keys!"
+  when: not ssh_key.stat.exists
+
+- name: create ssh folder
+  file:
+    state: directory
+    dest: /home/{{ username }}/.ssh
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0700'
+
+- name: create authorized_keys
+  template:
+    src: templates/ssh_keys/{{username}}
+    dest: /home/{{ username }}/.ssh/authorized_keys
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0600'

@@ -1,0 +1,11 @@
+[jumphost]
+ams3 ansible_host={{jumphost0}}
+nyc1 ansible_host={{jumphost1}}
+
+# docs, wiki etc are properties,
+# hosts are called service
+# Ansible can use the ProxyJump directly. Use the parameter ansible_ssh_common_args.
+# this does ssh -J {{jumphost0}} root@10.110.0.3
+[service]
+service0 ansible_host={{service0}} ansible_ssh_common_args='-J {{jumphost}}'
+service1 ansible_host={{service1}} ansible_ssh_common_args='-J {{jumphost}}'

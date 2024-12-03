@@ -1,0 +1,9 @@
+- hosts:
+  - service
+
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Hello services
+      command: uname -a

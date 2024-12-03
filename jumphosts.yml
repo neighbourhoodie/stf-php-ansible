@@ -1,9 +1,10 @@
 - hosts:
-  # - all
-  - service
+  - jumphost
+
   # root because we want to install software on the machines
   remote_user: root
 
-  roles:
-    - role: httpd
-      tags: [httpd]
+  tasks:
+    - name: Hello jumphosts
+      debug:
+        msg: "Hello cat"
