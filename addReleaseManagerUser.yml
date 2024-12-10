@@ -1,29 +1,23 @@
 - hosts:
-  # - "{{ host | default('ams3') }}"
   - jumphost
 
   become: true
   become_user: root
 
   pre_tasks:
-    - name: Create a linux user
-      user:
-        name: "{{ username }}"
-        create_home: yes
-        # The user should be created if it doesn't exist or updated if it already exists
-        state: present
-        shell: /bin/bash
-
     - name: Create release-manager group
       group:
         name: release-manager
         state: present
 
-    - name: Add user to release-manager group
+    - name: Create a linux user and add it to release-manager group
       user:
         name: "{{ username }}"
+        create_home: yes
         groups: "release-manager"
         append: yes
+        state: present
+        shell: /bin/bash
 
   roles:
     - role: add_ssh_key
@@ -31,30 +25,26 @@
 
 
 - hosts:
-  - download_service
+  - downloads
 
   become: true
   become_user: root
 
   pre_tasks:
-    - name: Create a linux user
-      user:
-        name: "{{ username }}"
-        create_home: yes
-        # The user should be created if it doesn't exist or updated if it already exists
-        state: present
-        shell: /bin/bash
-
     - name: Create release-manager group
       group:
         name: release-manager
         state: present
 
-    - name: Add user to release-manager group
+    - name: Create a linux user and add it to release-manager group
       user:
         name: "{{ username }}"
+        create_home: yes
+        state: present
         groups: "release-manager"
         append: yes
+        shell: /bin/bash
 
   roles:
     - role: add_ssh_key
+

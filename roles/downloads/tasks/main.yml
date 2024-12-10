@@ -1,0 +1,55 @@
+- name: Install Apache with mod-php, php, and cerbot, openssl
+  apt:
+    pkg:
+      - apache2
+      - libapache2-mod-php8.2
+      - php8.2
+      - certbot
+      - python3-certbot-apache
+      - openssl
+      - apache2-utils
+    state:
+    # Ensure package list is up-to-date
+    update_cache: yes
+
+- name: create local box
+  file:
+    state: directory
+    dest: /local/this-box
+    mode: '0750'
+
+- name: Store secrets file
+  template:
+    src: templates/secrets.conf
+    dest: /local/this-box/apache.conf
+    mode: '0640'
+    owner: root
+    group: www-data
+
+- name: Add Apache config for downloads.php.net
+  template:
+    src: templates/downloads.php.net.conf
+    dest: /etc/apache2/sites-available/downloads.php.net.conf
+  notify: reload apache
+
+- name: Add Apache config for shared.php.net
+  template:
+    src: templates/shared.php.net.conf
+    dest: /etc/apache2/sites-available/shared.php.net.conf
+  notify: reload apache
+
+- name: Enable Apache PHP module
+  command: a2enmod php8.2
+  notify: reload apache
+
+- name: Ensure Apache is started and enabled
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Run certbot tasks
+  include_tasks: certbot.yml
+
+- name: Run self-signed certificate tasks
+  include_tasks: self-signed-certs.yml

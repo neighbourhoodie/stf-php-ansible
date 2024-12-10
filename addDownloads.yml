@@ -1,0 +1,8 @@
+- hosts:
+  - downloads
+
+  become: yes
+  become_user: root
+
+  roles:
+    - role: downloads

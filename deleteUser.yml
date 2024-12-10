@@ -1,5 +1,5 @@
 - hosts:
-  - all
+  - "{{ host | default('all') }}"
 
   become: yes
   become_user: root
