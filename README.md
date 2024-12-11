@@ -9,6 +9,23 @@ Ansible doesn’t require any special software to be installed on the nodes that
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
+## Using Ansible
+
+Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
+
+To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
+
+```shell
+ssh -fNF etc/ssh_config jumphost0.ams3.do.php.backend.lol
+```
+
+This creates an SSH control channel to jumphost0 that will remain valid for 4 hours. Re-run this when connections start failing after 4 hours.
+
+Then you can run any playbook like this:
+
+```shell
+ansible-playbook -i inventory/php playbook.yml
+```
 
 ## Set up the jumphost
 
