@@ -1,0 +1,65 @@
+# Run this playbook to initialie your machines
+# `ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"`
+
+# Install Google Authenticator and copy GA file
+- hosts:
+  - jumphost
+
+  remote_user: root
+
+  tasks:
+    - name: Copy admin's Google Authenticator files
+      loop: "{{ admins }}"
+      include_role:
+        name: add_GA_file
+      vars:
+        username: "{{ item.name }}"
+        path_to_google_auth: "{{ item.GA_file }}"
+
+  roles:
+    - role: install_GA
+
+- hosts:
+  - service
+
+  remote_user: root
+
+  roles:
+    - role: add_firewall
+
+# Add admin user and pubkey everywhere
+- hosts:
+  - all
+
+  remote_user: root
+
+  tasks:
+  - name: Create a linux user and add it to sudo group
+    user:
+      name: "{{ item.name }}"
+      create_home: yes
+      state: present
+      groups: sudo
+      append: yes
+    loop: "{{ admins }}"
+
+  - name: Copy admin's ssh-keys
+    loop: "{{ admins }}"
+    include_role:
+      name: add_ssh_key
+    vars:
+      username: "{{ item.name }}"
+      pubkeys: "{{ item.pubkeys }}"
+
+  - name: Disable root login
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: 'PermitRootLogin no'
+    notify: restart ssh
+
+  handlers:
+  - name: restart ssh
+    service:
+      name: ssh
+      state: restarted

@@ -1,0 +1,28 @@
+# Add UFW firewall configuration so that the services are only accessible through the public ip of the jumphosts
+- name: Ensure UFW is installed
+  apt:
+    name: ufw
+    state: present
+    update_cache: yes
+
+- name: Allow ssh only from jumphost
+  ufw:
+    rule: allow
+    from_ip: "{{ item }}"
+    port: 22
+  loop:
+    - "{{ hostvars.ams3.ansible_default_ipv4.address }}"
+    - "{{ hostvars.nyc1.ansible_default_ipv4.address }}"
+
+- name: Allow incoming requests from port 80 and 443
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+  loop:
+    - 80
+    - 443
+
+- name: Enable UFW and deny incoming requests
+  ufw:
+    state: enabled
+    policy: deny

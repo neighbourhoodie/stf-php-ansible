@@ -1,15 +1,9 @@
 - hosts:
   - all
 
-  # remote_user: root
   become: yes
   become_user: root
-  # become_method: su
 
-  pre_tasks:
-    - name: Hello user
-      debug:
-        msg: "Hello {{ local_user }}"
   tasks:
   - name: Delete an existing linux user
     user:
@@ -17,6 +11,3 @@
       state: absent
       force: true
       remove: yes
-
-  # roles:
-  # - role: delete_user

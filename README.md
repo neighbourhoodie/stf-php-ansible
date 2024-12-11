@@ -27,15 +27,38 @@ Then you can run any playbook like this:
 ansible-playbook -i inventory/php playbook.yml
 ```
 
-## Set up the jumphost
+## Initialize machines
 
-There is a role that installs common software on the jumphosts (Google Authenticator).
+To initialize your machines, run this playbook:
 
-Run it:
 ```sh
-ansible-playbook -i inventory/php jumphosts.yml --tags "install"
+ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
 ```
-It installs Google Authenticator and enables it by changing the congig files `/etc/ssh/sshd_config` and `/etc/pam.d/sshd`.
+
+You have to pass a file with all admins you want to add. The formal looks like this:
+
+```yml
+admins:
+  - name: rocko
+    GA_file: /home/rocko/.google_authenticator
+    pubkeys:
+      - ssh-rsa abcxyz rocko.artischocko@mail.com
+      - ssh-ed25519 abcxyz artischocko@rocko.ie
+```
+
+You can add several publick keys, but you don't have to.
+
+### What this does
+
+Initialise all machines
+  1. Define all admin users (name, pubkey, Google Authenticator file)
+  2. Disable root login
+  3. Google Auth set up
+  4. Set up firewall rules to only log in via jump host IPs
+
+
+
+# Utility tasks
 
 ## Add a new user
 
@@ -71,6 +94,13 @@ ansible-playbook -i inventory/php addReleaseManagerUser.yml --extra-vars "userna
 This playbook creates a new user on jumphosts and the download-service.
 User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to everywhere.
 
+# Delete a user
+
+To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `ams3` by default.
+
+```shell
+ansible-playbook -i inventory/php deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
+```
 ## Using different jumphosts
 
 You can specify different hosts that you want to run your playbook on. Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1). By default the host is set to the jumphost in Europe (ams3).
@@ -79,14 +109,6 @@ To change jumphost to a different one use the `--extra-vars` argument as follows
 
 ```shell
 ansible-playbook -i inventory/php [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
-```
-
-# Delete a user
-
-To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `ams3` by default.
-
-```shell
-ansible-playbook -i inventory/php deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 ```
 
 ## Running Ansible

@@ -1,49 +1,9 @@
 - hosts:
-  - "{{ host | default('ams3') }}"
-  # - jumphost
+  - all
 
-  # remote_user: root
-  # Instead of root using local user
-  # reference: https://stackoverflow.com/questions/21422158/ansible-accessing-local-environment-variables
   become: yes
   become_user: root
 
-  pre_tasks:
-    - name: Hello user
-      debug:
-        msg: "Hello {{ local_user }}"
-
-    - name: Create a linux user
-      user:
-        name: "{{ username }}"
-        create_home: yes
-        # The user should be created if it doesn't exist or updated if it already exists
-        state: present
-
-    - name: Add user to sudo group
-      user:
-        name: "{{ username }}"
-        groups: sudo
-        append: yes
-
-    - name: Allow passwordless sudo for the user
-      lineinfile:
-        path: /etc/sudoers
-        state: present
-        regexp: '^{{ username }}'
-        line: '{{ username }} ALL=(ALL) NOPASSWD:ALL'
-        validate: '/usr/sbin/visudo -cf %s'
-
-  roles:
-    - role: add_ssh_key
-    - role: add_GA_file
-
-- hosts:
-  - service
-
-  remote_user: root
-  # become: yes
-  # become_user: "{{ local_user }}"
   pre_tasks:
     - name: Create a linux sudo user
       user:
@@ -54,17 +14,15 @@
         groups: sudo
         append: yes
 
-    # - name: Add user to sudo group
-    #   user:
-    #     name: "{{ username }}"
-
-    - name: Allow passwordless sudo for the user
-      lineinfile:
-        path: /etc/sudoers
-        state: present
-        regexp: '^{{ username }}'
-        line: '{{ username }} ALL=(ALL) NOPASSWD:ALL'
-        validate: '/usr/sbin/visudo -cf %s'
-
   roles:
     - role: add_ssh_key
+
+# Put the GA file only on jumphost
+- hosts:
+  - jumphost
+
+  become: yes
+  become_user: root
+
+  roles:
+    - role: add_GA_file

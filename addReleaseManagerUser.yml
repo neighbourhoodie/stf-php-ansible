@@ -1,13 +1,9 @@
 - hosts:
-  - "{{ host | default('ams3') }}"
+  # - "{{ host | default('ams3') }}"
+  - jumphost
 
-  # Instead of root using local user
-  # reference: https://stackoverflow.com/questions/21422158/ansible-accessing-local-environment-variables
   become: true
-  vars:
-    local_user: "{{ lookup('env', 'USER') }}"
-  become_user: "{{ local_user }}"
-  become_method: sudo
+  become_user: root
 
   pre_tasks:
     - name: Create a linux user
@@ -35,11 +31,10 @@
 
 - hosts:
   - download_service
+
   become: true
-  vars:
-    local_user: "{{ lookup('env', 'USER') }}"
-  become_user: "{{ local_user }}"
-  become_method: sudo
+  become_user: root
+
   pre_tasks:
     - name: Create a linux user
       user:

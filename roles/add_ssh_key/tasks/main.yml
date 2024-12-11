@@ -10,12 +10,11 @@
   register: ssh_key
   vars:
     ansible_become: false
-#   delegate_to: localhost
 
 - name: Fail if there is no ssh_key for the new user
   fail:
     msg: "Please add the user's public ssh key to roles/add_GA_file/templates/ssh_keys!"
-  when: not ssh_key.stat.exists
+  when: (pubkeys is not defined) and (not ssh_key.stat.exists)
 
 - name: create ssh folder
   file:
@@ -25,10 +24,20 @@
     group: "{{ username }}"
     mode: '0700'
 
-- name: create authorized_keys
+- name: Create authorized_keys
   template:
     src: templates/ssh_keys/{{username}}
     dest: /home/{{ username }}/.ssh/authorized_keys
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: '0600'
+  when: ssh_key.stat.exists and pubkeys is not defined
+
+- name: Create authorized_keys from init
+  copy:
+    dest: /home/{{ username }}/.ssh/authorized_keys
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0600'
+    content: "{{ pubkeys | join('\n') }}"
+  when: pubkeys is defined

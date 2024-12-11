@@ -1,8 +1,8 @@
 - hosts:
   - jumphost
 
-  # root because we want to install software on the machines
-  remote_user: root
+  become: yes
+  become_user: root
 
   tasks:
     - name: Hello jumphosts
