@@ -13,6 +13,7 @@
         state: present
         groups: sudo
         append: yes
+        shell: /bin/bash
 
   roles:
     - role: add_ssh_key

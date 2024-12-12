@@ -41,6 +41,7 @@
       state: present
       groups: sudo
       append: yes
+      shell: /bin/bash
     loop: "{{ admins }}"
 
   - name: Copy admin's ssh-keys

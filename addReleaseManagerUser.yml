@@ -12,6 +12,7 @@
         create_home: yes
         # The user should be created if it doesn't exist or updated if it already exists
         state: present
+        shell: /bin/bash
 
     - name: Create release-manager group
       group:
@@ -42,6 +43,7 @@
         create_home: yes
         # The user should be created if it doesn't exist or updated if it already exists
         state: present
+        shell: /bin/bash
 
     - name: Create release-manager group
       group:
