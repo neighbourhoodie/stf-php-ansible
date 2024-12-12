@@ -1,0 +1,10 @@
+[jumphost]
+ams3 ansible_host={{jumphost0}}
+nyc1 ansible_host={{jumphost1}}
+
+# docs, wiki etc are properties,
+# hosts are called service
+
+[service]
+service0.ams3.do.php.backend.lol
+service1.ams3.do.php.backend.lol

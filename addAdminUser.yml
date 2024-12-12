@@ -1,0 +1,28 @@
+- hosts:
+  - all
+
+  become: yes
+  become_user: root
+
+  pre_tasks:
+    - name: Create a linux sudo user
+      user:
+        name: "{{ username }}"
+        create_home: yes
+        # The user should be created if it doesn't exist or updated if it already exists
+        state: present
+        groups: sudo
+        append: yes
+
+  roles:
+    - role: add_ssh_key
+
+# Put the GA file only on jumphost
+- hosts:
+  - jumphost
+
+  become: yes
+  become_user: root
+
+  roles:
+    - role: add_GA_file

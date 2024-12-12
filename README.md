@@ -1,58 +1,138 @@
-# Ansible demo for PHP with STF project
-
-## Objective
-
-The server infrastructure supporting PHP is outdated, requiring extensive manual work and is currently managed by a single maintainer, which could potentially become a liability. This infrastructure plays a critical role as it hosts the PHP release files that users download.
-As part of the Scope of Work with Sovereign Tech Fund [STF](https://www.sovereigntechfund.de/) our goal is to modernize and optimize this process by introducing automation wherever suitable, which will reduce the time spent by maintainers in these tasks and improve technical resilience of the project.
+# Ansible for PHP with STA project
 
 ## Proposal
 
-We created this project as a test case for [Ansible](https://docs.ansible.com/ansible/latest/index.html) to demonstrate how we can use it to automate server infrastructure setup.
+We created this project as a shadow infra for [Ansible](https://docs.ansible.com/ansible/latest/index.html) to automate server infrastructure setup.
 
 Ansible is a configuration management tool that facilitates the task of setting up and maintaining remote servers.
 Ansible doesn’t require any special software to be installed on the nodes that will be managed with this tool. A control machine is set up with the Ansible software, which then communicates with the nodes via standard SSH.
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
-## What the demo aims to do
+## Using Ansible
 
-This demo repository gives an overview of how Ansible can be used to manage PHP infrastructure. It includes the following:
+Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
 
-- Ansible is configured to operate through `jumphost` server to connect to the two property host servers.
-- An Ansible [role](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html) is set up to install Apache on all the property host servers.
-- Encrypted variables are used. Ansible has its own dedicated [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html) to manage and store vault passwords.
+To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
 
-## Set up for the demo project
+```shell
+ssh -fNF etc/ssh_config jumphost0.ams3.do.php.backend.lol
+```
 
-1. Three [Digital Ocean droplets](https://www.digitalocean.com/products/droplets) were set up. One to mimic the `jumphost` and the other two for property host servers.
-2. This demo repository were set up to run Ansible on the hosts servers.
+This creates an SSH control channel to jumphost0 that will remain valid for 4 hours. Re-run this when connections start failing after 4 hours.
 
-   a. Inventory: Define the 3 hosts that Ansible works against.
+Then you can run any playbook like this:
 
-   b. Roles: Define the set of tasks that will be run against the defined hosts. In this example we have tasks to
-      - Install Apache2
-      - Configure Apache to listen to floating IPs of the host servers
-      - Update Apache to latest version
-3. Define `test.yml` to execute the tasks defined earlier. Here you need to define the host servers where you want your tasks to be run (in this case we chose the 'service' property host) and also specify remote user who will execute Ansible.
+```shell
+ansible-playbook -i inventory/php playbook.yml
+```
 
-Ansible can SSH directly into the host servers and run the tasks that it needs to. In this example Ansible is run from your local machine and to do so you will need to have access to the example host server droplets on Neighbourhoodie Digital Ocean.
+## Initialize machines
+
+To initialize your machines, run this playbook:
+
+```sh
+ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
+```
+
+You have to pass a file with all admins you want to add. The formal looks like this:
+
+```yml
+admins:
+  - name: rocko
+    GA_file: /home/rocko/.google_authenticator
+    pubkeys:
+      - ssh-rsa abcxyz rocko.artischocko@mail.com
+      - ssh-ed25519 abcxyz artischocko@rocko.ie
+```
+
+You can add several publick keys, but you don't have to.
+
+### What this does
+
+Initialise all machines
+  1. Define all admin users (name, pubkey, Google Authenticator file)
+  2. Disable root login
+  3. Google Auth set up
+  4. Set up firewall rules to only log in via jump host IPs
+
+
+
+# Utility tasks
+
+## Add a new user
+
+To add a new user, an admin or a release-manager, you use the related playbooks.
+
+### prerequisites
+
+- You need the `.google_authenticator` file somewhere on your local machine
+- You have to put the ssh key to `roles/add_ssh_key/templates/ssh_keys/username`.
+
+The playbooks take the required parameters `username` and `path_to_google_auth`:
+
+> [!NOTE]
+> The name of the ssh_key file has to be the same as the username.
+
+It creates a linux user and copies the `.google_authenticator` file and the `authorized_keys` to the user's homedir.
+
+### Add an admin user
+
+```shell
+ansible-playbook -i inventory/php addAdminUser.yml --extra-vars "username=rocko path_to_google_auth=absolute/path/to/.google_authenticator"
+```
+
+This playbook creates a new user on jumphosts and all services.
+User group is `sudo`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to everywhere.
+
+### Add a release-manager user
+
+```shell
+ansible-playbook -i inventory/php addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
+```
+
+This playbook creates a new user on jumphosts and the download-service.
+User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to everywhere.
+
+# Delete a user
+
+To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `ams3` by default.
+
+```shell
+ansible-playbook -i inventory/php deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
+```
+## Using different jumphosts
+
+You can specify different hosts that you want to run your playbook on. Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1). By default the host is set to the jumphost in Europe (ams3).
+
+To change jumphost to a different one use the `--extra-vars` argument as follows:
+
+```shell
+ansible-playbook -i inventory/php [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
+```
 
 ## Running Ansible
 
 Clone the repository and request access to the test droplets.
 
-Ensure you can successfully `ssh` into the test droplets from your local machine.
+Ensure you can successfully `ssh` into the test droplets via jumphost from your local machine.
 
-Run Ansible as follows:
+**Run the jumphost playbook as follows:**
 
 ```bash
-ansible-playbook -i inventory/demo test.yml --ask-vault-pass
+ansible-playbook -i inventory/php jumphosts.yml --ask-vault-pass
+```
+
+**Run the playbook for all services as follows:**
+
+```bash
+ansible-playbook -i inventory/php services.yml
 ```
 
 ## Using encrypted vars
 
-1. create file `EDITOR=nano ansible-vault create inventory/demo/group_vars/all.yml`
-2. edit file `EDITOR=nano ansible-vault edit inventory/demo/group_vars/all.yml`
+1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
+2. edit file `EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml`
 
 (Password was added by the create command: - 123)
 

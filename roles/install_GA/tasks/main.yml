@@ -1,0 +1,19 @@
+- name: Install Google Authenticator
+  ansible.builtin.package:
+    name: libpam-google-authenticator
+    state: present
+    update_cache: yes
+
+# Enable Google Authenticator for SSH
+- name: Add SSH PAM config
+  template:
+    src: templates/ssh_pam_config
+    dest: /etc/pam.d/sshd
+  notify: restart ssh
+
+# Configure SSH to Allow 2FA
+- name: Allow PAM authentication
+  template:
+    src: templates/sshd_config
+    dest: /etc/ssh/sshd_config
+  notify: restart ssh
