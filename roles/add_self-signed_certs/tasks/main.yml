@@ -1,0 +1,31 @@
+# The following sets up self-signed SSL certificate, enables SSL site
+# and schedules automatic renewal of the
+
+# usage:
+# - role: add_self-signed_certs
+#
+# When you use it with apache, you have to install `apache2-utils` and enable the SSL module:
+# - name: Enable SSL module in Apache
+#   command: a2enmod ssl
+#   notify: reload apache
+
+- name: Install openssl
+  apt:
+    name: openssl
+    state: present
+    update_cache: yes
+
+- name: Generate private key
+  command: >
+    openssl genrsa -out /etc/ssl/certs/php-self-signed.key 2048
+  args:
+    creates: /etc/ssl/certs/php-self-signed.key
+
+# Note: Validity Period of Letsencrypt is 90 days, 1 year seems to be common for ssssl :snake:
+  command: >
+    openssl req -new -x509 -key /etc/ssl/certs/php-self-signed.key
+    -out /etc/ssl/certs/php-self-signed.crt
+    -days 365
+    -subj "/C=US/ST=State/L=City/O=php/OU=Unit/CN=php.net"
+  args:
+    creates: /etc/ssl/certs/php-self-signed.crt
