@@ -1,0 +1,21 @@
+# The following sets up SSL certificate using Let's Encrypt, enables SSL site
+# and schedules automatic renewal of the certificates
+- name: LetsEncrypt certificates
+  shell: |
+    certbot --apache -n --agree-tos --email {{ email }} -d {{ downloads_domain }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ downloads_domain }}/fullchain.pem"
+
+- name: Enable SSL site
+  command: a2ensite downloads.php.net.conf
+  notify: reload apache
+
+- name: Set up renewal cron job
+  cron:
+    name: "Renew Let's Encrypt certificates"
+    job: "certbot renew --quiet" # 'quiet' is used to suppress the outputs
+    state: present
+    minute: 0
+    hour: 0
+    weekday: 1
+  notify: reload apache

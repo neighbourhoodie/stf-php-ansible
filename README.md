@@ -35,7 +35,7 @@ To initialize your machines, run this playbook:
 ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
 ```
 
-You have to pass a file with all admins you want to add. The formal looks like this:
+You have to pass a file with all admins you want to add. The format looks like this, but there is also an example at `etc/admins.yml`:
 
 ```yml
 admins:
@@ -56,6 +56,43 @@ Initialise all machines
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
+# Set up services
+
+> [!IMPORTANT]
+> Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
+>
+
+## downloads.php.net
+
+```sh
+ansible-playbook -i inventory/php addDownloads.yml --ask-vault-pass
+```
+
+<details>
+  <summary>
+    <h3>What this does</h3>
+  </summary>
+
+  This playbook installs the following sowtware on a machine:
+  - apache 2
+  - libapache2-mod-php8.2
+  - php8.2
+  - certbot
+  - python3-certbot-apache
+  - openssl
+  - apache2-utils
+
+  It puts the `apache.conf`, a file with some secrets to `/local/this-box`.
+  Further, it copies the apache config files for `downloads.php.net` and `shared.php.net`.
+  It creates letsencrypt-certs for `downloads.php.net` and self-signed SSL certs for `shared.php.net`.
+
+</details>
+
+## wiki.php.net
+
+## museum.php.net
+
+## main.php.net
 
 
 # Utility tasks
@@ -92,15 +129,18 @@ ansible-playbook -i inventory/php addReleaseManagerUser.yml --extra-vars "userna
 ```
 
 This playbook creates a new user on jumphosts and the download-service.
-User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to everywhere.
+User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to the downloads service.
 
-# Delete a user
+### Delete a user
 
-To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `ams3` by default.
+To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `all` by default.
 
 ```shell
 ansible-playbook -i inventory/php deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 ```
+
+---
+
 ## Using different jumphosts
 
 You can specify different hosts that you want to run your playbook on. Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1). By default the host is set to the jumphost in Europe (ams3).
@@ -109,24 +149,6 @@ To change jumphost to a different one use the `--extra-vars` argument as follows
 
 ```shell
 ansible-playbook -i inventory/php [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
-```
-
-## Running Ansible
-
-Clone the repository and request access to the test droplets.
-
-Ensure you can successfully `ssh` into the test droplets via jumphost from your local machine.
-
-**Run the jumphost playbook as follows:**
-
-```bash
-ansible-playbook -i inventory/php jumphosts.yml --ask-vault-pass
-```
-
-**Run the playbook for all services as follows:**
-
-```bash
-ansible-playbook -i inventory/php services.yml
 ```
 
 ## Using encrypted vars

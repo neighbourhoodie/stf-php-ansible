@@ -1,10 +1,15 @@
 [jumphost]
-ams3 ansible_host={{jumphost0}}
-nyc1 ansible_host={{jumphost1}}
+ams3 ansible_host=jumphost0.ams3.do.php.backend.lol
+nyc1 ansible_host=jumphost1.nyc1.do.php.backend.lol
 
 # docs, wiki etc are properties,
 # hosts are called service
 
 [service]
 service0.ams3.do.php.backend.lol
+service1.ams3.do.php.backend.lol
+# service2.ams3.do.php.backend.lol
+# service3.ams3.do.php.backend.lol
+
+[downloads]
 service1.ams3.do.php.backend.lol
