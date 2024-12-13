@@ -1,4 +1,4 @@
-# Run this playbook to initialie your machines
+# Run this playbook to initialise your machines
 # `ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"`
 
 # Install Google Authenticator and copy GA file

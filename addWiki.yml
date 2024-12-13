@@ -1,0 +1,8 @@
+- hosts:
+  - wiki
+
+  become: yes
+  become_user: root
+
+  roles:
+    - role: wiki
