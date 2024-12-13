@@ -1,0 +1,68 @@
+# This role sets up the property museum.php.net with NGINX together with the fancyindex module
+
+# Change version number to update nginx
+- name: Set NGINX version
+  set_fact:
+    nginx_version: "1.24.0"
+
+- name: Install Software
+  apt:
+    name:
+    - git
+    - build-essential
+    - libpcre3
+    - libpcre3-dev
+    - zlib1g
+    - zlib1g-dev
+    - libssl-dev
+    state: present
+
+# Install nginx with fancyindex: https://github.com/aperezdc/ngx-fancyindex?tab=readme-ov-file#building
+- name: Download the latest version of Nginx source
+  get_url:
+    url: http://nginx.org/download/nginx-{{ nginx_version }}.tar.gz
+    dest: /tmp/nginx-{{ nginx_version }}.tar.gz
+
+- name: Extract Nginx source
+  unarchive:
+    src: /tmp/nginx-{{ nginx_version }}.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Download ngx-fancyindex module
+  git:
+    repo: https://github.com/aperezdc/ngx-fancyindex.git
+    dest: /tmp/ngx-fancyindex
+
+# We use self signed SSL certs, so --with-http_ssl_module is needed
+# Specify the installation paths via --sbin-path
+- name: Compile and install Nginx with ngx-fancyindex
+  shell: |
+    cd /tmp/nginx-{{ nginx_version }}
+    ./configure --sbin-path=/usr/sbin/nginx --pid-path=/run/nginx.pid --with-http_ssl_module --add-module=/tmp/ngx-fancyindex
+    make
+    make install
+  args:
+    chdir: /tmp
+
+- name: Create the SSL Certificate
+  include_role:
+    name: add_self-signed_certs
+
+- name: Create a strong Diffie-Hellman group
+  command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+  args:
+    creates: /etc/ssl/certs/dhparam.pem
+
+# This adds museum nginx config file.
+- name: Add nginx config file
+  template:
+    src: templates/museumweb.conf
+    dest: /etc/nginx/sites-enabled/default
+  notify: reload nginx
+
+- name: start nginx
+  service:
+    name: nginx
+    state: started
+    enabled: yes

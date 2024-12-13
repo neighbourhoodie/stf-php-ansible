@@ -1,0 +1,18 @@
+---
+
+# The reload command keeps the Nginx server running as it reloads updated configuration files.
+# If Nginx notices a syntax error in any of the configuration files,
+# the reload is aborted and the server keeps running based on old config files.
+# Reloading is safer than restarting Nginx.
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded
+
+# The restart command will shut down the server including all related services and power it on again.
+# Restart Nginx only when making significant configuration updates, such as changing ports or interfaces.
+# This command will force shut down all worker processes.
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted

@@ -8,6 +8,12 @@
 # - name: Enable SSL module in Apache
 #   command: a2enmod ssl
 #   notify: reload apache
+#
+# When you use it with Nginx, you have to add the DH group
+# - name: Create a strong Diffie-Hellman group
+#   command: openssl dhparam -out /etc/ssl/certs/dhparam.pem 4096
+#   args:
+#     creates: /etc/ssl/certs/dhparam.pem
 
 - name: Install openssl
   apt:
@@ -22,6 +28,7 @@
     creates: /etc/ssl/certs/php-self-signed.key
 
 # Note: Validity Period of Letsencrypt is 90 days, 1 year seems to be common for ssssl :snake:
+- name: Generate self-signed certificate
   command: >
     openssl req -new -x509 -key /etc/ssl/certs/php-self-signed.key
     -out /etc/ssl/certs/php-self-signed.crt
