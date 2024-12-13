@@ -21,8 +21,8 @@
   template:
     src: templates/secrets.conf
     dest: /local/this-box/apache.conf
-    mode: '0640'
-    owner: root
+    mode: '0600'
+    owner: www-data
     group: www-data
 
 - name: Add Apache config for downloads.php.net
