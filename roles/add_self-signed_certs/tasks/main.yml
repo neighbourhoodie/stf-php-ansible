@@ -21,7 +21,7 @@
   args:
     creates: /etc/ssl/certs/php-self-signed.key
 
-- name: Generate self-signed certificate
+# Note: Validity Period of Letsencrypt is 90 days, 1 year seems to be common for ssssl :snake:
   command: >
     openssl req -new -x509 -key /etc/ssl/certs/php-self-signed.key
     -out /etc/ssl/certs/php-self-signed.crt
