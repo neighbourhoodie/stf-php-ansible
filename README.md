@@ -16,23 +16,27 @@ Ansible organises system administration operations into a hierarchy of playbooks
 To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
 
 ```shell
-ssh -fNF etc/ssh_config jumphost0.ams3.do.php.backend.lol
+bin/auth-jump0
 ```
 
 This creates an SSH control channel to jumphost0 that will remain valid for 4 hours. Re-run this when connections start failing after 4 hours.
 
+There is a corresponding `bin/auth-jump1`.
+
 Then you can run any playbook like this:
 
 ```shell
-ansible-playbook -i inventory/php playbook.yml
+ansible-playbook playbook.yml
 ```
+
+If you have more than one inventory (say one to try things out with and a live one), you can overwrite the default inventory of `inventory/php` (set in `ansible.cfg`) like so: `ansible-playbook -i inventory/other ...`
 
 ## Initialize machines
 
 To initialize your machines, run this playbook:
 
 ```sh
-ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
+ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
 ```
 
 You have to pass a file with all admins you want to add. The format looks like this, but there is also an example at `etc/admins.yml`:
@@ -65,7 +69,7 @@ Initialise all machines
 ## downloads.php.net
 
 ```sh
-ansible-playbook -i inventory/php addDownloads.yml --ask-vault-pass
+ansible-playbook addDownloads.yml
 ```
 
 <details>
@@ -94,6 +98,16 @@ ansible-playbook -i inventory/php addDownloads.yml --ask-vault-pass
 
 ## main.php.net
 
+## Changing the Jumphost
+
+By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is .gitignored) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
+
+```diff
+-ssh_common_args = -F etc/ssh_config_jump0
++ssh_common_args = -F etc/ssh_config_jump1
+```
+
+And then you initialise the authentication with `bin/auth-jump1` like before.
 
 # Utility tasks
 
@@ -116,7 +130,7 @@ It creates a linux user and copies the `.google_authenticator` file and the `aut
 ### Add an admin user
 
 ```shell
-ansible-playbook -i inventory/php addAdminUser.yml --extra-vars "username=rocko path_to_google_auth=absolute/path/to/.google_authenticator"
+ansible-playbook addAdminUser.yml --extra-vars "username=rocko path_to_google_auth=absolute/path/to/.google_authenticator"
 ```
 
 This playbook creates a new user on jumphosts and all services.
@@ -125,7 +139,7 @@ User group is `sudo`. It puts the `.google_authenticator` file to the jumphost a
 ### Add a release-manager user
 
 ```shell
-ansible-playbook -i inventory/php addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
+ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
 ```
 
 This playbook creates a new user on jumphosts and the download-service.
@@ -136,7 +150,7 @@ User group is `release-manager`. It puts the `.google_authenticator` file to the
 To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `all` by default.
 
 ```shell
-ansible-playbook -i inventory/php deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
+ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 ```
 
 ---
@@ -148,7 +162,7 @@ You can specify different hosts that you want to run your playbook on. Currently
 To change jumphost to a different one use the `--extra-vars` argument as follows:
 
 ```shell
-ansible-playbook -i inventory/php [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
+ansible-playbook [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
 ```
 
 ## Using encrypted vars
