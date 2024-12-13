@@ -1,5 +1,4 @@
 # The following sets up self-signed SSL certificate, enables SSL site
-# and schedules automatic renewal of the
 
 - name: Install required packages
   apt:

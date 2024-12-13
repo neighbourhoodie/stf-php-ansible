@@ -8,8 +8,7 @@
       - python3-certbot-apache
       - openssl
       - apache2-utils
-    state:
-    # Ensure package list is up-to-date
+    state: present
     update_cache: yes
 
 - name: create local box
