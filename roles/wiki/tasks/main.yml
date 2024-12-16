@@ -37,4 +37,4 @@
     name: add_certbot
   vars:
     domain: "{{ wiki_domain }}"
-    ssl_site: "wiki.conf"
+    config_file: "{{ wiki_config_file }}"

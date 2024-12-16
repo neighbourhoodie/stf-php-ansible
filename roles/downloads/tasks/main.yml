@@ -52,7 +52,7 @@
     name: add_certbot
   vars:
     domain: "{{ downloads_domain }}"
-    ssl_site: "downloads.php.net.conf"
+    config_file: "{{ downloads_config_file }}"
 
 - name: Run self-signed certificate tasks
   include_tasks: self-signed-certs.yml
