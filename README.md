@@ -55,6 +55,7 @@ You can add several publick keys, but you don't have to.
 ### What this does
 
 Initialise all machines
+
   1. Define all admin users (name, pubkey, Google Authenticator file)
   2. Disable root login
   3. Google Auth set up
@@ -77,7 +78,7 @@ ansible-playbook addDownloads.yml
     <h3>What this does</h3>
   </summary>
 
-  This playbook installs the following sowtware on a machine:
+  This playbook installs the following software on a machine:
   - apache 2
   - libapache2-mod-php8.2
   - php8.2
@@ -93,6 +94,17 @@ ansible-playbook addDownloads.yml
 </details>
 
 ## wiki.php.net
+
+This playbook installs the following:
+
+- apache2
+- libapache2-mod-php8.2
+- php8.2
+- certbot
+- python3-certbot-apache
+
+It copies the apache config file to wiki.conf and creates letsencrypt certificates.
+The domain and email is saved as variables.
 
 ## museum.php.net
 

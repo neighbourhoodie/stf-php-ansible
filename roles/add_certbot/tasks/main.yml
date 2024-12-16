@@ -1,0 +1,45 @@
+# The following sets up SSL certificate using Let's Encrypt, enables SSL site
+# and schedules automatic renewal of the certificates. Parameters are required.
+
+# usage:
+# - role: add_certbot
+#   vars:
+#     domain: "{{ downloads_domain }}"
+#     config_file: "{{ downloads_config_file }}"
+#
+# Note certbot is for apache2 and won't work for nginx
+
+- name: Check if email exists
+  fail:
+    msg: "Please add email to inventory/php/group_vars/service.yml"
+  when: email is undefined
+
+- name: Check if domain exists
+  fail:
+    msg: "Please add domain to inventory/php/group_vars/service.yml"
+  when: domain is undefined
+
+- name: Check if config file name exists
+  fail:
+    msg: "Please add config file name to inventory/php/group_vars/service.yml"
+  when: config_file is undefined
+
+- name: Get LetsEncrypt certificates
+  shell: |
+    certbot --apache -n --agree-tos --email {{ email }} -d {{ domain }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+
+- name: Enable SSL site
+  command: a2ensite {{ config_file }}
+  notify: reload apache
+
+- name: Set up renewal cron job
+  cron:
+    name: "Renew Let's Encrypt certificates"
+    job: "certbot renew --quiet" # 'quiet' is used to suppress the outputs
+    state: present
+    minute: 0
+    hour: 0
+    weekday: 1
+  notify: reload apache

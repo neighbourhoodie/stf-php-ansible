@@ -1,0 +1,40 @@
+- name: Install Apache with mod-php, php, and cerbot
+  apt:
+    pkg:
+      - apache2
+      - libapache2-mod-php8.2
+      - php8.2
+      - certbot
+      - python3-certbot-apache
+    state: present
+    update_cache: yes
+
+# Headers module used in wiki.conf and needs to be enabled
+- name: Create symlink to enable headers module in config file
+  file:
+    src: /etc/apache2/mods-available/headers.load
+    dest: /etc/apache2/mods-enabled/headers.load
+    state: link
+
+- name: Add Apache config for wiki
+  template:
+    src: templates/wiki.conf
+    dest: /etc/apache2/sites-available/wiki.conf
+  notify: reload apache
+
+- name: Enable Apache PHP module
+  shell: a2enmod php8.2
+  notify: reload apache
+
+- name: Ensure Apache is started and enabled
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Run certbot tasks
+  include_role:
+    name: add_certbot
+  vars:
+    domain: "{{ wiki_domain }}"
+    config_file: "{{ wiki_config_file }}"

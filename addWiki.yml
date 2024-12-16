@@ -1,9 +1,9 @@
 - hosts:
-  - downloads
+  - wiki
 
   become: yes
   become_user: root
 
   roles:
     - role: shared_handlers
-    - role: downloads
+    - role: properties/wiki

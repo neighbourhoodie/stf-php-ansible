@@ -48,7 +48,11 @@
     enabled: yes
 
 - name: Run certbot tasks
-  include_tasks: certbot.yml
+  include_role:
+    name: add_certbot
+  vars:
+    domain: "{{ downloads_domain }}"
+    config_file: "{{ downloads_config_file }}"
 
 - name: Run self-signed certificate tasks
   include_tasks: self-signed-certs.yml
