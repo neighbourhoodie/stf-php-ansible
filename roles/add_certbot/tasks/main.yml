@@ -1,5 +1,12 @@
 # The following sets up SSL certificate using Let's Encrypt, enables SSL site
-# and schedules automatic renewal of the certificates
+# and schedules automatic renewal of the certificates. Parameters are required.
+
+# usage:
+# - role: add_certbot
+#   vars:
+#     domain: "{{ downloads_domain }}"
+#     ssl_site: "downloads.php.net.conf" <-- replace with better var name
+#
 
 - name: Get LetsEncrypt certificates
   shell: |
