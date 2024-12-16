@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ssh -fNF jumphost1.nyc1.do.backend.lol

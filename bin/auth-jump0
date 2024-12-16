@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ssh -fNF jumphost0.ams3.do.backend.lol
