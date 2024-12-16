@@ -21,8 +21,8 @@
       from_ip: "{{ item }}"
       port: 22
     loop:
-      - "{{ hostvars.ams3.ansible_default_ipv4.address }}"
-      - "{{ hostvars.nyc1.ansible_default_ipv4.address }}"
+      - 167.99.32.163 # jumphost am3
+      - 68.183.104.48 # jumphost nyc
 
   - name: Allow incoming requests from port 80 and 443
     ufw:
