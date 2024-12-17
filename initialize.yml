@@ -57,13 +57,9 @@
 
   # Allow members of group sudo to execute any command without specifying their password
   - name: Configure sudoers
-    lineinfile:
-      path: /etc/sudoers
-      state: present
-      regexp: '^%sudo ALL='
-      insertafter: '^%sudo ALL='
-      line: '%sudo ALL=(ALL) NOPASSWD: ALL'
-      validate: '/usr/sbin/visudo -cf %s'
+    copy:
+      dest: /etc/sudoers.d/20-sudo-password
+      content: '%sudo ALL=(ALL) NOPASSWD: ALL'
 
   - name: Copy admin's ssh-keys
     loop: "{{ admins }}"
