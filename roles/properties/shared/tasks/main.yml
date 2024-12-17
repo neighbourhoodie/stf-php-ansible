@@ -4,7 +4,6 @@
       - apache2
       - libapache2-mod-php8.2
       - php8.2
-      - openssl
       - apache2-utils
     state: present
     update_cache: yes
@@ -25,5 +24,11 @@
     state: started
     enabled: yes
 
-- name: Run self-signed certificate tasks
-  include_tasks: self-signed-certs.yml
+- name: Enable SSL module in Apache
+  command: a2enmod ssl
+  notify: reload apache
+
+- name: Create the self-signed SSL Certificate
+  include_role:
+    name: add_self-signed_certs
+
