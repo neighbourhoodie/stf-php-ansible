@@ -1,24 +1,7 @@
 # Run this playbook to initialise your machines
 # `ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"`
 
-# Install Google Authenticator and copy GA file
-- hosts:
-  - jumphost
-
-  remote_user: root
-
-  tasks:
-    - name: Copy admin's Google Authenticator files
-      loop: "{{ admins }}"
-      include_role:
-        name: add_GA_file
-      vars:
-        username: "{{ item.name }}"
-        path_to_google_auth: "{{ item.GA_file }}"
-
-  roles:
-    - role: install_GA
-
+# Set up firewall on all services
 - hosts:
   - service
 
@@ -38,8 +21,8 @@
       from_ip: "{{ item }}"
       port: 22
     loop:
-      - "{{ hostvars.ams3.ansible_default_ipv4.address }}"
-      - "{{ hostvars.nyc1.ansible_default_ipv4.address }}"
+      - 167.99.32.163 # jumphost am3
+      - 68.183.104.48 # jumphost nyc
 
   - name: Allow incoming requests from port 80 and 443
     ufw:
@@ -72,6 +55,16 @@
       shell: /bin/bash
     loop: "{{ admins }}"
 
+  # Allow members of group sudo to execute any command without specifying their password
+  - name: Configure sudoers
+    lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%sudo ALL='
+      insertafter: '^%sudo ALL='
+      line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+      validate: '/usr/sbin/visudo -cf %s'
+
   - name: Copy admin's ssh-keys
     loop: "{{ admins }}"
     include_role:
@@ -80,6 +73,32 @@
       username: "{{ item.name }}"
       pubkeys: "{{ item.pubkeys }}"
 
+
+# Install Google Authenticator and copy GA file on jumphosts
+- hosts:
+  - jumphost
+
+  remote_user: root
+
+  tasks:
+    - name: Copy admin's Google Authenticator files
+      loop: "{{ admins }}"
+      include_role:
+        name: add_GA_file
+      vars:
+        username: "{{ item.name }}"
+        path_to_google_auth: "{{ item.GA_file }}"
+
+  roles:
+    - role: install_GA
+
+# Disable root login at the very end
+- hosts:
+  - all
+
+  remote_user: root
+
+  tasks:
   - name: Disable root login
     lineinfile:
       path: /etc/ssh/sshd_config
