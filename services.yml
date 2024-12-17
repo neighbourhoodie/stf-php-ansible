@@ -1,9 +1,0 @@
-- hosts:
-  - service
-
-  become: yes
-  become_user: root
-
-  tasks:
-    - name: Uname
-      command: uname -a
