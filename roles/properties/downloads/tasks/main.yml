@@ -1,4 +1,4 @@
-- name: Install Apache with mod-php, php, and cerbot, openssl
+- name: Install Apache with mod-php, php, and cerbot
   apt:
     pkg:
       - apache2
@@ -6,8 +6,6 @@
       - php8.2
       - certbot
       - python3-certbot-apache
-      - openssl
-      - apache2-utils
     state: present
     update_cache: yes
 
@@ -31,12 +29,6 @@
     dest: /etc/apache2/sites-available/downloads.php.net.conf
   notify: reload apache
 
-- name: Add Apache config for shared.php.net
-  template:
-    src: templates/shared.php.net.conf
-    dest: /etc/apache2/sites-available/shared.php.net.conf
-  notify: reload apache
-
 - name: Enable Apache PHP module
   command: a2enmod php8.2
   notify: reload apache
@@ -54,5 +46,3 @@
     domain: "{{ downloads_domain }}"
     config_file: "{{ downloads_config_file }}"
 
-- name: Run self-signed certificate tasks
-  include_tasks: self-signed-certs.yml

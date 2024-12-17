@@ -7,3 +7,4 @@
   roles:
     - role: shared_handlers
     - role: properties/downloads
+    - role: properties/shared
