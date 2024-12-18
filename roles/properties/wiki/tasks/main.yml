@@ -36,3 +36,4 @@
   vars:
     domain: "{{ wiki_domain }}"
     config_file: wiki.conf
+    email: "{{ systems_email }}"

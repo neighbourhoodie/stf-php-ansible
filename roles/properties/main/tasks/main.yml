@@ -41,6 +41,14 @@
     dest: /etc/apache2/sites-available/main.php.net.conf
   notify: reload apache
 
+- name: Run certbot tasks
+  include_role:
+    name: add_certbot
+  vars:
+    domain: "{{ main_domain }}"
+    config_file: main.php.net.conf
+    email: "{{ master_email }}"
+
 - name: Enable Apache mod_php
   apt:
     name: libapache2-mod-php8.2

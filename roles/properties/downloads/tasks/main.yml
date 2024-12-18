@@ -43,4 +43,5 @@
   vars:
     domain: "{{ downloads_domain }}"
     config_file: downloads.php.net.conf
+    email: "{{ systems_email }}"
 

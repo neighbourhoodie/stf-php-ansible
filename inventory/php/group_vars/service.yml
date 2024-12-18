@@ -9,6 +9,5 @@ museum_domain: museum.php.backend.lol
 main_domain: main.php.backend.lol
 main_domain_alias: master.php.backend.lol
 
-# email: systems@php.net
-email: jacoba@neighbourhood.
+systems_email: systems@php.net
 master_email: webmaster@php.net
