@@ -37,15 +37,6 @@
     dest: /etc/apache2/sites-available/main.php.net.conf
   notify: reload apache
 
-# Properties main, lxr, status, and gcov all have the same certificates as lxr
-- name: Run certbot tasks
-  include_role:
-    name: add_certbot
-  vars:
-    domain: "{{ lxr_domain }}"
-    config_file: lxr.php.net.conf
-    email: "{{ master_email }}"
-
 - name: Enable Apache mod_php
   apt:
     name: libapache2-mod-php8.2
