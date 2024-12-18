@@ -6,9 +6,12 @@ downloads_domain: download.php.backend.lol
 shared_domain: shared.php.backend.lol
 wiki_domain: wiki.php.backend.lol # actual domain: wiki.php.net
 museum_domain: museum.php.backend.lol
+main_domain: main.php.backend.lol
+main_domain_alias: master.php.backend.lol
 
 downloads_config_file: downloads.php.net.conf
 wiki_config_file: wiki.conf
 
 # email: systems@php.net
-email: jacoba@neighbourhood.ie
+email: jacoba@neighbourhood.
+master_email: webmaster@php.net
