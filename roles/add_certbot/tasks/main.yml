@@ -5,7 +5,7 @@
 # - role: add_certbot
 #   vars:
 #     domain: "{{ downloads_domain }}"
-#     config_file: "{{ downloads_config_file }}"
+#     config_file: name.of.file.conf
 #
 # Note certbot is for apache2 and won't work for nginx
 
@@ -22,7 +22,15 @@
 - name: Check if config file name exists
   fail:
     msg: "Please add config file name to inventory/php/group_vars/service.yml"
-  when: config_file is undefined
+  when: config_file is
+
+- name: Install cerbot for apache
+  apt:
+    pkg:
+      - certbot
+      - python3-certbot-apache
+    state: present
+    update_cache: yes
 
 - name: Get LetsEncrypt certificates
   shell: |

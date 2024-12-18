@@ -1,11 +1,9 @@
-- name: Install Apache with mod-php, php, and cerbot
+- name: Install Apache with mod-php and php
   apt:
     pkg:
       - apache2
       - libapache2-mod-php8.2
       - php8.2
-      - certbot
-      - python3-certbot-apache
     state: present
     update_cache: yes
 
@@ -44,5 +42,5 @@
     name: add_certbot
   vars:
     domain: "{{ downloads_domain }}"
-    config_file: "{{ downloads_config_file }}"
+    config_file: downloads.php.net.conf
 
