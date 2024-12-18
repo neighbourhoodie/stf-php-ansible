@@ -6,3 +6,4 @@
 
   roles:
     - role: properties/main
+    - role: properties/lxr
