@@ -9,18 +9,10 @@
     state: present
     update_cache: yes
 
-# Do we need a file here?
-# - name: Create PHP custom configuration for include_path
-#   copy:
-#     dest: /etc/php/8.0/apache2/conf.d/99-custom.ini
-#     content: |
-#       ; Custom PHP include_path
-#       include_path = ".:/usr/share/php:/custom/include/path"
-
-- name: Add Apache config for lxr.php.net
+- name: Add Apache config for gcov.php.net
   template:
-    src: templates/lxr.php.net.conf
-    dest: /etc/apache2/sites-available/lxr.php.net.conf
+    src: templates/gcov.php.net.conf
+    dest: /etc/apache2/sites-available/gcov.php.net.conf
   notify: reload apache
 
 - name: Enable Apache mod_php

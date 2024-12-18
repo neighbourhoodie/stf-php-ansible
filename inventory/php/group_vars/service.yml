@@ -12,6 +12,8 @@ museum_domain: museum.php.backend.lol
 main_domain: main.php.backend.lol
 main_domain_alias: master.php.backend.lol
 lxr_domain: lxr.php.backend.lol
+status_domain: status.php.backend.lol
+gcov_domain: gcov.php.backend.lol
 
 systems_email: systems@php.net
 master_email: webmaster@php.net

@@ -4,6 +4,10 @@
   become: yes
   become_user: root
 
+# Note: Properties main, lxr, status, and gcov all have the same certificates as lxr
   roles:
+    - role: shared_handlers
     - role: properties/main
     - role: properties/lxr
+    - role: properties/status
+    - role: properties/gcov
