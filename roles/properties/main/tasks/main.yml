@@ -1,0 +1,48 @@
+- name: Install Apache with mod-php, php, cli-php and mariaDB
+  apt:
+    pkg:
+      - apache2
+      - libapache2-mod-php8.2
+      - php8.2
+      - php8.2-cli
+      - mariadb-server
+    state: present
+    update_cache: yes
+
+# Do we need a file here?
+# - name: Create PHP custom configuration for include_path
+#   copy:
+#     dest: /etc/php/8.0/apache2/conf.d/99-custom.ini
+#     content: |
+#       ; Custom PHP include_path
+#       include_path = ".:/usr/share/php:/custom/include/path"
+
+- name: create local box
+  file:
+    state: directory
+    dest: /local/this-box
+    mode: '0750'
+
+- name: Store secrets file
+  template:
+    src: templates/secrets.conf
+    dest: /local/this-box/apache.conf
+    mode: '0600'
+    owner: www-data
+    group: www-data
+
+- name: Add Apache config for main.php.net
+  template:
+    src: templates/main.php.net.conf
+    dest: /etc/apache2/sites-available/main.php.net.conf
+  notify: reload apache
+
+- name: Enable Apache mod_php
+  apt:
+    name: libapache2-mod-php8.2
+    state: present
+
+- name: Restart Apache to apply PHP configuration
+  service:
+    name: apache2
+    state: restarted

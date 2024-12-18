@@ -1,28 +1,36 @@
 # The following sets up SSL certificate using Let's Encrypt, enables SSL site
 # and schedules automatic renewal of the certificates. Parameters are required.
+# Note: This certbot role is for apache2 and won't work for nginx
 
 # usage:
 # - role: add_certbot
 #   vars:
 #     domain: "{{ downloads_domain }}"
-#     config_file: "{{ downloads_config_file }}"
-#
-# Note certbot is for apache2 and won't work for nginx
+#     config_file: name.of.file.conf
+#     email: "{{ systems_email }}"
 
 - name: Check if email exists
   fail:
-    msg: "Please add email to inventory/php/group_vars/service.yml"
+    msg: "Please add email to this role"
   when: email is undefined
 
 - name: Check if domain exists
   fail:
-    msg: "Please add domain to inventory/php/group_vars/service.yml"
+    msg: "Please add domain to this role"
   when: domain is undefined
 
 - name: Check if config file name exists
   fail:
-    msg: "Please add config file name to inventory/php/group_vars/service.yml"
+    msg: "Please add config file name to this role"
   when: config_file is undefined
+
+- name: Install cerbot for apache
+  apt:
+    pkg:
+      - certbot
+      - python3-certbot-apache
+    state: present
+    update_cache: yes
 
 - name: Get LetsEncrypt certificates
   shell: |

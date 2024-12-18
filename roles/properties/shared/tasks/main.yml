@@ -8,6 +8,14 @@
     state: present
     update_cache: yes
 
+- name: Enable SSL module in Apache
+  command: a2enmod ssl
+  notify: reload apache
+
+- name: Create the self-signed SSL Certificate
+  include_role:
+    name: add_self-signed_certs
+
 - name: Add Apache config for shared.php.net
   template:
     src: templates/shared.php.net.conf
@@ -24,11 +32,4 @@
     state: started
     enabled: yes
 
-- name: Enable SSL module in Apache
-  command: a2enmod ssl
-  notify: reload apache
-
-- name: Create the self-signed SSL Certificate
-  include_role:
-    name: add_self-signed_certs
 

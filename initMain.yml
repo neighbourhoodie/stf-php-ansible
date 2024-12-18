@@ -1,0 +1,19 @@
+- hosts:
+  - main
+
+  become: yes
+  become_user: root
+
+  roles:
+    - role: shared_handlers
+    # Note: Properties main, lxr, status, and gcov all have the same certificates as lxr
+    - role: add_certbot
+      vars:
+        domain: "{{ lxr_domain }}"
+        config_file: lxr.php.net.conf
+        email: "{{ master_email }}"
+    - role: properties/main
+    - role: properties/lxr
+    - role: properties/status
+    - role: properties/gcov
+

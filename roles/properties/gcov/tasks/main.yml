@@ -1,0 +1,26 @@
+- name: Install Apache with mod-php, php, cli-php and mariaDB
+  apt:
+    pkg:
+      - apache2
+      - libapache2-mod-php8.2
+      - php8.2
+      - php8.2-cli
+      - mariadb-server
+    state: present
+    update_cache: yes
+
+- name: Add Apache config for gcov.php.net
+  template:
+    src: templates/gcov.php.net.conf
+    dest: /etc/apache2/sites-available/gcov.php.net.conf
+  notify: reload apache
+
+- name: Enable Apache mod_php
+  apt:
+    name: libapache2-mod-php8.2
+    state: present
+
+- name: Restart Apache to apply PHP configuration
+  service:
+    name: apache2
+    state: restarted

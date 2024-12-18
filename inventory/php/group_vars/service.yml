@@ -4,11 +4,16 @@ jumphost: "{{ host | default('jumphost0.ams3.do.php.backend.lol') }}"
 # using download.php.backend.lol for test purposes
 downloads_domain: download.php.backend.lol
 shared_domain: shared.php.backend.lol
+
 wiki_domain: wiki.php.backend.lol # actual domain: wiki.php.net
+
 museum_domain: museum.php.backend.lol
 
-downloads_config_file: downloads.php.net.conf
-wiki_config_file: wiki.conf
+main_domain: main.php.backend.lol
+main_domain_alias: master.php.backend.lol
+lxr_domain: lxr.php.backend.lol
+status_domain: status.php.backend.lol
+gcov_domain: gcov.php.backend.lol
 
-# email: systems@php.net
-email: jacoba@neighbourhood.ie
+systems_email: systems@php.net
+master_email: webmaster@php.net
