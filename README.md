@@ -121,6 +121,16 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 
 And then you initialise the authentication with `bin/auth-jump1` like before.
 
+# Deploy / Backups
+
+### Workflow
+```mermaid
+%%{init: {"flowchart": {"htmlLabels": false}} }%%
+flowchart TB
+  1(GitHub) --> RsyncService -- puts on --> Property
+  2(Property) -- backups to --> S3
+```
+
 # Utility tasks
 
 ## Add a new user
