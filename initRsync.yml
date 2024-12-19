@@ -1,13 +1,14 @@
 # Run this playbook to initialise your machines
-# `ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"`
+# ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
+# ansible-playbook -i inventory/php initRsync.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
 
 # Set up firewall on all services
 - hosts:
-  - service
+  - rsync
 
   remote_user: root
 
-  tasks:
+  pre_tasks:
     # Add UFW firewall configuration so that the services are only accessible through the public ip of the jumphosts
   - name: Ensure UFW is installed
     apt:
@@ -32,19 +33,24 @@
       - 80
       - 443
 
+  - name: Allow incoming rsync requests from 873/tcp from services
+    ufw:
+      rule: allow
+      from_ip: "{{ item }}"
+      port: 873
+      proto: tcp
+    loop:
+      - "{{ hostvars['service0']['ansible_facts']['default_ipv4']['address'] }}"
+      - "{{ hostvars['service1']['ansible_facts']['default_ipv4']['address'] }}"
+      - "{{ hostvars['service2']['ansible_facts']['default_ipv4']['address'] }}"
+      - "{{ hostvars['service3']['ansible_facts']['default_ipv4']['address'] }}"
+
   - name: Enable UFW and deny incoming requests
     ufw:
       state: enabled
       policy: deny
 
 
-# Add admin user and pubkey everywhere
-- hosts:
-  - all
-
-  remote_user: root
-
-  tasks:
   - name: Create a linux user and add it to sudo group
     user:
       name: "{{ item.name }}"
@@ -69,41 +75,17 @@
       username: "{{ item.name }}"
       pubkeys: "{{ item.pubkeys }}"
 
+  - name: create local systems
+    file:
+      state: directory
+      dest: /local/systems
+      mode: '0750'
 
-# Install Google Authenticator and copy GA file on jumphosts
 - hosts:
-  - jumphost
+  - rsync
 
-  remote_user: root
-
-  tasks:
-    - name: Copy admin's Google Authenticator files
-      loop: "{{ admins }}"
-      include_role:
-        name: add_GA_file
-      vars:
-        username: "{{ item.name }}"
-        path_to_google_auth: "{{ item.GA_file }}"
+  become: yes
+  become_user: root
 
   roles:
-    - role: install_GA
-
-# Disable root login at the very end
-- hosts:
-  - all
-
-  remote_user: root
-
-  tasks:
-  - name: Disable root login
-    lineinfile:
-      path: /etc/ssh/sshd_config
-      regexp: '^PermitRootLogin'
-      line: 'PermitRootLogin no'
-    notify: restart ssh
-
-  handlers:
-  - name: restart ssh
-    service:
-      name: ssh
-      state: restarted
+   - role: properties/rsync

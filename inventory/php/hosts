@@ -1,15 +1,17 @@
 [jumphost]
-ams3 ansible_host=jumphost0.ams3.do.php.backend.lol
-nyc1 ansible_host=jumphost1.nyc1.do.php.backend.lol
+jumphost0 ansible_host=jumphost0.ams3.do.php.backend.lol
+jumphost1 ansible_host=jumphost1.nyc1.do.php.backend.lol
 
 # docs, wiki etc are properties,
 # hosts are called service
+[rsync]
+rsync0.ams3.do.php.backend.lol
 
 [service]
-service0.ams3.do.php.backend.lol
-service1.ams3.do.php.backend.lol
-service2.ams3.do.php.backend.lol
-service3.ams3.do.php.backend.lol
+service0 ansible_host=service0.ams3.do.php.backend.lol
+service1 ansible_host=service1.ams3.do.php.backend.lol
+service2 ansible_host=service2.ams3.do.php.backend.lol
+service3 ansible_host=service3.ams3.do.php.backend.lol
 
 [wiki]
 service0.ams3.do.php.backend.lol
