@@ -24,7 +24,7 @@
     msg: "Please add config file name to this role"
   when: config_file is undefined
 
-- name: Install cerbot for apache
+- name: Install certbot for apache
   apt:
     pkg:
       - certbot

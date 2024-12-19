@@ -6,6 +6,8 @@
 
   roles:
     - role: shared_handlers
+    # Running the lxr role before certbot to ensure the certs are available to restart apache
+    - role: properties/lxr
     # Note: Properties main, lxr, status, and gcov all have the same certificates as lxr
     - role: add_certbot
       vars:
@@ -13,7 +15,6 @@
         config_file: lxr.php.net.conf
         email: "{{ master_email }}"
     - role: properties/main
-    - role: properties/lxr
     - role: properties/status
     - role: properties/gcov
 
