@@ -42,7 +42,3 @@ for i in systems doc-editor php-shared talks php-gtk-doc peclweb; do
     cd /local/mirrors/$i
     $GIT_FETCH && $GIT_RESET;
 done
-
-# Systems scripts were dropped down a level at some point.
-cd /local/systems;
-$GIT_FETCH && $GIT_RESET;
