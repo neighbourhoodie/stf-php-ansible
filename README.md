@@ -38,8 +38,10 @@ To initialize your machines, run this playbook:
 ```sh
 ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
 ```
-
-You have to pass a file with all admins you want to add. The format looks like this, but there is also an example at `etc/admins.yml`:
+> [!IMPORTANT]
+> You have to pass a file with all admins you want to add.
+> The format looks like this, but there is also an example at `etc/admins.yml`:
+>
 
 ```yml
 admins:
@@ -69,14 +71,10 @@ Initialise _all_ machines. This means: jumphosts, services where the properties 
 
 If you wanna read more about the services, please do so at our [Properties readme](Properties.md).
 
-downloads.php.net
-: `ansible-playbook addDownloads.yml`
-wiki.php.net
-: `ansible-playbook addWiki.yml`
-museum.php.net
-: `ansible-playbook initMuseum.yml`
-main.php.net
-: `ansible-playbook initMain.yml`
+- downloads.php.net: `ansible-playbook addDownloads.yml`
+- wiki.php.net: `ansible-playbook addWiki.yml`
+- museum.php.net: `ansible-playbook initMuseum.yml`
+- main.php.net: `ansible-playbook initMain.yml`
 
 ## Changing the Jumphost
 

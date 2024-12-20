@@ -1,26 +1,31 @@
 # Services and properties
 
+Each property is implemented as an Ansible role located in the [roles/properties](roles/properties) directory.
+
+Some properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
+
 ## Jumphosts
 
 ## Rsync
 
+This service keeps repositories up-to-date by performing a git checkout via a cron job. The update process is automated to ensure the latest version of the code is always available.
+
+On the Rsync.php.net machine are 3 directories located:
+
+`local/services`: The location of the scripts responsible for updating repositories and the rsync daemon config file.
+  
+`local/mirrors`: The directory where the repositories are stored and updated.
+
+`/local/repos`: Another directory where the repositories are stored and updated.
+
 ### Workflow
 ```mermaid
 %%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart TB
-  1(GitHub) --> RsyncService -- puts on --> Property
-  2(Property) -- backups to --> S3
+flowchart TD
+  A[Start: Cron Job] -- triggers --> B["/local/systems/update-everything"]
+  B --> C[Rsync Pulls Latest Changes from GitHub]
+  C --> D[Repositories are up-to-date]
 ```
-On the Rsync.php.net machine are 3 directories located:
-
-`local/services`
-: Here are the scripts for the cronjobs.
-  
-`local/mirrors`
-: This is the place for all the GitHub repositores
-
-`/local/repos`
-: 2 repos are here
 
 ## Services
 
