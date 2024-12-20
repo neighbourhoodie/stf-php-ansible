@@ -38,8 +38,10 @@ To initialize your machines, run this playbook:
 ```sh
 ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
 ```
-
-You have to pass a file with all admins you want to add. The format looks like this, but there is also an example at `etc/admins.yml`:
+> [!IMPORTANT]
+> You have to pass a file with all admins you want to add.
+> The format looks like this, but there is also an example at `etc/admins.yml`:
+>
 
 ```yml
 admins:
@@ -54,61 +56,25 @@ You can add several publick keys, but you don't have to.
 
 ### What this does
 
-Initialise all machines
+Initialise _all_ machines. This means: jumphosts, services where the properties live on and the rsync machine.
 
   1. Define all admin users (name, pubkey, Google Authenticator file)
   2. Disable root login
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
-# Set up services
+# Set up services TBD
 
 > [!IMPORTANT]
 > Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
 >
 
-## downloads.php.net
+If you wanna read more about the services, please do so at our [Properties readme](Properties.md).
 
-```sh
-ansible-playbook addDownloads.yml
-```
-
-<details>
-  <summary>
-    <h3>What this does</h3>
-  </summary>
-
-  This playbook installs the following software on a machine:
-  - apache 2
-  - libapache2-mod-php8.2
-  - php8.2
-  - certbot
-  - python3-certbot-apache
-  - openssl
-  - apache2-utils
-
-  It puts the `apache.conf`, a file with some secrets to `/local/this-box`.
-  Further, it copies the apache config files for `downloads.php.net` and `shared.php.net`.
-  It creates letsencrypt-certs for `downloads.php.net` and self-signed SSL certs for `shared.php.net`.
-
-</details>
-
-## wiki.php.net
-
-This playbook installs the following:
-
-- apache2
-- libapache2-mod-php8.2
-- php8.2
-- certbot
-- python3-certbot-apache
-
-It copies the apache config file to wiki.conf and creates letsencrypt certificates.
-The domain and email is saved as variables.
-
-## museum.php.net
-
-## main.php.net
+- downloads.php.net: `ansible-playbook addDownloads.yml`
+- wiki.php.net: `ansible-playbook addWiki.yml`
+- museum.php.net: `ansible-playbook initMuseum.yml`
+- main.php.net: `ansible-playbook initMain.yml`
 
 ## Changing the Jumphost
 
@@ -120,6 +86,7 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 ```
 
 And then you initialise the authentication with `bin/auth-jump1` like before.
+
 
 # Utility tasks
 
@@ -150,6 +117,8 @@ User group is `sudo`. It puts the `.google_authenticator` file to the jumphost a
 
 ### Add a release-manager user
 
+A release manager has only access to the downloads machine.
+
 ```shell
 ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
 ```
@@ -167,6 +136,16 @@ ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 
 ---
 
+## Using encrypted vars
+
+1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
+2. edit file `EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml`
+
+(Password was added by the create command: - 123)
+
+Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
+
+
 ## Using different jumphosts
 
 You can specify different hosts that you want to run your playbook on. Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1). By default the host is set to the jumphost in Europe (ams3).
@@ -176,12 +155,3 @@ To change jumphost to a different one use the `--extra-vars` argument as follows
 ```shell
 ansible-playbook [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
 ```
-
-## Using encrypted vars
-
-1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
-2. edit file `EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml`
-
-(Password was added by the create command: - 123)
-
-Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).

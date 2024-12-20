@@ -1,0 +1,11 @@
+# Run this playbook to set up your Rsync machine
+# ansible-playbook inventory/php initRsync.yml"
+
+- hosts:
+  - rsync
+
+  become: yes
+  become_user: root
+
+  roles:
+   - role: properties/rsync

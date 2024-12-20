@@ -1,0 +1,4 @@
+#!/bin/sh
+
+/local/systems/update-mirrors && \
+/local/systems/update-phpweb-backend

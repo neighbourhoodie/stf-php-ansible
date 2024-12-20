@@ -1,28 +1,41 @@
-# Run this playbook to initialise your machines
-# `ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"`
+# Run this playbook to initialise your machines: The jumphosts, the rsync machine and all services.
+# It sets up the , diables root login, creates admin users, puts their ssh keys to the machines.
+# It installs GA and the Google Authenticator file to the jumphosts.
 
-# Set up firewall on all services
+# Example run:
+# ansible-playbook inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
+# ansible-playbook inventory/php initialize.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
+
+
+# Set up firewall on all services and the rsync
 - hosts:
   - service
+  - rsync
 
   remote_user: root
 
   tasks:
-    # Add UFW firewall configuration so that the services are only accessible through the public ip of the jumphosts
+  - name: Gather facts for all jumphosts
+    setup:
+      gather_subset:
+        - default_ipv4
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    loop: "{{ groups['jumphost'] }}"
+
   - name: Ensure UFW is installed
     apt:
       name: ufw
       state: present
       update_cache: yes
 
+  # Add UFW firewall configuration so that the services are only accessible through the public ip of the jumphosts
   - name: Allow ssh only from jumphost
     ufw:
       rule: allow
-      from_ip: "{{ item }}"
+      from_ip: "{{ hostvars[item].ansible_default_ipv4.address }}"
       port: 22
-    loop:
-      - 167.99.32.163 # jumphost am3
-      - 68.183.104.48 # jumphost nyc
+    loop: "{{ groups['jumphost'] }}"
 
   - name: Allow incoming requests from port 80 and 443
     ufw:
@@ -36,6 +49,33 @@
     ufw:
       state: enabled
       policy: deny
+
+
+- hosts:
+  - rsync
+
+  remote_user: root
+
+  tasks:
+  - name: Gather facts for all services
+    setup:
+      gather_subset:
+        - default_ipv4
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    loop: "{{ groups['service'] }}"
+
+  - name: Allow incoming rsync requests from services
+    ufw:
+      rule: allow
+      from_ip: "{{ hostvars[item].ansible_default_ipv4.address }}"
+      port: 873
+      proto: tcp
+    loop: "{{ groups['service'] }}"
+
+  - name: Reload UFW and deny incoming requests
+    ufw:
+      state: reloaded
 
 
 # Add admin user and pubkey everywhere
