@@ -54,61 +54,29 @@ You can add several publick keys, but you don't have to.
 
 ### What this does
 
-Initialise all machines
+Initialise _all_ machines. This means: jumphosts, services where the properties live on and the rsync machine.
 
   1. Define all admin users (name, pubkey, Google Authenticator file)
   2. Disable root login
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
-# Set up services
+# Set up services TBD
 
 > [!IMPORTANT]
 > Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
 >
 
-## downloads.php.net
+If you wanna read more about the services, please do so at our [Properties readme](Properties.md).
 
-```sh
-ansible-playbook addDownloads.yml
-```
-
-<details>
-  <summary>
-    <h3>What this does</h3>
-  </summary>
-
-  This playbook installs the following software on a machine:
-  - apache 2
-  - libapache2-mod-php8.2
-  - php8.2
-  - certbot
-  - python3-certbot-apache
-  - openssl
-  - apache2-utils
-
-  It puts the `apache.conf`, a file with some secrets to `/local/this-box`.
-  Further, it copies the apache config files for `downloads.php.net` and `shared.php.net`.
-  It creates letsencrypt-certs for `downloads.php.net` and self-signed SSL certs for `shared.php.net`.
-
-</details>
-
-## wiki.php.net
-
-This playbook installs the following:
-
-- apache2
-- libapache2-mod-php8.2
-- php8.2
-- certbot
-- python3-certbot-apache
-
-It copies the apache config file to wiki.conf and creates letsencrypt certificates.
-The domain and email is saved as variables.
-
-## museum.php.net
-
-## main.php.net
+downloads.php.net
+: `ansible-playbook addDownloads.yml`
+wiki.php.net
+: `ansible-playbook addWiki.yml`
+museum.php.net
+: `ansible-playbook initMuseum.yml`
+main.php.net
+: `ansible-playbook initMain.yml`
 
 ## Changing the Jumphost
 
@@ -121,15 +89,6 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 
 And then you initialise the authentication with `bin/auth-jump1` like before.
 
-# Deploy / Backups
-
-### Workflow
-```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart TB
-  1(GitHub) --> RsyncService -- puts on --> Property
-  2(Property) -- backups to --> S3
-```
 
 # Utility tasks
 
@@ -160,6 +119,8 @@ User group is `sudo`. It puts the `.google_authenticator` file to the jumphost a
 
 ### Add a release-manager user
 
+A release manager has only access to the downloads machine.
+
 ```shell
 ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
 ```
@@ -176,6 +137,16 @@ ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 ```
 
 ---
+
+## Using encrypted vars
+
+1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
+2. edit file `EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml`
+
+(Password was added by the create command: - 123)
+
+Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
+
 
 ## Using different jumphosts
 
@@ -194,12 +165,3 @@ We use `hostvars` to access server information. Facts need to be gathered and ca
 ```shell
 ansible HOSTNAME -m setup
 ```
-
-## Using encrypted vars
-
-1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
-2. edit file `EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml`
-
-(Password was added by the create command: - 123)
-
-Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
