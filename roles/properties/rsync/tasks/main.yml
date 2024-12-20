@@ -39,6 +39,7 @@
     state: started
     enabled: yes
 
+# Initially clone all repositories. This task will not run if /local/repos/phpweb/.git exists
 - name: Git clone everything
   shell: /local/systems/git-clone
   args:
@@ -62,7 +63,7 @@
     job: "/local/systems/build-docs-rsync"
     user: "root"
 
-# This is added by update-mirror
+# The script is added by update-mirror
 # Fridays at 09:10 AM
 - name: fetch-chms.php cron
   cron:

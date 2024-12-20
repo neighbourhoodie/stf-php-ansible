@@ -1,20 +1,27 @@
-# Run this playbook to initialise your machines
-# `ansible-playbook -i inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"`
+# Run this playbook to initialise your machines: The jumphosts, the rsync machine and all services.
+# It sets up the , diables root login, creates admin users, puts their ssh keys to the machines.
+# It installs GA and the Google Authenticator file to the jumphosts.
+
+# Example run:
+# ansible-playbook inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
+# ansible-playbook inventory/php initRsync.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
+
 
 # Set up firewall on all services
 - hosts:
   - service
+  - rsync
 
   remote_user: root
 
   tasks:
-    # Add UFW firewall configuration so that the services are only accessible through the public ip of the jumphosts
   - name: Ensure UFW is installed
     apt:
       name: ufw
       state: present
       update_cache: yes
 
+  # Add UFW firewall configuration so that the services are only accessible through the public ip of the jumphosts
   - name: Allow ssh only from jumphost
     ufw:
       rule: allow
@@ -36,6 +43,27 @@
     ufw:
       state: enabled
       policy: deny
+
+- hosts:
+  - rsync
+
+  remote_user: root
+  tasks:
+  - name: Allow incoming rsync requests from services
+    ufw:
+      rule: allow
+      from_ip: "{{ item }}"
+      port: 873
+      proto: tcp
+    loop:
+      - "{{ hostvars['service0']['ansible_facts']['default_ipv4']['address'] }}"
+      - "{{ hostvars['service1']['ansible_facts']['default_ipv4']['address'] }}"
+      - "{{ hostvars['service2']['ansible_facts']['default_ipv4']['address'] }}"
+      - "{{ hostvars['service3']['ansible_facts']['default_ipv4']['address'] }}"
+
+  - name: Reload UFW and deny incoming requests
+    ufw:
+      state: reloaded
 
 
 # Add admin user and pubkey everywhere
