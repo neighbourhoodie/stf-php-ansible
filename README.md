@@ -157,11 +157,3 @@ To change jumphost to a different one use the `--extra-vars` argument as follows
 ```shell
 ansible-playbook [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
 ```
-
-## Access ip address from ansible facts cache
-
-We use `hostvars` to access server information. Facts need to be gathered and cached in `.ansible-facts-cache` to access it. Run the following to gather cache. Replace HOSTNAME with relevant hostname e.g. `service0` or `jumphost0`.
-
-```shell
-ansible HOSTNAME -m setup
-```

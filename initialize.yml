@@ -4,10 +4,10 @@
 
 # Example run:
 # ansible-playbook inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
-# ansible-playbook inventory/php initRsync.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
+# ansible-playbook inventory/php initialize.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
 
 
-# Set up firewall on all services
+# Set up firewall on all services and the rsync
 - hosts:
   - service
   - rsync
@@ -15,6 +15,14 @@
   remote_user: root
 
   tasks:
+  - name: Gather facts for all jumphosts
+    setup:
+      gather_subset:
+        - default_ipv4
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    loop: "{{ groups['jumphost'] }}"
+
   - name: Ensure UFW is installed
     apt:
       name: ufw
@@ -25,11 +33,9 @@
   - name: Allow ssh only from jumphost
     ufw:
       rule: allow
-      from_ip: "{{ item }}"
+      from_ip: "{{ hostvars[item].ansible_default_ipv4.address }}"
       port: 22
-    loop:
-      - "{{ hostvars['jumphost0']['ansible_facts']['default_ipv4']['address'] }}"
-      - "{{ hostvars['jumphost1']['ansible_facts']['default_ipv4']['address'] }}"
+    loop: "{{ groups['jumphost'] }}"
 
   - name: Allow incoming requests from port 80 and 443
     ufw:
@@ -44,22 +50,28 @@
       state: enabled
       policy: deny
 
+
 - hosts:
   - rsync
 
   remote_user: root
+
   tasks:
+  - name: Gather facts for all services
+    setup:
+      gather_subset:
+        - default_ipv4
+    delegate_to: "{{ item }}"
+    delegate_facts: true
+    loop: "{{ groups['service'] }}"
+
   - name: Allow incoming rsync requests from services
     ufw:
       rule: allow
-      from_ip: "{{ item }}"
+      from_ip: "{{ hostvars[item].ansible_default_ipv4.address }}"
       port: 873
       proto: tcp
-    loop:
-      - "{{ hostvars['service0']['ansible_facts']['default_ipv4']['address'] }}"
-      - "{{ hostvars['service1']['ansible_facts']['default_ipv4']['address'] }}"
-      - "{{ hostvars['service2']['ansible_facts']['default_ipv4']['address'] }}"
-      - "{{ hostvars['service3']['ansible_facts']['default_ipv4']['address'] }}"
+    loop: "{{ groups['service'] }}"
 
   - name: Reload UFW and deny incoming requests
     ufw:
