@@ -1,0 +1,23 @@
+- name: Create local directory to store downloads and shared
+  file:
+    state: directory
+    dest: "{{ wiki_docroot }}"
+    mode: '750'
+
+ name: Copy update-wiki script to the server
+  template:
+    src: templates/update-wiki
+    dest: /local/systems/update-wiki
+    mode: '700'
+  vars:
+    #TODO: need to replace this with rsync0 variable from rsync PR
+    rsync_server: "rsync0.ams3.do.php.backend.lol"
+    wiki_docroot: "/srv/web-wiki/dokuwiki"
+
+- name: Deploy wiki daily
+  cron:
+    name: "Run update-wiki daily"
+    minute: "0"
+    hour: "0"
+    day: "*"
+    job: "/local/systems/update-wiki"

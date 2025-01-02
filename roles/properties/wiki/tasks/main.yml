@@ -30,10 +30,6 @@
     state: started
     enabled: yes
 
-- name: Run certbot tasks
-  include_role:
-    name: add_certbot
-  vars:
-    domain: "{{ wiki_domain }}"
-    config_file: wiki.conf
-    email: "{{ systems_email }}"
+
+
+- include_tasks: deploy.yml
