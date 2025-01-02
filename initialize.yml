@@ -50,6 +50,13 @@
       state: enabled
       policy: deny
 
+  # This is the place for all the scripts
+  - name: Create local systems directory
+    file:
+      state: directory
+      dest: /local/systems
+      mode: '750'
+
 
 - hosts:
   - rsync
