@@ -32,9 +32,10 @@
     state: present
     update_cache: yes
 
+# Use certonly option to obtain the certificate without modifying the Apache configuration
 - name: Get LetsEncrypt certificates
   shell: |
-    certbot --apache -n --agree-tos --email {{ email }} -d {{ domain }}
+    certbot certonly --apache -n --agree-tos --email {{ email }} -d {{ domain }}
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
 

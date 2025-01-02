@@ -7,7 +7,9 @@ shared_domain: shared.php.backend.lol
 
 # actual domain: wiki.php.net
 wiki_domain: wiki.php.backend.lol
-wiki_docroot: /srv/web-wiki/dokuwiki
+wiki_alias: wiki2.php.backend.lol
+wiki_token: wiki_token
+wiki_docroot: /srv/web-wiki/dokuwiki/dokuwiki
 
 museum_domain: museum.php.backend.lol
 

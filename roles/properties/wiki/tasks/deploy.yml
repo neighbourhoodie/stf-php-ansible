@@ -1,10 +1,20 @@
-- name: Create local directory to store downloads and shared
+# todo: init playbook
+- name: Install rsync
+  apt:
+    name: rsync
+    state: present
+
+- name: Create local directory to store wiki content
   file:
     state: directory
-    dest: "{{ wiki_docroot }}"
-    mode: '750'
+    # dest: "{{ wiki_docroot }}"
+    dest: "/srv/web-wiki/dokuwiki"
+    mode: '755'
+    owner: www-data
+    group: www-data
+    recurse: yes
 
- name: Copy update-wiki script to the server
+- name: Copy update-wiki script to the server
   template:
     src: templates/update-wiki
     dest: /local/systems/update-wiki

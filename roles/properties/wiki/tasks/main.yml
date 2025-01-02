@@ -19,9 +19,26 @@
     src: templates/wiki.conf
     dest: /etc/apache2/sites-available/wiki.conf
   notify: reload apache
+  vars:
+    #TODO: need to replace this with rsync0 variable from rsync PR
+    rsync_server: "rsync0.ams3.do.php.backend.lol"
+    wiki_docroot: "/srv/web-wiki/dokuwiki"
+    wiki_domain: "wiki.php.backend.lol"
+    wiki_alias: "wiki.php.backend.lol"
+    wiki_token: "wiki.php.backend.lol"
+    systems_email: "engineering@neighbourhood.ie"
 
+# FIXME: this sometimes doesn't work. Then we have to disable mpm_event and Enable mpm_prefork defore running this
+# sudo a2dismod mpm_event
+# sudo a2enmod mpm_prefork
 - name: Enable Apache PHP module
   shell: a2enmod php8.2
+  notify: reload apache
+
+# because we run certbot with certonly, we have to enable this
+# Think about putting this into the certbot role
+- name: Enable SSL module in Apache
+  command: a2enmod ssl rewrite
   notify: reload apache
 
 - name: Ensure Apache is started and enabled
@@ -30,6 +47,15 @@
     state: started
     enabled: yes
 
+- name: Run certbot tasks
+  include_role:
+    name: add_certbot
+  vars:
+    # domain: "{{ wiki_domain }}"
+    domain: "wiki.php.backend.lol"
+    config_file: wiki.conf
+    # email: "{{ systems_email }}"
+    email: "engineering@neighbourhood.ie"
 
 
 - include_tasks: deploy.yml
