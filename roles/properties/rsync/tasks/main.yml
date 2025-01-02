@@ -10,9 +10,8 @@
   file:
     state: directory
     dest: /local/{{ item }}
-    mode: '0750'
+    mode: '750'
   loop:
-    - systems
     - mirrors
     - repos
 
