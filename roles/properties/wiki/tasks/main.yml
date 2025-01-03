@@ -27,10 +27,10 @@
   shell: a2enmod php8.2
   notify: reload apache
 
-# because we run certbot with certonly, we have to enable this
-# Think about putting this into the certbot role
-- name: Enable SSL module in Apache
-  command: a2enmod ssl rewrite
+# because we run certbot with certonly, and we use Rewrite in our apache config
+# we have to enable this
+- name: Enable Rewrite module in Apache
+  command: a2enmod rewrite
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

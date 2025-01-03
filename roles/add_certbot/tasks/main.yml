@@ -11,7 +11,7 @@
 
 - name: Check if all params are set
   fail:
-    msg: "Please provive email, domain and config_file to this role"
+    msg: "Please provide email, domain and config_file to this role"
   when: (email is undefined) or (domain is undefined) or (config_file is undefined)
 
 - name: Install certbot for apache
@@ -28,6 +28,11 @@
     certbot certonly --apache -n --agree-tos --email {{ email }} -d {{ domain }}
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+
+# because we run certbot with certonly we have to enable this
+- name: Enable SSL module in Apache
+  command: a2enmod ssl
+  notify: reload apache
 
 - name: Enable SSL site
   command: a2ensite {{ config_file }}
