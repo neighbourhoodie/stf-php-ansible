@@ -5,7 +5,11 @@ jumphost: "{{ host | default('jumphost0.ams3.do.php.backend.lol') }}"
 downloads_domain: download.php.backend.lol
 shared_domain: shared.php.backend.lol
 
-wiki_domain: wiki.php.backend.lol # actual domain: wiki.php.net
+# actual domain: wiki.php.net
+wiki_domain: wiki.php.backend.lol
+wiki_alias: wiki2.php.backend.lol
+wiki_token: wiki_token
+wiki_docroot: /srv/web-wiki/dokuwiki/dokuwiki
 
 museum_domain: museum.php.backend.lol
 
