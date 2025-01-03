@@ -1,6 +1,6 @@
 - name: Install Apache with mod-php and php
   apt:
-    pkg:
+    name:
       - apache2
       - libapache2-mod-php8.2
       - php8.2
