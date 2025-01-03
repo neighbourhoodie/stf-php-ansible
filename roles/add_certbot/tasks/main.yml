@@ -34,6 +34,7 @@
   command: a2enmod ssl
   notify: reload apache
 
+# todo move out
 - name: Enable SSL site
   command: a2ensite {{ config_file }}
   notify: reload apache

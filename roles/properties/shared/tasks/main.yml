@@ -8,10 +8,6 @@
     state: present
     update_cache: yes
 
-- name: Enable SSL module in Apache
-  command: a2enmod ssl
-  notify: reload apache
-
 - name: Create the self-signed SSL Certificate
   include_role:
     name: add_self-signed_certs
@@ -29,8 +25,8 @@
     line: 'LoadModule expires_module /usr/lib/apache2/modules/mod_expires.so'
     state: present
 
-- name: Enable Apache PHP and headers modules
-  command: a2enmod php8.2 headers
+- name: Enable Apache, SSL and headers modules
+  command: a2enmod php8.2 ssl headers
   notify: reload apache
 
 - name: Enable SSL site
