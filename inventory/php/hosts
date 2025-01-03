@@ -7,11 +7,11 @@ jumphost1 ansible_host=jumphost1.nyc1.do.php.backend.lol
 [rsync]
 rsync0.ams3.do.php.backend.lol
 
-[service]
-service0 ansible_host=service0.ams3.do.php.backend.lol
-service1 ansible_host=service1.ams3.do.php.backend.lol
-service2 ansible_host=service2.ams3.do.php.backend.lol
-service3 ansible_host=service3.ams3.do.php.backend.lol
+[service:children]
+wiki
+downloads
+museum
+main
 
 [wiki]
 service0.ams3.do.php.backend.lol
