@@ -9,20 +9,10 @@
 #     config_file: name.of.file.conf
 #     email: "{{ systems_email }}"
 
-- name: Check if email exists
+- name: Check if all params are set
   fail:
-    msg: "Please add email to this role"
-  when: email is undefined
-
-- name: Check if domain exists
-  fail:
-    msg: "Please add domain to this role"
-  when: domain is undefined
-
-- name: Check if config file name exists
-  fail:
-    msg: "Please add config file name to this role"
-  when: config_file is undefined
+    msg: "Please provive email, domain and config_file to this role"
+  when: (email is undefined) or (domain is undefined) or (config_file is undefined)
 
 - name: Install certbot for apache
   apt:
