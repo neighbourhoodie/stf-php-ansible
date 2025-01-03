@@ -1,0 +1,41 @@
+- name: Ensure local backup directory exists
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+    mode: '755'
+
+- name: Check if backup_dir is empty
+  find:
+    paths: "{{ backup_dir }}"
+    hidden: no
+  register: backup_dir_content
+
+- name: Compress directory if backup does not exist
+  shell: |
+    tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+  args:
+    chdir: "{{ backup_dir }}"
+  when: backup_dir_content.matched == 0
+
+- name: Install Restic
+  package:
+    name: restic
+    state: present
+
+- name: Initialize Restic
+  command:
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ service }} init
+  ignore_errors: yes
+
+- name: Create daily backup and prune files older than 7 days
+  cron:
+    name: Daily backup and prune files older than 7 days
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ service }} backup {{ backup_dir }} && \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ service }} forget --keep-daily 7 --prune
+    state: present
+    minute: "0"
+    hour: "0"
