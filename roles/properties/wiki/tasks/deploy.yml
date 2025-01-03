@@ -1,9 +1,3 @@
-# todo: init playbook
-- name: Install rsync
-  apt:
-    name: rsync
-    state: present
-
 - name: Create local directory to store wiki content
   file:
     state: directory

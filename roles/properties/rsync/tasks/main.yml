@@ -1,8 +1,6 @@
-- name: Install git and rsync
+- name: Install git
   apt:
-    pkg:
-      - git
-      - rsync
+    pkg: git
     state: present
     update_cache: yes
 

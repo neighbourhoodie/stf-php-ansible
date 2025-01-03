@@ -23,9 +23,11 @@
     delegate_facts: true
     loop: "{{ groups['jumphost'] }}"
 
-  - name: Ensure UFW is installed
+  - name: Install ufw and rsync
     apt:
-      name: ufw
+      name:
+      - ufw
+      - rsync
       state: present
       update_cache: yes
 
