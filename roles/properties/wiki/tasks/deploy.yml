@@ -1,8 +1,7 @@
 - name: Create local directory to store wiki content
   file:
     state: directory
-    # dest: "{{ wiki_docroot }}"
-    dest: "/srv/web-wiki/dokuwiki"
+    dest: "{{ wiki_docroot }}"
     mode: '755'
     owner: www-data
     group: www-data

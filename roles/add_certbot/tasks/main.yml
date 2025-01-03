@@ -9,20 +9,10 @@
 #     config_file: name.of.file.conf
 #     email: "{{ systems_email }}"
 
-- name: Check if email exists
+- name: Check if all params are set
   fail:
-    msg: "Please add email to this role"
-  when: email is undefined
-
-- name: Check if domain exists
-  fail:
-    msg: "Please add domain to this role"
-  when: domain is undefined
-
-- name: Check if config file name exists
-  fail:
-    msg: "Please add config file name to this role"
-  when: config_file is undefined
+    msg: "Please provide email, domain and config_file to this role"
+  when: (email is undefined) or (domain is undefined) or (config_file is undefined)
 
 - name: Install certbot for apache
   apt:
@@ -38,6 +28,11 @@
     certbot certonly --apache -n --agree-tos --email {{ email }} -d {{ domain }}
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+
+# because we run certbot with certonly we have to enable this
+- name: Enable SSL module in Apache
+  command: a2enmod ssl
+  notify: reload apache
 
 - name: Enable SSL site
   command: a2ensite {{ config_file }}

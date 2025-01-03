@@ -1,5 +1,3 @@
----
-
 # The reload command keeps the Nginx server running as it reloads updated configuration files.
 # If Nginx notices a syntax error in any of the configuration files,
 # the reload is aborted and the server keeps running based on old config files.

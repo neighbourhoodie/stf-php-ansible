@@ -1,3 +1,6 @@
+# This role takes the ssh-key rom the repository (/templates/ssh_keys/key)
+# and puts it to the user's homedir
+
 - name: Add user - check google auth path param
   fail:
     msg: "Please provide a username for the new user"

@@ -11,13 +11,13 @@
   file:
     state: directory
     dest: /local/this-box
-    mode: '0750'
+    mode: '750'
 
 - name: Store secrets file
   template:
     src: templates/secrets.conf
     dest: /local/this-box/apache.conf
-    mode: '0600'
+    mode: '600'
     owner: www-data
     group: www-data
 
@@ -27,15 +27,11 @@
     dest: /etc/apache2/sites-available/downloads.php.net.conf
   notify: reload apache
 
-- name: Enable Apache PHP module
-  command: a2enmod php8.2
+# because we run certbot with certonly, and we use Rewrite in our apache config
+# we have to enable rewrite module
+- name: Enable Apache PHP and Rewrite module
+  command: a2enmod php8.2 rewrite
   notify: reload apache
-
-- name: Ensure Apache is started and enabled
-  service:
-    name: apache2
-    state: started
-    enabled: yes
 
 - name: Run certbot tasks
   include_role:
@@ -45,3 +41,8 @@
     config_file: downloads.php.net.conf
     email: "{{ systems_email }}"
 
+- name: Ensure Apache is started and enabled
+  service:
+    name: apache2
+    state: started
+    enabled: yes
