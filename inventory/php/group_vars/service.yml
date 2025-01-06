@@ -6,6 +6,8 @@ rsync_domain: rsync0.ams3.do.php.backend.lol
 # using downloads.php.backend.lol for test purposes
 downloads_domain: downloads.php.backend.lol
 shared_domain: shared.php.backend.lol
+downloads_docroot: /local/www/sites/
+shared_docroot: /local/www/sites/
 
 # actual domain: wiki.php.net
 wiki_domain: wiki.php.backend.lol
