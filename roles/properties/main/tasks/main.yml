@@ -46,3 +46,6 @@
   service:
     name: apache2
     state: restarted
+
+# Add cronjob scripts
+- include_tasks: deploy.yml
