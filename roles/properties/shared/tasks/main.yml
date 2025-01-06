@@ -45,7 +45,6 @@
     state: started
     enabled: yes
 
-# Add cronjob scripts
 - include_tasks: deploy.yml
 
 # Run backup cronjob

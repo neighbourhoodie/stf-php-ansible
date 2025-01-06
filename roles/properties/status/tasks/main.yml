@@ -1,11 +1,8 @@
-- name: Install Apache with mod-php, php, cli-php and mariaDB
+# This property redirects to https://php.net
+
+- name: Install Apache
   apt:
-    name:
-      - apache2
-      - libapache2-mod-php8.2
-      - php8.2
-      - php8.2-cli
-      - mariadb-server
+    name: apache2
     state: present
     update_cache: yes
 
@@ -15,12 +12,10 @@
     dest: /etc/apache2/sites-available/status.php.net.conf
   notify: reload apache
 
-- name: Enable Apache mod_php
-  apt:
-    name: libapache2-mod-php8.2
-    state: present
+- name: Enable SSL site
+  command: a2ensite status.php.net.conf
+  notify: reload apache
 
-- name: Restart Apache to apply PHP configuration
-  service:
-    name: apache2
-    state: restarted
+- name: Enable Rewrite module in Apache
+  command: a2enmod rewrite
+  notify: reload apache

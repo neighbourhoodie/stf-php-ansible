@@ -1,21 +1,10 @@
-- name: Install Apache with mod-php, php, cli-php and mariaDB
+# This property redirects to https://heap.space
+
+- name: Install Apache
   apt:
-    name:
-      - apache2
-      - libapache2-mod-php8.2
-      - php8.2
-      - php8.2-cli
-      - mariadb-server
+    name: apache2
     state: present
     update_cache: yes
-
-# Do we need a file here?
-# - name: Create PHP custom configuration for include_path
-#   copy:
-#     dest: /etc/php/8.0/apache2/conf.d/99-custom.ini
-#     content: |
-#       ; Custom PHP include_path
-#       include_path = ".:/usr/share/php:/custom/include/path"
 
 - name: Add Apache config for lxr.php.net
   template:
@@ -23,12 +12,10 @@
     dest: /etc/apache2/sites-available/lxr.php.net.conf
   notify: reload apache
 
-- name: Enable Apache mod_php
-  apt:
-    name: libapache2-mod-php8.2
-    state: present
+- name: Enable SSL site
+  command: a2ensite lxr.php.net.conf
+  notify: reload apache
 
-- name: Restart Apache to apply PHP configuration
-  service:
-    name: apache2
-    state: restarted
+- name: Enable Rewrite module in Apache
+  command: a2enmod rewrite
+  notify: reload apache

@@ -13,9 +13,10 @@
     dest: /etc/apache2/sites-available/wiki.conf
   notify: reload apache
 
-# FIXME: this sometimes doesn't work. Then we have to disable mpm_event and Enable mpm_prefork defore running this
-# sudo a2dismod mpm_event
-# sudo a2enmod mpm_prefork
+- name: Enable SSL site
+  command: a2ensite wiki.conf
+  notify: reload apache
+
 # because we run certbot with certonly, and we use Rewrite in our apache config
 # we have to enable this
 - name: Enable Apache PHP module
@@ -39,7 +40,6 @@
     name: add_certbot
   vars:
     domain: "{{ wiki_domain }}"
-    config_file: wiki.conf
     email: "{{ systems_email }}"
 
 
