@@ -1,0 +1,25 @@
+- name: Create local directory to store downloads and shared
+  file:
+    state: directory
+    dest: "{{downloads_shared_docroot}}{{ downloads_domain }}"
+    mode: '750'
+
+- name: Copy downloads scripts to the server
+  template:
+    src: templates/{{ item }}
+    dest: /local/systems/{{ item }}
+    mode: '700'
+  loop:
+    - update-downloads
+  vars:
+    rsync_server: "{{ rsync_domain }}"
+    downloads_domain: "{{ downloads_domain }}"
+
+- name: Create a cron job to run hourly
+  cron:
+    name: "Run {{ item }} hourly"
+    minute: "0"
+    hour: "*"
+    job: "/local/systems/{{ item }}"
+  loop:
+    - update-downloads
