@@ -1,0 +1,48 @@
+- name: Create temporary local backup directory if it doesn't exist
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+    mode: '755'
+
+- name: Remove old backup file if it exists
+  command:
+    cmd: "rm -rf {{ backup_dir }}/*"
+
+- name: Compress backup from local
+  shell: |
+    tar cf - {{ docroot }}{{ domain }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+
+- name: Install Restic
+  package:
+    name: restic
+    state: present
+
+- name: Initialize Restic
+  command:
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
+  ignore_errors: yes
+
+- name: Create daily backup
+  cron:
+    name: Daily backup
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ backup_name }}.tar.bz2
+    state: present
+    minute: "0"
+    hour: "0"
+
+# Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
+- name: Daily prune files older than 7 days
+  cron:
+    name: Daily prune files older than 7 days
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
+    state: present
+    minute: "0"
+    hour: "0"

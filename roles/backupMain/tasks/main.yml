@@ -1,0 +1,61 @@
+# This is following the backup-main script https://github.com/php/systems/blob/master/backup-main
+
+- name: Create a local backup directory with today's date
+  file:
+    path: "{{ backup_dir }}/{{ backup_name }}"
+    state: directory
+    mode: '755'
+
+- name: Dump MySQL database to backup directory
+  shell: |
+    mysqldump -u nobody -Q phpmasterdb > {{ backup_dir }}/{{ backup_name }}/phpmasterdb.sql
+
+- name: Copy Apache configuration to backup directory
+  copy:
+    src: /etc/apache2
+    dest: "{{ backup_dir }}/{{ backup_name }}/apache2"
+    remote_src: yes
+
+- name: Compress backup
+  shell: |
+    tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+
+- name: Remove uncompressed backup directory
+  file:
+    path: "{{ backup_dir }}/{{ backup_name }}"
+    state: absent
+
+- name: Install Restic
+  package:
+    name: restic
+    state: present
+
+- name: Initialize Restic
+  command:
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
+  ignore_errors: yes
+
+- name: Create daily backup
+  cron:
+    name: Daily backup
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ backup_name }}.tar.bz2
+    state: present
+    minute: "0"
+    hour: "0"
+
+# Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
+- name: Daily prune files older than 7 days
+  cron:
+    name: Daily prune files older than 7 days
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
+    state: present
+    minute: "0"
+    hour: "0"
