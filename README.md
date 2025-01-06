@@ -136,6 +136,19 @@ ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 
 ---
 
+## Run Backups
+
+To run backup by properties, pass the property names as extra variables `host_name`. If no hostname is provided then `downloads` would be used as default.
+
+```shell
+ansible-playbook runBackup.yml --extra-vars "host_name=HOSTNAME"
+
+# example to backup `main`
+ansible-playbook runBackup.yml --extra-vars "host_name=downloads"
+```
+
+Backup process is different for `main` and other properties. `backupMain` role backs up mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and `backupOtherProperties` role creates a tar file of the docroot folder and backs that up.
+
 ## Using encrypted vars
 
 1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
