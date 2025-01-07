@@ -1,2 +1,0 @@
-#!/bin/sh
-rsync -azC --timeout=600 --delete --delete-after {{rsync_server}}::php-shared {{downloads_shared_docroot}}{{shared_domain}}
