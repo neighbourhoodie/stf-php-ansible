@@ -28,9 +28,14 @@
   notify: reload apache
 
 # because we run certbot with certonly, and we use Rewrite in our apache config
-# we have to enable rewrite module
-- name: Enable Apache PHP and Rewrite module
-  command: a2enmod php8.2 rewrite
+# we have to enable rewrite and ssl module
+- name: Enable the Apache2 module rewrite
+  community.general.apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - rewrite
+    - ssl
   notify: reload apache
 
 - name: Run certbot tasks

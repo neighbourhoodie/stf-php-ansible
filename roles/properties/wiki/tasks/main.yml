@@ -13,17 +13,17 @@
     dest: /etc/apache2/sites-available/wiki.conf
   notify: reload apache
 
-# FIXME: this sometimes doesn't work. Then we have to disable mpm_event and Enable mpm_prefork defore running this
-# sudo a2dismod mpm_event
-# sudo a2enmod mpm_prefork
-- name: Enable Apache PHP module
-  command: a2enmod php8.2
-  notify: reload apache
-
 # because we run certbot with certonly, and we use Rewrite in our apache config
 # we have to enable this
-- name: Enable Rewrite module in Apache
-  command: a2enmod rewrite headers
+- name: Enable the Apache2 modules
+  community.general.apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - php8.2
+    - headers
+    - rewrite
+    - ssl
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

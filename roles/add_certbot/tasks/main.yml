@@ -29,11 +29,6 @@
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
 
-# because we run certbot with certonly we have to enable this
-- name: Enable SSL module in Apache
-  command: a2enmod ssl
-  notify: reload apache
-
 # todo move out
 - name: Enable SSL site
   command: a2ensite {{ config_file }}

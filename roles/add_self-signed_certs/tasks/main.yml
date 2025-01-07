@@ -4,10 +4,7 @@
 # usage:
 # - role: add_self-signed_certs
 #
-# When you use it with apache, you have to install `apache2-utils` and enable the SSL module:
-# - name: Enable SSL module in Apache
-#   command: a2enmod ssl
-#   notify: reload apache
+# When you use it with apache, you have to install `apache2-utils` and enable the SSL module
 #
 # When you use it with Nginx, you have to add the DH group
 # - name: Create a strong Diffie-Hellman group
