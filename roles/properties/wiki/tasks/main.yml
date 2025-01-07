@@ -7,13 +7,6 @@
     state: present
     update_cache: yes
 
-# Headers module used in wiki.conf and needs to be enabled
-- name: Create symlink to enable headers module in config file
-  file:
-    src: /etc/apache2/mods-available/headers.load
-    dest: /etc/apache2/mods-enabled/headers.load
-    state: link
-
 - name: Add Apache config for wiki
   template:
     src: templates/wiki.conf
@@ -24,13 +17,13 @@
 # sudo a2dismod mpm_event
 # sudo a2enmod mpm_prefork
 - name: Enable Apache PHP module
-  shell: a2enmod php8.2
+  command: a2enmod php8.2
   notify: reload apache
 
 # because we run certbot with certonly, and we use Rewrite in our apache config
 # we have to enable this
 - name: Enable Rewrite module in Apache
-  command: a2enmod rewrite
+  command: a2enmod rewrite headers
   notify: reload apache
 
 - name: Ensure Apache is started and enabled
