@@ -92,8 +92,8 @@ people			IN CNAME people-php-net.ax4z.com.
 ; not behind Myra because only accessed via rsync
 rsync			IN CNAME sc3.php.net.
 ; Geodispersion of rsync; regional rsync nodes (RRNs)
-americas.rsync	IN CNAME {{rsync_server}}.
-asia.rsync		IN CNAME {{rsync_server}}.
+americas.rsync	IN CNAME {{rsync_domain}}.
+asia.rsync		IN CNAME {{rsync_domain}}.
 europe.rsync		IN CNAME rsync.php.streamservice.nl.
 
 ; shared is important, most php.net sites rely on it for styles, etc.
