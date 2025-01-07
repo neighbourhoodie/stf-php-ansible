@@ -25,8 +25,14 @@
     line: 'LoadModule expires_module /usr/lib/apache2/modules/mod_expires.so'
     state: present
 
-- name: Enable Apache, SSL and headers modules
-  command: a2enmod php8.2 ssl headers
+- name: Enable modules in Apache
+  command: a2enmod {{ item }}
+  args:
+    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+  loop:
+    - ssl
+    - php8.2
+    - headers
   notify: reload apache
 
 - name: Enable SSL site

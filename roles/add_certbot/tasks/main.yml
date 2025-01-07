@@ -32,6 +32,8 @@
 # because we run certbot with certonly we have to enable this
 - name: Enable SSL module in Apache
   command: a2enmod ssl
+  args:
+    creates: /etc/apache2/mods-enabled/ssl.conf
   notify: reload apache
 
 # todo move out
