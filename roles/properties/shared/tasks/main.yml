@@ -47,3 +47,6 @@
 
 # Add cronjob scripts
 - include_tasks: deploy.yml
+
+# Run backup cronjob
+- include_tasks: backup.yml

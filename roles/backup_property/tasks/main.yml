@@ -1,29 +1,29 @@
-# This is following the backup-main script https://github.com/php/systems/blob/master/backup-main
+# This role is being used by multiple properties. It creates a local backup directory and makes a backup of the root folder using Restic.
+# Example usage:
+# - name: Run backup tasks
+#   include_role:
+#     name: backup_property
+#   vars:
+#     property: property-name
+#     backup_dir:  "{{ backup_directory_path }}"
+#     backup_name: "property-name-{{ ansible_date_time.date }}"
+#     domain: "{{ property_domain }}"
+#     docroot: "{{ property_document_root_path }}"
 
-- name: Create a local backup directory with today's date
+
+- name: Create temporary local backup directory if it doesn't exist
   file:
-    path: "{{ backup_dir }}/{{ backup_name }}"
+    path: "{{ backup_dir }}"
     state: directory
     mode: '755'
 
-- name: Dump MySQL database to backup directory
+- name: Remove old backup file if it exists
+  command:
+    cmd: "rm -rf {{ backup_dir }}/*"
+
+- name: Compress backup from local
   shell: |
-    mysqldump -u nobody -Q phpmasterdb > {{ backup_dir }}/{{ backup_name }}/phpmasterdb.sql
-
-- name: Copy Apache configuration to backup directory
-  copy:
-    src: /etc/apache2
-    dest: "{{ backup_dir }}/{{ backup_name }}/apache2"
-    remote_src: yes
-
-- name: Compress backup
-  shell: |
-    tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
-
-- name: Remove uncompressed backup directory
-  file:
-    path: "{{ backup_dir }}/{{ backup_name }}"
-    state: absent
+    tar cf - {{ docroot }}{{ domain }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
 
 - name: Install Restic
   package:
@@ -44,8 +44,7 @@
       RESTIC_PASSWORD="{{ restic_password }}" \
       restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ backup_name }}.tar.bz2
     state: present
-    minute: "0"
-    hour: "0"
+    special_time: daily
 
 # Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
 - name: Daily prune files older than 7 days
@@ -57,5 +56,4 @@
       RESTIC_PASSWORD="{{ restic_password }}" \
       restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
     state: present
-    minute: "0"
-    hour: "0"
+    special_time: daily
