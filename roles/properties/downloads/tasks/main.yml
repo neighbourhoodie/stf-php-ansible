@@ -46,3 +46,6 @@
     name: apache2
     state: started
     enabled: yes
+
+# Add cronjob scripts
+- include_tasks: deploy.yml
