@@ -13,7 +13,7 @@
     dest: /etc/apache2/sites-available/wiki.conf
   notify: reload apache
 
-- name: Enable SSL site
+- name: Enable config file
   command: a2ensite wiki.conf
   notify: reload apache
 

@@ -1,4 +1,4 @@
-# The following sets up self-signed SSL certificate, enables SSL site
+# The following sets up self-signed SSL certificate
 # and schedules automatic renewal of the
 
 # usage:

@@ -46,7 +46,7 @@
     # - php8.2
   notify: reload apache
 
-- name: Enable SSL site
+- name: Enable config file
   command: a2ensite main.php.net.conf
   notify: reload apache
 

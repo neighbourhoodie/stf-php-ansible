@@ -12,7 +12,7 @@
     dest: /etc/apache2/sites-available/gcov.php.net.conf
   notify: reload apache
 
-- name: Enable SSL site
+- name: Enable config file
   command: a2ensite gcov.php.net.conf
   notify: reload apache
 

@@ -1,4 +1,4 @@
-# The following sets up SSL certificate using Let's Encrypt, enables SSL site
+# The following sets up SSL certificate using Let's Encrypt
 # and schedules automatic renewal of the certificates. Parameters are required. Domain can be a list
 # Note: This certbot role is for apache2 and won't work for nginx
 

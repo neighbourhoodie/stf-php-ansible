@@ -12,7 +12,7 @@
     dest: /etc/apache2/sites-available/lxr.php.net.conf
   notify: reload apache
 
-- name: Enable SSL site
+- name: Enable config file
   command: a2ensite lxr.php.net.conf
   notify: reload apache
 
