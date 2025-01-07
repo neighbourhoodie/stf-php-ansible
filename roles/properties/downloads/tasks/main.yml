@@ -29,8 +29,13 @@
 
 # because we run certbot with certonly, and we use Rewrite in our apache config
 # we have to enable rewrite module
-- name: Enable Apache PHP and Rewrite module
-  command: a2enmod php8.2 rewrite
+- name: Enable Apache php and rewrite modules
+  command: a2enmod {{ item }}
+  args:
+    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+  loop:
+    - rewrite
+    - php8.2
   notify: reload apache
 
 - name: Run certbot tasks
