@@ -136,6 +136,12 @@ ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
 
 ---
 
+## Backups
+
+Backups are run as part of the property role tasks.
+
+Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
+
 ## Using encrypted vars
 
 1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
