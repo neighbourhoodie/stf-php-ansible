@@ -143,7 +143,7 @@ To run backup by properties, pass the property names as extra variables `host_na
 ```shell
 ansible-playbook runBackup.yml --extra-vars "host_name=HOSTNAME"
 
-# example to backup `main`
+# example to backup `downloads`
 ansible-playbook runBackup.yml --extra-vars "host_name=downloads"
 ```
 
