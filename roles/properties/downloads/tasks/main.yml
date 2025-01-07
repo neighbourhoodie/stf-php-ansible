@@ -56,4 +56,12 @@
 - include_tasks: deploy.yml
 
 # Run backup cronjob
-- include_tasks: backup.yml
+- name: Run backup tasks
+  include_role:
+    name: backup_property
+  vars:
+    property: downloads
+    backup_dir:  "{{ backup_dir }}"
+    backup_name: "downloads-{{ ansible_date_time.date }}"
+    domain: "{{ downloads_domain }}"
+    docroot: "{{ downloads_docroot }}"
