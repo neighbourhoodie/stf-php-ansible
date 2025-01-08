@@ -10,6 +10,7 @@ downloads_domain: downloads.php.backend.lol
 shared_domain: shared.php.backend.lol
 downloads_docroot: /local/www/sites
 shared_docroot: /local/www/sites
+downloads_home_dir: /home
 
 backup_dir: /local/backups
 

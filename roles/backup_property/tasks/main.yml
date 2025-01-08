@@ -8,7 +8,7 @@
 #     backup_dir:  "{{ backup_directory_path }}"
 #     backup_name: "property-name-{{ ansible_date_time.date }}"
 #     domain: "{{ property_domain }}"
-#     docroot: "{{ property_document_root_path }}"
+#     doc_root: "{{ property_document_root_path }}"
 
 
 - name: Create temporary local backup directory if it doesn't exist
@@ -23,7 +23,7 @@
 
 - name: Compress backup from local
   shell: |
-    tar cf - {{ docroot }}/{{ domain }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+    tar cf - {{ doc_root }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
 
 - name: Install Restic
   package:

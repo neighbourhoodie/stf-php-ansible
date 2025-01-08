@@ -59,7 +59,7 @@
     backup_dir:  "{{ backup_dir }}"
     backup_name: "shared-{{ ansible_date_time.date }}"
     domain: "{{ shared_domain }}"
-    docroot: "{{ shared_docroot }}"
+    doc_root: "{{ shared_docroot }}/{{ shared_domain }}"
 
 # Firewall settings
 # - name: Block port 80 access
