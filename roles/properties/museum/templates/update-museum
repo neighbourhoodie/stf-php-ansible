@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rsync -azC --timeout=600 --delete --delete-after --exclude=vendor {{ rsync_domain }}::museum {{ museum_docroot }}/{{ museum_domain }}

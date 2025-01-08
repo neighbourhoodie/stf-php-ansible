@@ -17,6 +17,7 @@ wiki_token: wiki_token
 wiki_docroot: /srv/web-wiki/dokuwiki/dokuwiki
 
 museum_domain: museum.php.backend.lol
+museum_docroot: /local/www
 
 main_domain: main.php.backend.lol
 main_domain_alias: master.php.backend.lol
