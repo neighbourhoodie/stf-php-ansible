@@ -63,18 +63,20 @@ Initialise _all_ machines. This means: jumphosts, services where the properties 
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
-# Set up services TBD
+## Set up services
 
 > [!IMPORTANT]
 > Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
 >
 
 If you wanna read more about the services, please do so at our [Properties readme](Properties.md).
+To set them up, run:
 
-- downloads.php.net: `ansible-playbook addDownloads.yml`
-- wiki.php.net: `ansible-playbook addWiki.yml`
-- museum.php.net: `ansible-playbook initMuseum.yml`
-- main.php.net: `ansible-playbook initMain.yml`
+- rsync: `ansible-playbook initRsync.yml`
+- downloads: `ansible-playbook initServiceDownloads.yml`
+- wiki: `ansible-playbook initServiceWiki.yml`
+- museum: `ansible-playbook initServiceMuseum.yml`
+- main: `ansible-playbook initServiceMain.yml`
 
 ## Changing the Jumphost
 

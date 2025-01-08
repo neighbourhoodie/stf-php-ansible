@@ -8,17 +8,21 @@ Some properties have a `templates` directory. This is for files such as cron scr
 
 ## Rsync
 
-This service keeps repositories up-to-date by performing a git checkout via a cron job. The update process is automated to ensure the latest version of the code is always available.
+This service keeps repositories up-to-date by performing a git checkout via a cron job.
+The update process is automated to ensure the latest version of the code is always available.
 
-On the Rsync.php.net machine are 3 directories located:
+On the Rsync.php.net machine are 4 directories located:
 
 `local/services`: The location of the scripts responsible for updating repositories and the rsync daemon config file.
-  
+
 `local/mirrors`: The directory where the repositories are stored and updated.
 
 `/local/repos`: Another directory where the repositories are stored and updated.
 
+`/local/museumweb`: This is the content of museum. It is not a git repository and not be handled by the update scripts.
+
 ### Workflow
+
 ```mermaid
 %%{init: {"flowchart": {"htmlLabels": false}} }%%
 flowchart TD
