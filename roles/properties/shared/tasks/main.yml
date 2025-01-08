@@ -35,7 +35,7 @@
     - headers
   notify: reload apache
 
-- name: Enable SSL site
+- name: Enable config file
   command: a2ensite shared.php.net.conf
   notify: reload apache
 
@@ -45,7 +45,6 @@
     state: started
     enabled: yes
 
-# Add cronjob scripts
 - include_tasks: deploy.yml
 
 # Run backup cronjob

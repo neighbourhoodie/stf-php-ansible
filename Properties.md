@@ -28,8 +28,21 @@ flowchart TD
 ```
 
 ## Services
+```mermaid
+graph TD
+  ServiceMain[Main Service] --> Status[status]
+  ServiceMain --> Main[main]
+  ServiceMain --> Gcov[gcov]
+  ServiceMain --> Lxr[lxr]
+  
+  ServiceWiki[Wiki Service] --> Wiki[wiki]
+  ServiceMuseum[Museum Service] --> Museum[museum]
+  
+  ServiceDownloads[Downloads Service] --> Downloads[downloads]
+  ServiceDownloads --> Shared[shared]
+```
 
-### downloads.php.net
+### downloads
 
 ```sh
 ansible-playbook addDownloads.yml
@@ -40,22 +53,13 @@ ansible-playbook addDownloads.yml
     <h3>What this does</h3>
   </summary>
 
-  This playbook installs the following software on a machine:
-  - apache 2
-  - libapache2-mod-php8.2
-  - php8.2
-  - certbot
-  - python3-certbot-apache
-  - openssl
-  - apache2-utils
-
   It puts the `apache.conf`, a file with some secrets to `/local/this-box`.
   Further, it copies the apache config files for `downloads.php.net` and `shared.php.net`.
   It creates letsencrypt-certs for `downloads.php.net` and self-signed SSL certs for `shared.php.net`.
 
 </details>
 
-## wiki.php.net
+### wiki
 
 This playbook installs the following:
 
@@ -68,7 +72,7 @@ This playbook installs the following:
 It copies the apache config file to wiki.conf and creates letsencrypt certificates.
 The domain and email is saved as variables.
 
-## museum.php.net
+### museum
 
-## main.php.net
+### main
 

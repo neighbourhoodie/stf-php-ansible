@@ -38,12 +38,15 @@
     - php8.2
   notify: reload apache
 
+- name: Enable config file
+  command: a2ensite downloads.php.net.conf
+  notify: reload apache
+
 - name: Run certbot tasks
   include_role:
     name: add_certbot
   vars:
     domain: "{{ downloads_domain }}"
-    config_file: downloads.php.net.conf
     email: "{{ systems_email }}"
 
 - name: Ensure Apache is started and enabled
@@ -52,7 +55,6 @@
     state: started
     enabled: yes
 
-# Add deploy cronjob scripts
 - include_tasks: deploy.yml
 
 # Run backup cronjob

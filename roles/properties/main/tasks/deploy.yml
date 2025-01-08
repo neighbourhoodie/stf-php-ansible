@@ -1,20 +1,15 @@
 - name: Install bzip2
   apt:
-    pkg:
-      - bzip2
+    name: bzip2
     state: present
 
 - name: Create local directory to store php-main-web
   file:
     state: directory
     dest: /local/mirrors/php-main-web/public/fetch
-    mode: '750'
-
-- name: Add maintain-master-dns.php
-  template:
-    src: templates/maintain-master-dns.php
-    dest: /local/systems/maintain-master-dns.php
-    mode: '700'
+    mode: '644'
+    group: 'www-data'
+    owner: 'www-data'
 
 - name: Add php.net.zone
   template:
@@ -24,33 +19,27 @@
   loop:
     - /local/systems/php.net.zone
     - /local/mirrors/php-main-web/public/fetch/php.net.zone
-  vars:
-    rsync_server: "{{ rsync_domain }}"
-    main_domain: "{{ main_domain }}"
 
-- name: Copy main scripts to the server
+- name: Add main scripts to the server
   template:
     src: templates/{{ item }}
     dest: /local/systems/{{ item }}
     mode: '700'
   loop:
     - maintain-main
+    - maintain-master-dns.php
     - process-main-zone-file
-  vars:
-    rsync_server: "{{ rsync_domain }}"
-    main_domain: "{{ main_domain }}"
 
+
+# Cron jobs for maintain-main
 - name: Create a cron job to run maintain-main hourly
   cron:
     name: "Run maintain-main hourly"
-    minute: "0"
-    hour: "*"
+    special_time: hourly
     job: "/local/systems/maintain-main"
 
 - name: Create a cron job to run maintain-main weekly
   cron:
     name: "Run maintain-main weekly"
-    minute: "0"
-    hour: "0"
-    weekday: "0"
+    special_time: weekly
     job: "/local/systems/maintain-main"
