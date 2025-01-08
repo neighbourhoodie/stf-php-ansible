@@ -5,7 +5,8 @@
 We created this project as a shadow infra for [Ansible](https://docs.ansible.com/ansible/latest/index.html) to automate server infrastructure setup.
 
 Ansible is a configuration management tool that facilitates the task of setting up and maintaining remote servers.
-Ansible doesn’t require any special software to be installed on the nodes that will be managed with this tool. A control machine is set up with the Ansible software, which then communicates with the nodes via standard SSH.
+Ansible doesn’t require any special software to be installed on the nodes that will be managed with this tool.
+A control machine is set up with the Ansible software, which then communicates with the nodes via standard SSH.
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
@@ -63,18 +64,20 @@ Initialise _all_ machines. This means: jumphosts, services where the properties 
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
-# Set up services TBD
+## Set up services
 
 > [!IMPORTANT]
 > Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
 >
 
 If you wanna read more about the services, please do so at our [Properties readme](Properties.md).
+To set them up, run:
 
-- downloads.php.net: `ansible-playbook addDownloads.yml`
-- wiki.php.net: `ansible-playbook addWiki.yml`
-- museum.php.net: `ansible-playbook initMuseum.yml`
-- main.php.net: `ansible-playbook initMain.yml`
+- rsync: `ansible-playbook initRsync.yml`
+- downloads: `ansible-playbook initServiceDownloads.yml`
+- wiki: `ansible-playbook initServiceWiki.yml`
+- museum: `ansible-playbook initServiceMuseum.yml`
+- main: `ansible-playbook initServiceMain.yml`
 
 ## Changing the Jumphost
 
@@ -128,7 +131,10 @@ User group is `release-manager`. It puts the `.google_authenticator` file to the
 
 ### Delete a user
 
-To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory. You can also add the name of the host from where you want to delete the user e.g. nyc1, service0, service1. If no host is provided it will be deleted from `all` by default.
+To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory.
+
+You can also add the name of the host from where you want to delete the user e.g. `jumphost`, `museum`.
+If no host is provided it will be deleted from `all` by default.
 
 ```shell
 ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
@@ -154,7 +160,9 @@ Further details on encryption can be found in [ansible documentation](https://do
 
 ## Using different jumphosts
 
-You can specify different hosts that you want to run your playbook on. Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1). By default the host is set to the jumphost in Europe (ams3).
+You can specify different hosts that you want to run your playbook on.
+Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1).
+By default the host is set to the jumphost in Europe (ams3).
 
 To change jumphost to a different one use the `--extra-vars` argument as follows:
 

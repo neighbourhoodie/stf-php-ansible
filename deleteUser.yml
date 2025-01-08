@@ -1,3 +1,8 @@
+# This playbook deletes a user with the given name
+# If a specific host is set, it gets only deleted ton that machine.
+# Usage:
+# ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
+
 - hosts:
   - "{{ host | default('all') }}"
 
