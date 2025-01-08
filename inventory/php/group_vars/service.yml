@@ -18,7 +18,7 @@ wiki_alias: wiki2.php.backend.lol
 wiki_token: wiki_token
 wiki_docroot: /srv/web-wiki/dokuwiki/dokuwiki
 wiki_backup_dir: /local/this-box
-wiki_home_path: /home/web/{{ wiki_domain }}/public_html
+wiki_home_dir: /home/web/{{ wiki_domain }}/public_html
 
 museum_domain: museum.php.backend.lol
 museum_docroot: /local/www

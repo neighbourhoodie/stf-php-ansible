@@ -29,7 +29,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}/data backup {{ wiki_home_path }}/data
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}/data backup {{ wiki_home_dir }}/data
     state: present
     special_time: daily
 
@@ -41,7 +41,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}/media backup {{ wiki_home_path }}/data/media
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}/media backup {{ wiki_home_dir }}/data/media
     state: present
     special_time: daily
 
