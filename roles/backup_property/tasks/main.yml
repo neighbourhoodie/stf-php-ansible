@@ -23,7 +23,7 @@
 
 - name: Compress backup from local
   shell: |
-    tar cf - {{ docroot }}{{ domain }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+    tar cf - {{ docroot }}/{{ domain }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
 
 - name: Install Restic
   package:
