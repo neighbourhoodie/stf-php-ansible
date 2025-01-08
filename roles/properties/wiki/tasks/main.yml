@@ -49,12 +49,6 @@
 - include_tasks: deploy.yml
 
 # Run backup cronjob
-- name: Run backup tasks
-  include_role:
-    name: backup_property
+- include_tasks: backup.yml
   vars:
     property: wiki
-    backup_dir:  "{{ backup_dir }}"
-    backup_name: "wiki-{{ ansible_date_time.date }}"
-    domain: "{{ wiki_domain }}"
-    docroot: "{{ wiki_docroot }}"
