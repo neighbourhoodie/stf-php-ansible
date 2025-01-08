@@ -12,11 +12,6 @@
     - media/archive
     - media/daily
 
-- name: Install Restic
-  package:
-    name: restic
-    state: present
-
 - name: Initialize Restic
   command:
     cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
