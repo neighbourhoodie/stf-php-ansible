@@ -10,12 +10,6 @@
   shell: |
     mysqldump -u nobody -Q phpmasterdb > {{ backup_dir }}/{{ backup_name }}/phpmasterdb.sql
 
-- name: Copy Apache configuration to backup directory
-  copy:
-    src: /etc/apache2
-    dest: "{{ backup_dir }}/{{ backup_name }}/apache2"
-    remote_src: yes
-
 - name: Compress backup
   shell: |
     tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2

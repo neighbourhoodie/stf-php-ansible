@@ -55,4 +55,3 @@
   vars:
     property: main
     backup_name: "main-{{ ansible_date_time.date }}"
-    backup_dir: "{{ backup_dir }}"
