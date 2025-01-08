@@ -1,7 +1,7 @@
 - name: Create local directory to store downloads and shared
   file:
     state: directory
-    dest: "{{downloads_docroot}}{{ downloads_domain }}"
+    dest: "{{ downloads_docroot }}/{{ downloads_domain }}"
     mode: '750'
 
 - name: Copy downloads scripts to the server
