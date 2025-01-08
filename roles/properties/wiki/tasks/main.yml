@@ -50,5 +50,3 @@
 
 # Run backup cronjob
 - include_tasks: backup.yml
-  vars:
-    property: wiki

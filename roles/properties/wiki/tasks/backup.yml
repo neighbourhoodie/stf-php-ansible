@@ -14,7 +14,7 @@
 
 - name: Initialize Restic
   command:
-    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki init
   ignore_errors: yes
 
 - name: Create daily backup - data
@@ -24,7 +24,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}/data backup {{ wiki_home_dir }}/data
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data backup {{ wiki_home_dir }}/data
     state: present
     special_time: daily
 
@@ -36,7 +36,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}/media backup {{ wiki_home_dir }}/data/media
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media backup {{ wiki_home_dir }}/data/media
     state: present
     special_time: daily
 
@@ -48,6 +48,6 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki forget --keep-daily 7 --prune
     state: present
     special_time: daily
