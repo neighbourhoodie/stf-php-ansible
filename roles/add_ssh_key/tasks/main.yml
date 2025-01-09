@@ -1,5 +1,6 @@
-# This role takes the ssh-key from the repository (this-role/templates/ssh_keys/key)
-# and puts it to the user's homedir
+# This role takes the ssh-key and puts it to the user's homedir
+# The parameter `username` is required
+# If no pubkeys are passed, the role looks at the templates folder of this role
 
 - name: Add user - check google auth path param
   fail:
