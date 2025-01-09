@@ -59,26 +59,19 @@
 - name: Create MariaDB database
   shell: |
     mysql -u root -p{{ db_root_password }} -e "CREATE DATABASE IF NOT EXISTS {{ db_name }}"
+  args:
+    creates: "/var/lib/mysql/{{ db_name }}"
 
-- name: Check if MySQL user 'nobody' exists
-  shell: |
-    mysql -u root -p{{ db_root_password }} -e "SELECT COUNT(*) FROM mysql.user WHERE user = 'nobody';"
-  register: nobody_user_check
-
-# Create MySQL user 'nobody' if it doesn't exist
 - name: Create MySQL user 'nobody' if not exists
   shell: |
-    mysql -u root -p{{ db_root_password }} -e "CREATE USER 'nobody'@'localhost' IDENTIFIED BY 'nobody_password';"
-  when: (nobody_user_check.stdout_lines[1] | int) == 0
-  register: create_user
+    mysql -u root -p{{ db_root_password }} -e "CREATE USER IF NOT EXISTS 'nobody'@'localhost' IDENTIFIED BY '';"
 
-# Grant privileges to 'nobody' for the specified database
+# nobody user only needs to query, so we give it SELECT permissions
 - name: Grant privileges to 'nobody' for the specified database
   shell: |
-    mysql -u root -p{{ db_root_password }} -e "GRANT ALL PRIVILEGES ON {{ db_name }}.* TO 'nobody'@'localhost';"
+    mysql -u root -p{{ db_root_password }} -e "GRANT SELECT ON {{ db_name }}.* TO 'nobody'@'localhost'; FLUSH PRIVILEGES;"
 
 # Add backup cronjob
 - include_tasks: backup.yml
   vars:
     property: main
-    backup_name: "main-{{ ansible_date_time.date }}"
