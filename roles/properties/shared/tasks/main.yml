@@ -62,15 +62,15 @@
     docroot: "{{ shared_docroot }}"
 
 # Firewall settings
-- name: Block port 80 access
-  ufw:
-    rule: deny
-    port: 80
+# - name: Block port 80 access
+#   ufw:
+#     rule: deny
+#     port: 80
 
-- name: Allow access to port 443 only from Myra hosts
-  ufw:
-    rule: allow
-    port: 443
-    proto: tcp
-    src: "{{ item }}"
-    loop: "{{ myra_hosts }}"
+# - name: Allow access to port 443 only from Myra hosts
+#   ufw:
+#     rule: allow
+#     port: 443
+#     proto: tcp
+#     src: "{{ item }}"
+#     loop: "{{ myra_hosts }}"
