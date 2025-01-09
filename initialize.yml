@@ -3,8 +3,8 @@
 # It installs GA and the Google Authenticator file to the jumphosts.
 
 # Example run:
-# ansible-playbook inventory/php initialize.yml --extra-vars "@/path/to/admins.yml"
-# ansible-playbook inventory/php initialize.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
+# ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
+# ansible-playbook initialize.yml --extra-vars "@/home/jacoba/dev/stf-php-ansible/etc/admins.yml"
 
 
 # Set up firewall on all services and the rsync

@@ -1,5 +1,5 @@
 # Run this playbook to set up your museum machine
-# ansible-playbook inventory/php initServiceMuseum.yml"
+# ansible-playbook initServiceMuseum.yml"
 
 - hosts:
   - museum

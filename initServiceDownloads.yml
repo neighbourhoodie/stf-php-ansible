@@ -1,5 +1,5 @@
 # Run this playbook to set up your downloads machine
-# ansible-playbook inventory/php initServiceDownloads.yml"
+# ansible-playbook initServiceDownloads.yml"
 
 - hosts:
   - downloads
