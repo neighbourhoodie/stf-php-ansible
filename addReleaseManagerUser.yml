@@ -28,7 +28,7 @@
         shell: /bin/bash
 
   roles:
-    - role:
+    - role: add_ssh_key
       vars:
         username: "{{ username }}"
     - role: add_GA_file
