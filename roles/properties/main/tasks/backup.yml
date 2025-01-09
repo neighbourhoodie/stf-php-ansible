@@ -4,6 +4,12 @@
   set_fact:
     backup_name: "{{ property }}-{{ ansible_date_time.date }}"
 
+- name: Create temporary local backup directory if it doesn't exist
+  file:
+    path: "{{ backup_dir }}"
+    state: directory
+    mode: '777'
+
 - name: Create a local backup directory with today's date
   file:
     path: "{{ backup_dir }}/{{ backup_name }}"

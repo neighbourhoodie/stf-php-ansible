@@ -53,8 +53,6 @@
 - name: Set mysql root password
   shell: |
     mysqladmin -u root password "{{ db_root_password }}"
-  args:
-    creates: /root/.mysql_secured
 
 - name: Create MariaDB database
   shell: |
@@ -75,3 +73,4 @@
 - include_tasks: backup.yml
   vars:
     property: main
+
