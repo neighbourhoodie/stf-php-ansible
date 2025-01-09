@@ -15,21 +15,21 @@
 # the next 3 tasks are for test purposes and can be removed once proper data is added to the machine
 - name: Test - Create test data directory
   file:
-    path: "{{ wiki_home_dir }}/data/media"
+    path: "{{ wiki_home_path }}/data/media"
     state: directory
     mode: '755'
 
 - name: Test - Create test data in base directory
   copy:
-    dest: "{{ wiki_home_dir }}/data/test_data.txt"
+    dest: "{{ wiki_home_path }}/data/test_data.txt"
     content: |
-      This is test data for {{ wiki_home_dir }}/data.
+      This is test data for {{ wiki_home_path }}/data.
 
 - name: Test - Create test data in wiki home directory
   copy:
-    dest: "{{ wiki_home_dir }}/data/media/test_media.txt"
+    dest: "{{ wiki_home_path }}/data/media/test_media.txt"
     content: |
-      This is test data for {{ wiki_home_dir }}/data/media.
+      This is test data for {{ wiki_home_path }}/data/media.
 
 - name: Install Restic
   package:
@@ -56,7 +56,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data backup {{ wiki_home_dir }}/data
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data backup {{ wiki_home_path }}/data
     state: present
     special_time: daily
 
@@ -68,7 +68,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media backup {{ wiki_home_dir }}/data/media
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media backup {{ wiki_home_path }}/data/media
     state: present
     special_time: daily
 
