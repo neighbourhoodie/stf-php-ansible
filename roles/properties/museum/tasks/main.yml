@@ -105,7 +105,5 @@
     name: backup_property
   vars:
     property: museum
-    backup_dir:  "{{ backup_dir }}"
-    backup_name: "museum-{{ ansible_date_time.date }}"
     domain: "{{ museum_domain }}"
     doc_root: "{{ museum_docroot }}/{{ museum_domain }}"

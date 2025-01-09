@@ -67,7 +67,5 @@
     name: backup_property
   vars:
     property: downloads
-    backup_dir:  "{{ backup_dir }}"
-    backup_name: "downloads-{{ ansible_date_time.date }}"
     domain: "{{ downloads_domain }}"
     doc_root: "{{ downloads_home_dir }}"
