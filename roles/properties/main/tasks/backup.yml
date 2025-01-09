@@ -12,13 +12,13 @@
 
 - name: Create a local backup directory with today's date
   file:
-    path: "{{ backup_dir }}/{{ backup_name }}"
+    path: "{{ backup_dir }}/main-{{ ansible_date_time.date }}"
     state: directory
     mode: '755'
 
 - name: Initialize Restic
   command:
-    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/main init
   environment:
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"

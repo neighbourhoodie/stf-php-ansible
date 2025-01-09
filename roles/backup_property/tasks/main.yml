@@ -57,3 +57,12 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
     state: present
     special_time: daily
+
+# Restore backup doc root
+- name: Restore backup
+  shell: |
+    restic restore latest --target {{ doc_root }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
