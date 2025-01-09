@@ -61,7 +61,7 @@
 # Restore backup doc root
 - name: Restore backup
   shell: |
-    restic restore latest --target {{ doc_root }}
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} restore latest --target {{ doc_root }}
   environment:
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"

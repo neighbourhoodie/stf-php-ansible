@@ -94,8 +94,11 @@
 # Restore backup doc root
 - name: Restore backup
   shell: |
-    restic restore latest --target {{ wiki_home_path }}
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/{{ item }} restore latest --target {{ wiki_home_path }}
   environment:
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
     RESTIC_PASSWORD: "{{ restic_password }}"
+  loop:
+    - data
+    - media
