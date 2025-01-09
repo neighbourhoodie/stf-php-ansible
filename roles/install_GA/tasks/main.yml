@@ -1,5 +1,7 @@
+# This role installs Google Authentiator and sets it up
+
 - name: Install Google Authenticator
-  ansible.builtin.package:
+  apt:
     name: libpam-google-authenticator
     state: present
     update_cache: yes
