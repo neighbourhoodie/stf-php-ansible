@@ -27,6 +27,8 @@
 - name: Compress backup from local
   shell: |
     tar cf - {{ doc_root }} | bzip2 -9 > {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
+  args:
+    creates: "{{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2"
 
 - name: Initialize Restic
   command:
