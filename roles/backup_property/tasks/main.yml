@@ -43,10 +43,7 @@
   cron:
     name: Daily backup
     job: |
-      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
-      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
-      RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
     state: present
     special_time: daily
 
@@ -55,9 +52,6 @@
   cron:
     name: Daily prune files older than 7 days
     job: |
-      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
-      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
-      RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
     state: present
     special_time: daily

@@ -64,10 +64,9 @@
   shell: |
     mysql -u root -p{{ db_root_password }} -e "CREATE USER IF NOT EXISTS 'nobody'@'localhost' IDENTIFIED BY '';"
 
-# nobody user only needs to query, so we give it SELECT permissions
 - name: Grant privileges to 'nobody' for the specified database
   shell: |
-    mysql -u root -p{{ db_root_password }} -e "GRANT SELECT ON {{ db_name }}.* TO 'nobody'@'localhost'; FLUSH PRIVILEGES;"
+    mysql -u root -p{{ db_root_password }} -e "GRANT SELECT, LOCK TABLES ON {{ db_name }}.* TO 'nobody'@'localhost'; FLUSH PRIVILEGES;"
 
 # Add backup cronjob
 - include_tasks: backup.yml

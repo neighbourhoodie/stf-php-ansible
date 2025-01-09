@@ -8,26 +8,13 @@
   file:
     path: "{{ backup_dir }}"
     state: directory
-    mode: '777'
+    mode: '777' # ¯\_(ツ)_/¯ We need write access ¯\_(ツ)_/¯
 
 - name: Create a local backup directory with today's date
   file:
     path: "{{ backup_dir }}/{{ backup_name }}"
     state: directory
     mode: '755'
-
-- name: Dump MySQL database to backup directory
-  shell: |
-    mysqldump -u nobody -Q phpmasterdb > {{ backup_dir }}/{{ backup_name }}/phpmasterdb.sql
-
-- name: Compress backup
-  shell: |
-    tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
-
-- name: Remove uncompressed backup directory
-  file:
-    path: "{{ backup_dir }}/{{ backup_name }}"
-    state: absent
 
 - name: Initialize Restic
   command:
@@ -36,13 +23,18 @@
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
     RESTIC_PASSWORD: "{{ restic_password }}"
-  ignore_errors: yes
+  ignore_errors: yes # it throws an error when it is already initialized
 
-- name: Create daily backup
+- name: Create backup script
+  template:
+    src: templates/backup-main
+    dest: "/local/systems/backup-main"
+    mode: "755"
+
+- name: Create MySQL dump and backup
   cron:
-    name: Daily backup
-    job: |
-      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ backup_name }}.tar.bz2
+    name: Daily MySQL Dump and Backup
+    job: "/local/scripts/backup-main"
     special_time: "daily"
     state: present
 
