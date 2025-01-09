@@ -1,4 +1,7 @@
-- name: Install Apache with mod-php, php
+# This role sets up the property wiki.php.net with Apache together with the php module
+# It uses certbot SSL certs
+
+- name: Install Apache with mod-php and php
   apt:
     name:
       - apache2

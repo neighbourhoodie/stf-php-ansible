@@ -1,3 +1,6 @@
+# This role sets up the property shared.php.net with Apache together with the php module
+# It uses self-signed SSL certs
+
 - name: Install Apache with mod-php, php and openssl
   apt:
     name:
@@ -57,4 +60,3 @@
     backup_name: "shared-{{ ansible_date_time.date }}"
     domain: "{{ shared_domain }}"
     docroot: "{{ shared_docroot }}"
-    
