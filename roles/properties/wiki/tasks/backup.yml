@@ -12,10 +12,42 @@
     - media/archive
     - media/daily
 
+# the next 3 tasks are for test purposes and can be removed once proper data is added to the machine
+- name: Test - Create test data directory
+  file:
+    path: "{{ wiki_home_dir }}/data/media"
+    state: directory
+    mode: '755'
+
+- name: Test - Create test data in base directory
+  copy:
+    dest: "{{ wiki_home_dir }}/data/test_data.txt"
+    content: |
+      This is test data for {{ wiki_home_dir }}/data.
+
+- name: Test - Create test data in wiki home directory
+  copy:
+    dest: "{{ wiki_home_dir }}/data/media/test_media.txt"
+    content: |
+      This is test data for {{ wiki_home_dir }}/data/media.
+
+- name: Install Restic
+  package:
+    name: restic
+    state: present
+
+# Initialize Restic for both data and media folders
 - name: Initialize Restic
   command:
-    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki init
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/{{ item }} init
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
   ignore_errors: yes
+  loop:
+    - data
+    - media
 
 - name: Create daily backup - data
   cron:

@@ -22,6 +22,10 @@
 - name: Initialize Restic
   command:
     cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
   ignore_errors: yes
 
 - name: Create daily backup
