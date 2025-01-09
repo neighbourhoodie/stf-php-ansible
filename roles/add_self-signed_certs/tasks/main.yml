@@ -1,5 +1,5 @@
 # The following sets up self-signed SSL certificate
-# and schedules automatic renewal of the
+# TODO: schedule automatic renewal of the certs
 
 # usage:
 # - role: add_self-signed_certs
@@ -7,6 +7,8 @@
 # When you use it with apache, you have to install `apache2-utils` and enable the SSL module:
 # - name: Enable SSL module in Apache
 #   command: a2enmod ssl
+#     args:
+#       creates: /etc/apache2/mods-enabled/ssh.conf
 #   notify: reload apache
 #
 # When you use it with Nginx, you have to add the DH group
