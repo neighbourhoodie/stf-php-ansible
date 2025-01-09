@@ -1,3 +1,11 @@
+# This playbook adds an admin user with the given name to all machines.
+# It creates a linux user, add it to sudo group and puts the ssh key to all machines.
+# The Google Authenticator file is only put to the jumphosts.
+
+# The parameters `username` and `path_to_google_auth` are required.
+# Usage:
+# ansible-playbook addAdminUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
+
 - hosts:
   - all
 
@@ -9,7 +17,6 @@
       user:
         name: "{{ username }}"
         create_home: yes
-        # The user should be created if it doesn't exist or updated if it already exists
         state: present
         groups: sudo
         append: yes
@@ -17,6 +24,8 @@
 
   roles:
     - role: add_ssh_key
+      vars:
+        username: "{{ username }}"
 
 # Put the GA file only on jumphost
 - hosts:
@@ -27,3 +36,6 @@
 
   roles:
     - role: add_GA_file
+      vars:
+        username: "{{ username }}"
+        path_to_google_auth: "{{ path_to_google_auth }}"

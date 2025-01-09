@@ -16,7 +16,5 @@
 - name: Deploy wiki daily
   cron:
     name: "Run update-wiki daily"
-    minute: "0"
-    hour: "0"
-    day: "*"
+    special_time: daily
     job: "/local/systems/update-wiki"

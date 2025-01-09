@@ -54,14 +54,13 @@
   args:
     creates: /etc/ssl/certs/dhparam.pem
 
-# This adds museum nginx config file.
-- name: Add nginx config file
+- name: Add museum nginx config file
   template:
     src: templates/museumweb.conf
     dest: /etc/nginx/sites-enabled/default
   notify: reload nginx
 
-- name: start nginx
+- name: Ensure nginx is started and enabled
   service:
     name: nginx
     state: started

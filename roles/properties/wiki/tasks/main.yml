@@ -1,4 +1,7 @@
-- name: Install Apache with mod-php, php
+# This role sets up the property wiki.php.net with Apache together with the php module
+# It uses certbot SSL certs
+
+- name: Install Apache with mod-php and php
   apt:
     name:
       - apache2
@@ -13,10 +16,6 @@
     dest: /etc/apache2/sites-available/wiki.conf
   notify: reload apache
 
-- name: Enable config file
-  command: a2ensite wiki.conf
-  notify: reload apache
-
 # because we run certbot with certonly, and we use Rewrite in our apache config
 # we have to enable this
 - name: Enable Apache PHP module
@@ -27,6 +26,10 @@
     - php8.2
     - headers
     - rewrite
+  notify: reload apache
+
+- name: Enable config file
+  command: a2ensite wiki.conf
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

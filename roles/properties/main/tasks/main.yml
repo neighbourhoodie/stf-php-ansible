@@ -9,14 +9,6 @@
     state: present
     update_cache: yes
 
-# Do we need a file here?
-# - name: Create PHP custom configuration for include_path
-#   copy:
-#     dest: /etc/php/8.0/apache2/conf.d/99-custom.ini
-#     content: |
-#       ; Custom PHP include_path
-#       include_path = ".:/usr/share/php:/custom/include/path"
-
 - name: create local box
   file:
     state: directory
@@ -37,13 +29,13 @@
     dest: /etc/apache2/sites-available/main.php.net.conf
   notify: reload apache
 
-- name: Enable Apache php modules
-  command: a2enmod php8.2
+- name: Enable Apache modules
+  command: a2enmod {{ item }}
   args:
-    creates: /etc/apache2/mods-enabled/php8.2.conf
-  # loop:
-    # - rewrite
-    # - php8.2
+    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+  loop:
+    - rewrite
+    - php8.2
   notify: reload apache
 
 - name: Enable config file

@@ -1,25 +1,18 @@
-- name: Create local directory to store downloads and shared
+- name: Create local directory to store downloads content
   file:
     state: directory
     dest: "{{ shared_docroot }}/{{ shared_domain }}"
     mode: '750'
 
-- name: Copy downloads scripts to the server
+- name: Copy update-shared script to the server
   template:
-    src: templates/{{ item }}
-    dest: /local/systems/{{ item }}
+    src: templates/update-shared
+    dest: /local/systems/update-shared
     mode: '700'
-  loop:
-    - update-shared
-  vars:
-    rsync_server: "{{ rsync_domain }}"
-    shared_domain: "{{ shared_domain }}"
 
 - name: Create a cron job to run hourly
   cron:
-    name: "Run {{ item }} hourly"
-    minute: "0"
-    hour: "*"
-    job: "/local/systems/{{ item }}"
-  loop:
-    - update-shared
+    name: "Run update-shared hourly"
+    special_time: hourly
+    job: "/local/systems/update-shared"
+

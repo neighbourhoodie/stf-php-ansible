@@ -2,8 +2,8 @@ jumphost: "{{ host | default('jumphost0.ams3.do.php.backend.lol') }}"
 
 rsync_domain: rsync0.ams3.do.php.backend.lol
 
-# the actual domain should be: downloads.php.net
-# using downloads.php.backend.lol for test purposes
+# the actual domains should be: *.php.net
+# using *.php.backend.lol for test purposes
 downloads_domain: downloads.php.backend.lol
 shared_domain: shared.php.backend.lol
 downloads_docroot: /local/www/sites
@@ -11,7 +11,6 @@ shared_docroot: /local/www/sites
 
 backup_dir: /local/backups
 
-# actual domain: wiki.php.net
 wiki_domain: wiki.php.backend.lol
 wiki_alias: wiki2.php.backend.lol
 wiki_token: wiki_token

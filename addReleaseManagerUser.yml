@@ -1,3 +1,11 @@
+# This playbook adds an release-manager user with the given name to the downloads machine.
+# It creates a linux user, add it to release-manager group and puts the ssh key to downloads and jumphosts.
+# The Google Authenticator file is only put to the jumphosts.
+
+# The parameters `username` and `path_to_google_auth` are required.
+# Usage:
+# ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
+
 - hosts:
   - jumphost
 
@@ -21,7 +29,12 @@
 
   roles:
     - role: add_ssh_key
+      vars:
+        username: "{{ username }}"
     - role: add_GA_file
+      vars:
+        username: "{{ username }}"
+        path_to_google_auth: "{{ path_to_google_auth }}"
 
 
 - hosts:
@@ -47,4 +60,6 @@
 
   roles:
     - role: add_ssh_key
+      vars:
+        username: "{{ username }}"
 

@@ -1,5 +1,6 @@
-# This role takes the ssh-key rom the repository (/templates/ssh_keys/key)
-# and puts it to the user's homedir
+# This role takes the ssh-key and puts it to the user's homedir
+# The parameter `username` is required
+# If no pubkeys are passed, the role looks at the templates folder of this role
 
 - name: Add user - check google auth path param
   fail:
@@ -25,7 +26,7 @@
     dest: /home/{{ username }}/.ssh
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '0700'
+    mode: '700'
 
 - name: Create authorized_keys
   template:
@@ -33,7 +34,7 @@
     dest: /home/{{ username }}/.ssh/authorized_keys
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '0600'
+    mode: '600'
   when: ssh_key.stat.exists and pubkeys is not defined
 
 - name: Create authorized_keys from init
@@ -41,6 +42,7 @@
     dest: /home/{{ username }}/.ssh/authorized_keys
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '0600'
+    mode: '600'
     content: "{{ pubkeys | join('\n') }}"
   when: pubkeys is defined
+
