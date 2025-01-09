@@ -2,9 +2,7 @@
 
 Each property is implemented as an Ansible role located in the [roles/properties](roles/properties) directory.
 
-Some properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
-
-## Jumphosts
+All properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
 
 ## Rsync
 
@@ -19,16 +17,14 @@ On the Rsync.php.net machine are 4 directories located:
 
 `/local/repos`: Another directory where the repositories are stored and updated.
 
-`/local/museumweb`: This is the content of museum. It is not a git repository and not be handled by the update scripts.
-
-### Workflow
+#### Content workflow
+rsync.php.net is a property. It pulls content from GitHub and puts the file to `/local/mirrors/{property}` on the rsync-machine. The property itself pulls the data from this folder via `rsync`. All this is handled by cronjobs.
 
 ```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart TD
-  A[Start: Cron Job] -- triggers --> B["/local/systems/update-everything"]
-  B --> C[Rsync Pulls Latest Changes from GitHub]
-  C --> D[Repositories are up-to-date]
+graph TD
+    A[Git Repository] -->|Cronjob: Pull updates| B[Rsync Service]
+    B -->|Cronjob: Pull updates| C[Property Local Repository]
+    C -->|Deploy to| D[Document Root]
 ```
 
 ## Services
@@ -80,3 +76,9 @@ The domain and email is saved as variables.
 
 ### main
 
+
+## Backups
+
+Backups are run as part of the property role tasks.
+
+Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
