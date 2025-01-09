@@ -1,0 +1,25 @@
+# Restore backup in local restore directory
+- name: Create a local restore directory with today's date
+  file:
+    path: "{{ restore_dir }}/wiki-{{ ansible_date_time.date }}"
+    state: directory
+    mode: '755'
+
+- name: Restore backup
+  shell: |
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/{{ item }} restore latest --target {{ restore_dir }}/wiki-{{ ansible_date_time.date }}/{{ item }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+  loop:
+    - data
+    - media
+
+# TODO: move data and media folder from /local/restore to {{ wiki_home_path }}
+# Then remove the restore_dir
+
+# - name: Remove temporary restore directory
+#   file:
+#     path: "{{ restore_dir }}/wiki-{{ ansible_date_time.date }}"
+#     state: absent

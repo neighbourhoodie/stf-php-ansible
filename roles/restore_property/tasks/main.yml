@@ -1,0 +1,35 @@
+# This role is being used by multiple properties. It creates a local restore directory and restore backup using Restic.
+# Example usage:
+# - name: Run restore tasks
+#   include_role:
+#     name: restore_property
+#   vars:
+#     property: property-name
+
+- name: Create temporary local restore directory if it doesn't exist
+  file:
+    path: "{{ restore_dir }}"
+    state: directory
+    mode: '755'
+
+- name: Restore backup
+  shell: |
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} restore latest --target {{ restore_dir }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+
+- name: Extract the .tar backup file
+  unarchive:
+    src: "{{ restore_dir }}/local/backups/{{ property }}-{{ ansible_date_time.date }}.tar.bz2"
+    dest: "{{ restore_dir }}"
+    remote_src: yes
+
+# TODO: need to move data from restore_dir to doc_root
+# Then remove the restore_dir
+
+# - name: Remove temporary restore directory
+#   file:
+#     path: "{{ restore_dir }}/main-{{ ansible_date_time.date }}"
+#     state: absent

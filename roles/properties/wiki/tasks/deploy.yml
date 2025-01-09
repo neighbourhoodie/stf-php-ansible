@@ -18,3 +18,6 @@
     name: "Run update-wiki daily"
     special_time: daily
     job: "/local/systems/update-wiki"
+
+# Run restore
+- include_tasks: restore.yml

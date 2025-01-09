@@ -13,6 +13,7 @@ shared_docroot: /local/www/sites
 downloads_home_dir: /home
 
 backup_dir: /local/backups
+restore_dir: /local/restore
 
 wiki_domain: wiki.php.backend.lol
 wiki_alias: wiki2.php.backend.lol
