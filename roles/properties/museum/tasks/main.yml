@@ -1,4 +1,5 @@
 # This role sets up the property museum.php.net with NGINX together with the fancyindex module
+# The content is put by hand to /local/www/museum_domain/
 
 # Change version number to update nginx
 - name: Set NGINX version
@@ -16,6 +17,7 @@
     - zlib1g-dev
     - libssl-dev
     state: present
+    update_cache: yes
 
 # Install nginx with fancyindex: https://github.com/aperezdc/ngx-fancyindex?tab=readme-ov-file#building
 - name: Download the latest version of Nginx source
@@ -44,6 +46,14 @@
     make install
   args:
     chdir: /tmp
+    creates: /usr/sbin/nginx
+
+# Nice to have: make `nginx` available in Terminal
+- name: Make nginx available in PATH
+  file:
+    src: /usr/sbin/nginx
+    dest: /usr/bin/nginx
+    state: link
 
 - name: Create the SSL Certificate
   include_role:
@@ -60,8 +70,31 @@
     dest: /etc/nginx/sites-enabled/default
   notify: reload nginx
 
-- name: Ensure nginx is started and enabled
+- name: Include museum config in nginx.conf
+  blockinfile:
+    path: /usr/local/nginx/conf/nginx.conf
+    block: |
+      include /etc/nginx/sites-enabled/*;
+    insertafter: '^http\s*{'
+    state: present
+  notify: reload nginx
+
+- name: start nginx
   service:
     name: nginx
     state: started
     enabled: yes
+
+# Firewall settings
+# - name: Block port 80 access
+#   ufw:
+#     rule: deny
+#     port: 80
+
+# - name: Allow access to port 443 only from Myra hosts
+#   ufw:
+#     rule: allow
+#     port: 443
+#     proto: tcp
+#     src: "{{ item }}"
+#     loop: "{{ myra_hosts }}"

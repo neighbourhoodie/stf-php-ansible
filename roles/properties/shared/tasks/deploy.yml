@@ -1,4 +1,4 @@
-- name: Create local directory to store downloads content
+- name: Create local directory to store shared content
   file:
     state: directory
     dest: "{{ shared_docroot }}/{{ shared_domain }}"
