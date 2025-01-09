@@ -50,6 +50,33 @@
 
 - include_tasks: deploy.yml
 
+- name: Set mysql root password
+  shell: |
+    mysqladmin -u root password "{{ db_root_password }}"
+  args:
+    creates: /root/.mysql_secured
+
+- name: Create MariaDB database
+  shell: |
+    mysql -u root -p{{ db_root_password }} -e "CREATE DATABASE IF NOT EXISTS {{ db_name }}"
+
+- name: Check if MySQL user 'nobody' exists
+  shell: |
+    mysql -u root -p{{ db_root_password }} -e "SELECT COUNT(*) FROM mysql.user WHERE user = 'nobody';"
+  register: nobody_user_check
+
+# Create MySQL user 'nobody' if it doesn't exist
+- name: Create MySQL user 'nobody' if not exists
+  shell: |
+    mysql -u root -p{{ db_root_password }} -e "CREATE USER 'nobody'@'localhost' IDENTIFIED BY 'nobody_password';"
+  when: (nobody_user_check.stdout_lines[1] | int) == 0
+  register: create_user
+
+# Grant privileges to 'nobody' for the specified database
+- name: Grant privileges to 'nobody' for the specified database
+  shell: |
+    mysql -u root -p{{ db_root_password }} -e "GRANT ALL PRIVILEGES ON {{ db_name }}.* TO 'nobody'@'localhost';"
+
 # Add backup cronjob
 - include_tasks: backup.yml
   vars:
