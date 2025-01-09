@@ -1,0 +1,85 @@
+# Reference backup script: https://github.com/php/systems/blob/master/backup-wiki-php-net
+- name: Ensure backup directories exist
+  file:
+    path: "{{ wiki_backup_dir }}/{{ wiki_domain }}/{{ item }}"
+    state: directory
+    mode: '755'
+  loop:
+    - data
+    - data/archive
+    - data/daily
+    - media
+    - media/archive
+    - media/daily
+
+# the next 3 tasks are for test purposes and can be removed once proper data is added to the machine
+- name: Test - Create test data directory
+  file:
+    path: "{{ wiki_home_path }}/data/media"
+    state: directory
+    mode: '755'
+
+- name: Test - Create test data in base directory
+  copy:
+    dest: "{{ wiki_home_path }}/data/test_data.txt"
+    content: |
+      This is test data for {{ wiki_home_path }}/data.
+
+- name: Test - Create test data in wiki home directory
+  copy:
+    dest: "{{ wiki_home_path }}/data/media/test_media.txt"
+    content: |
+      This is test data for {{ wiki_home_path }}/data/media.
+
+- name: Install Restic
+  package:
+    name: restic
+    state: present
+
+# Initialize Restic for both data and media folders
+- name: Initialize Restic
+  command:
+    cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/{{ item }} init
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+  ignore_errors: yes
+  loop:
+    - data
+    - media
+
+- name: Create daily backup - data
+  cron:
+    name: Daily backup - data
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data backup {{ wiki_home_path }}/data
+    state: present
+    special_time: daily
+
+# for debian etch, replace "media" by "data/media" as per https://github.com/php/systems/blob/master/backup-wiki-php-net#L57
+- name: Create daily backup - media
+  cron:
+    name: Daily backup - media
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media backup {{ wiki_home_path }}/data/media
+    state: present
+    special_time: daily
+
+# Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
+- name: Daily prune files older than 7 days
+  cron:
+    name: Daily prune files older than 7 days
+    job: |
+      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
+      AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
+      RESTIC_PASSWORD="{{ restic_password }}" \
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki forget --keep-daily 7 --prune
+    state: present
+    special_time: daily

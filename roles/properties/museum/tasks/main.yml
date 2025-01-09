@@ -98,3 +98,12 @@
 #     proto: tcp
 #     src: "{{ item }}"
 #     loop: "{{ myra_hosts }}"
+
+# Run backup cronjob
+- name: Run backup tasks
+  include_role:
+    name: backup_property
+  vars:
+    property: museum
+    domain: "{{ museum_domain }}"
+    doc_root: "{{ museum_docroot }}/{{ museum_domain }}"

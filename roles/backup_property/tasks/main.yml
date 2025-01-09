@@ -5,10 +5,8 @@
 #     name: backup_property
 #   vars:
 #     property: property-name
-#     backup_dir:  "{{ backup_directory_path }}"
-#     backup_name: "property-name-{{ ansible_date_time.date }}"
 #     domain: "{{ property_domain }}"
-#     docroot: "{{ property_document_root_path }}"
+#     doc_root: "{{ property_document_root_path }}"
 
 
 - name: Create temporary local backup directory if it doesn't exist
@@ -21,18 +19,22 @@
   command:
     cmd: "rm -rf {{ backup_dir }}/*"
 
+- name: Install bzip2
+  apt:
+    name: bzip2
+    state: present
+
 - name: Compress backup from local
   shell: |
-    tar cf - {{ docroot }}/{{ domain }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
-
-- name: Install Restic
-  package:
-    name: restic
-    state: present
+    tar cf - {{ doc_root }} | bzip2 -9 > {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
 
 - name: Initialize Restic
   command:
     cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
   ignore_errors: yes
 
 - name: Create daily backup
@@ -42,7 +44,7 @@
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" \
       AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" \
       RESTIC_PASSWORD="{{ restic_password }}" \
-      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ backup_name }}.tar.bz2
+      restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
     state: present
     special_time: daily
 
