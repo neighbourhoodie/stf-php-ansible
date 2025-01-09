@@ -1,5 +1,5 @@
 # This role sets up the property museum.php.net with NGINX together with the fancyindex module
-# It gets the content from rsync property and stores it at /local/www/museum_domain
+# The content is put by hand to /local/www/museum_domain/
 
 # Change version number to update nginx
 - name: Set NGINX version
@@ -84,8 +84,6 @@
     name: nginx
     state: started
     enabled: yes
-
-- include_tasks: deploy.yml
 
 # Firewall settings
 # - name: Block port 80 access
