@@ -1,10 +1,10 @@
-- name: Create local directory to store downloads and shared
+- name: Create local directory to store downloads content
   file:
     state: directory
     dest: "{{ downloads_docroot }}/{{ downloads_domain }}"
     mode: '750'
 
-- name: Copy downloads scripts to the server
+- name: Copy update-downloads script to the server
   template:
     src: templates/update-downloads
     dest: /local/systems/update-downloads
