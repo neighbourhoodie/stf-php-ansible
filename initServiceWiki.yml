@@ -1,3 +1,6 @@
+# Run this playbook to set up your wiki machine
+# ansible-playbook inventory/php initServiceWiki.yml"
+
 - hosts:
   - wiki
 
