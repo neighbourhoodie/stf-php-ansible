@@ -51,7 +51,5 @@
     name: "Renew Let's Encrypt certificates"
     job: "certbot renew --quiet" # 'quiet' is used to suppress the outputs
     state: present
-    minute: 0
-    hour: 0
-    weekday: 1
+    special_time: weekly
   notify: reload apache

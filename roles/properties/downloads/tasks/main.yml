@@ -57,7 +57,6 @@
 
 - include_tasks: deploy.yml
 
-# Run backup cronjob
 - name: Run backup tasks
   include_role:
     name: backup_property

@@ -18,8 +18,7 @@
 - name: Create a cron job to run hourly
   cron:
     name: "Run {{ item }} hourly"
-    minute: "0"
-    hour: "*"
+    special_time: hourly
     job: "/local/systems/{{ item }}"
   loop:
     - update-shared
