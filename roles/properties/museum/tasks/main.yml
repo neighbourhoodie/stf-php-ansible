@@ -113,3 +113,4 @@
     name: restore_property
   vars:
     property: museum
+    doc_root: "{{ museum_docroot }}/{{ museum_domain }}"

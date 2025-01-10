@@ -5,6 +5,7 @@
 #     name: restore_property
 #   vars:
 #     property: property-name
+#     doc_root: "{{ property_document_root_path }}"
 
 - name: Setting backup name
   set_fact:
@@ -26,7 +27,7 @@
 
 - name: Extract the .tar backup file
   unarchive:
-    src: "{{ restore_dir }}/{{ restore_name }}.tar.bz2"
+    src: "{{ restore_dir }}/local/backups/{{ restore_name }}.tar.bz2"
     dest: "{{ restore_dir }}/{{ restore_name }}"
     remote_src: yes
 

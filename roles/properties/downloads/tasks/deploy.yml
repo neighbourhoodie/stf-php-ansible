@@ -21,3 +21,4 @@
     name: restore_property
   vars:
     property: downloads
+    doc_root: "{{ downloads_home_dir }}"
