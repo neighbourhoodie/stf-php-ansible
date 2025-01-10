@@ -10,6 +10,13 @@
     state: present
     update_cache: yes
 
+- name: Run certbot tasks
+  include_role:
+    name: add_certbot
+  vars:
+    domain: "{{ wiki_domain }}"
+    email: "{{ systems_email }}"
+
 - name: Add Apache config for wiki
   template:
     src: templates/wiki.conf
@@ -37,14 +44,6 @@
     name: apache2
     state: started
     enabled: yes
-
-- name: Run certbot tasks
-  include_role:
-    name: add_certbot
-  vars:
-    domain: "{{ wiki_domain }}"
-    email: "{{ systems_email }}"
-
 
 - include_tasks: deploy.yml
 
