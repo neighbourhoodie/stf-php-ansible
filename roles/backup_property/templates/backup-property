@@ -13,17 +13,9 @@ export AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}"
 export RESTIC_PASSWORD="{{ restic_password }}"
 
 
-# Dump MySQL database to backup directory
-mysqldump -u nobody -Q phpmasterdb > {{ backup_name }}/phpmasterdb.sql
-echo "[$(date)] Database dump completed."
-
 # Compress backup
-tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_name }}.tar.bz2
+tar cf - {{ doc_root }} | bzip2 -9 > {{ backup_name }}.tar.bz2
 echo "[$(date)] Compression completed."
-
-# Remove uncompressed backup directory
-rm -rf {{ backup_name }}
-echo "[$(date)] Cleanup completed."
 
 # S3 Upload
 restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_name }}.tar.bz2

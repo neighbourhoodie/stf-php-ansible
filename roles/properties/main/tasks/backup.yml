@@ -35,7 +35,7 @@
   cron:
     name: Daily MySQL Dump and Backup
     job: "/local/systems/backup-main"
-    special_time: "daily"
+    special_time: daily
     state: present
 
 # Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
@@ -44,6 +44,6 @@
     name: Daily prune files older than 7 days
     job: |
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} forget --keep-daily 7 --prune
-    special_time: "daily"
+    special_time: daily
     state: present
 

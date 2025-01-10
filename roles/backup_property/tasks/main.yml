@@ -8,6 +8,9 @@
 #     domain: "{{ property_domain }}"
 #     doc_root: "{{ property_document_root_path }}"
 
+- name: Setting backup name
+  set_fact:
+    backup_name: "{{ property }}-{{ ansible_date_time.date }}"
 
 - name: Create temporary local backup directory if it doesn't exist
   file:
@@ -24,12 +27,6 @@
     name: bzip2
     state: present
 
-- name: Compress backup from local
-  shell: |
-    tar cf - {{ doc_root }} | bzip2 -9 > {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
-  args:
-    creates: "{{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2"
-
 - name: Initialize Restic
   command:
     cmd: restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} init
@@ -37,15 +34,20 @@
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
     RESTIC_PASSWORD: "{{ restic_password }}"
-  ignore_errors: yes
+  ignore_errors: yes # it throws an error when it is already initialized
 
-- name: Create daily backup
+- name: Create backup script
+  template:
+    src: templates/backup-property
+    dest: "/local/systems/backup-{{ property }}"
+    mode: "755"
+
+- name: Create daily property backup
   cron:
-    name: Daily backup
-    job: |
-      AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ property }}-{{ ansible_date_time.date }}.tar.bz2
-    state: present
+    name: Daily property backup
+    job: "/local/systems/backup-{{ property }}"
     special_time: daily
+    state: present
 
 # Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
 - name: Daily prune files older than 7 days
