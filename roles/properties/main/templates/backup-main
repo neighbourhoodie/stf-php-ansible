@@ -1,7 +1,9 @@
 #!/bin/sh
 
+cd {{ backup_dir }}
+
 # Redirect all output to the backup.log
-exec > "{{ backup_dir }}/backup.log" 2>&1
+exec > "backup.log" 2>&1
 
 echo "[$(date)] Starting backup process..."
 
@@ -10,20 +12,21 @@ export AWS_ACCESS_KEY_ID="{{ DO_access_key }}"
 export AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}"
 export RESTIC_PASSWORD="{{ restic_password }}"
 
+
 # Dump MySQL database to backup directory
-mysqldump -u nobody -Q phpmasterdb > {{ backup_dir }}/{{ backup_name }}/phpmasterdb.sql
+mysqldump -u nobody -Q phpmasterdb > {{ backup_name }}/phpmasterdb.sql
 echo "[$(date)] Database dump completed."
 
 # Compress backup
-tar cvf - {{ backup_dir }}/{{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+tar cvf - {{ backup_name }} | bzip2 -9 > {{ backup_name }}.tar.bz2
 echo "[$(date)] Compression completed."
 
 # Remove uncompressed backup directory
-rm -rf {{ backup_dir }}/{{ backup_name }}
+rm -rf {{ backup_name }}
 echo "[$(date)] Cleanup completed."
 
 # S3 Upload
-restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_dir }}/{{ backup_name }}.tar.bz2
+restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_name }}.tar.bz2
 echo "[$(date)] S3 upload completed."
 echo
 echo "[$(date)] Backup process finished successfully."
