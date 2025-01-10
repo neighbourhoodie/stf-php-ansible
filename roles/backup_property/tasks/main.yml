@@ -5,8 +5,7 @@
 #     name: backup_property
 #   vars:
 #     property: property-name
-#     domain: "{{ property_domain }}"
-#     doc_root: "{{ property_document_root_path }}"
+#     backup_path: "{{ property_document_root_path }}"
 
 - name: Setting backup name
   set_fact:

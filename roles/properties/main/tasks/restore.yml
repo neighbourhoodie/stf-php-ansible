@@ -1,0 +1,29 @@
+# Restore backup in local restore directory
+- name: Create a local restore directory with today's date
+  file:
+    path: "{{ restore_dir }}/main-{{ ansible_date_time.date }}"
+    state: directory
+    mode: '755'
+
+- name: Restore backup with Restic
+  shell: |
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/main restore latest --target {{ restore_dir }}/main-{{ ansible_date_time.date }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+
+- name: Extract the .tar backup file
+  unarchive:
+    src: "{{ restore_dir }}/main-{{ ansible_date_time.date }}/main-{{ ansible_date_time.date }}.tar.bz2"
+    dest: "{{ restore_dir }}"
+    remote_src: yes
+
+- name: Restore MySQL database from the dump
+  shell: |
+    mysql -u nobody phpmasterdb < {{ restore_dir }}/main-{{ ansible_date_time.date }}/phpmasterdb.sql
+
+- name: Remove temporary restore directory
+  file:
+    path: "{{ restore_dir }}/main-{{ ansible_date_time.date }}"
+    state: absent

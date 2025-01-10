@@ -67,5 +67,4 @@
     name: backup_property
   vars:
     property: downloads
-    domain: "{{ downloads_domain }}"
-    doc_root: "{{ downloads_home_dir }}"
+    backup_path: '{{ downloads_home_dir }}'

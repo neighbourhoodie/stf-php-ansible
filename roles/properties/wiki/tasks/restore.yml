@@ -1,0 +1,50 @@
+# Restore backup in local restore directory
+- name: Setting backup name
+  set_fact:
+    restore_name_data: "data-{{ ansible_date_time.date }}"
+    restore_name_media: "media-{{ ansible_date_time.date }}"
+
+- name: Create a local restore directory with today's date
+  file:
+    path: "{{ restore_dir }}/{{ item }}"
+    state: directory
+    mode: '755'
+  loop:
+    - restore_name_data
+    - restore_name_media
+
+- name: Restore backup
+  shell: |
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/{{ item }} restore latest --target {{ restore_dir }}/{{ item }}
+  environment:
+    AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
+    RESTIC_PASSWORD: "{{ restic_password }}"
+  loop:
+    - restore_name_data
+    - restore_name_media
+
+- name: Extract the .tar backup file
+  unarchive:
+    src: "{{ restore_dir }}/{{ item }}/local/backups/{{ item }}.tar.bz2"
+    dest: "{{ restore_dir }}/{{ item }}"
+    remote_src: yes
+  loop:
+    - restore_name_data
+    - restore_name_media
+
+- name: Copy restored data to the doc root
+  copy:
+    src: "{{ restore_dir }}/{{ item }}-{{ ansible_date_time.date }}"
+    dest: "{{ wiki_home_path }}/{{ item }}"
+  loop:
+    - data
+    - media
+
+- name: Remove temporary restore directory
+  file:
+    path: "{{ restore_dir }}/{{ item }}"
+    state: absent
+  loop:
+    - restore_name_data
+    - restore_name_media

@@ -15,3 +15,10 @@
     name: "Run update-downloads hourly"
     special_time: hourly
     job: "/local/systems/update-downloads"
+
+- name: Run restore tasks
+  include_role:
+    name: restore_property
+  vars:
+    property: downloads
+    backup_path: '{{ downloads_home_dir }}'

@@ -30,7 +30,6 @@
     - maintain-master-dns.php
     - process-main-zone-file
 
-
 # Cron jobs for maintain-main
 - name: Create a cron job to run maintain-main hourly
   cron:
@@ -43,3 +42,6 @@
     name: "Run maintain-main weekly"
     special_time: weekly
     job: "/local/systems/maintain-main"
+
+# Add restore tasks
+- include_tasks: restore.yml
