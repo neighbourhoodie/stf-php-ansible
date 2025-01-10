@@ -11,7 +11,7 @@
 
 - name: Ensure backup directories exist
   file:
-    path: "{{ wiki_backup_dir }}/{{ item }}"
+    path: "{{ backup_dir }}/{{ item }}"
     state: directory
     mode: '755'
   loop:
