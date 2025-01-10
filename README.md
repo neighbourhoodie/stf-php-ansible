@@ -14,7 +14,7 @@ A control machine is set up with the Ansible software, which then communicates w
 ## Initialize machines
 
 > [!WARNING]
-> COMMENT OUT ansibe.cfg ssh_connection BEFORE RUNNING THIS
+> COMMENT OUT ansible.cfg ssh_connection BEFORE RUNNING THIS
 
 
 To initialize your machines, you need a `yml` file with all admins you want to add.
@@ -50,7 +50,7 @@ It does the following:
 
 > [!WARNING]
 > WE NEED A WAY TO DO THIS BETTER:
-> COMMENT IN ansibe.cfg ssh_connection BEFORE RUNNING THIS
+> COMMENT IN ansible.cfg ssh_connection BEFORE RUNNING THIS
 > 
 Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
 

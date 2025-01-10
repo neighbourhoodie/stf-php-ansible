@@ -82,3 +82,9 @@ The domain and email is saved as variables.
 Backups are run as part of the property role tasks.
 
 Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
+
+## Restore backup
+
+Restores are run as part of deployment tasks of the properties. They are initially commented out so that they are not run on the first deployment of the property.
+
+Once the first deployment and backup is done, the restore tasks can be commented in so that when next time deployment is run data can be restored directly from the backup.
