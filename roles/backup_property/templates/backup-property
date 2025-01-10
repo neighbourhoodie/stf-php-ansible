@@ -14,7 +14,7 @@ export RESTIC_PASSWORD="{{ restic_password }}"
 
 
 # Compress backup
-tar cf - {{ doc_root }} | bzip2 -9 > {{ backup_name }}.tar.bz2
+tar cf - {{ backup_path }} | bzip2 -9 > {{ backup_name }}.tar.bz2
 echo "[$(date)] Compression completed."
 
 # S3 Upload

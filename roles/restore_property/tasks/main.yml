@@ -5,7 +5,7 @@
 #     name: restore_property
 #   vars:
 #     property: property-name
-#     doc_root: "{{ property_document_root_path }}"
+#     backup_path: "{{ property_document_root_path }}"
 
 - name: Setting backup name
   set_fact:
@@ -34,7 +34,7 @@
 - name: Copy restored data to the doc root
   copy:
     src: "{{ restore_dir }}/{{ restore_name }}"
-    dest: "{{ doc_root }}"
+    dest: '{{ backup_path }}'
 
 - name: Remove temporary restore directory
   file:

@@ -105,7 +105,7 @@
     name: backup_property
   vars:
     property: museum
-    doc_root: "{{ museum_docroot }}/{{ museum_domain }}"
+    backup_path: '{{ museum_docroot }}/{{ museum_domain }}'
 
 # Run restore
 - name: Run restore tasks
@@ -113,4 +113,4 @@
     name: restore_property
   vars:
     property: museum
-    doc_root: "{{ museum_docroot }}/{{ museum_domain }}"
+    backup_path: '{{ museum_docroot }}/{{ museum_domain }}'
