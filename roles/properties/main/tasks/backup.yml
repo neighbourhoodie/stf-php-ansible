@@ -31,15 +31,15 @@
     dest: "/local/systems/backup-main"
     mode: "755"
 
-- name: Create MySQL dump and backup
+- name: Create cron for msqldump and backup
   cron:
     name: Daily MySQL Dump and Backup
-    job: "/local/scripts/backup-main"
+    job: "/local/systems/backup-main"
     special_time: "daily"
     state: present
 
 # Prune backups older than 7 days as mentioned here: https://github.com/php/systems/blob/master/prune-backups
-- name: Daily prune files older than 7 days
+- name: Create cron for daily prune files older than 7 days
   cron:
     name: Daily prune files older than 7 days
     job: |

@@ -1,9 +1,7 @@
 #!/bin/sh
 
-LOG_FILE="{{ backup_dir }}/backup.log"
-
 # Redirect all output to the backup.log
-exec > "$LOG_FILE" 2>&1
+exec > "{{ backup_dir }}/backup.log" 2>&1
 
 echo "[$(date)] Starting backup process..."
 
@@ -17,7 +15,7 @@ mysqldump -u nobody -Q phpmasterdb > {{ backup_dir }}/{{ backup_name }}/phpmaste
 echo "[$(date)] Database dump completed."
 
 # Compress backup
-tar cf - {{ backup_dir }}/{{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
+tar cvf - {{ backup_dir }}/{{ backup_name }} | bzip2 -9 > {{ backup_dir }}/{{ backup_name }}.tar.bz2
 echo "[$(date)] Compression completed."
 
 # Remove uncompressed backup directory
