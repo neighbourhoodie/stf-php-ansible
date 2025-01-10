@@ -22,7 +22,7 @@ restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ b
 echo "[$(date)] S3 upload completed."
 
 # Remove local backup data
-rm -rf {{ wiki_backup_dir }}/*
+rm -rf {{ backup_dir }}/*
 echo "[$(date)] Cleanup completed."
 echo
 echo "[$(date)] Backup process finished successfully."
