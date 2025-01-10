@@ -1,0 +1,39 @@
+#!/bin/sh
+
+cd {{ wiki_backup_dir }}
+
+# Redirect all output to the backup.log
+exec > "backup.log" 2>&1
+
+echo "[$(date)] Starting backup process..."
+
+# Environment Variables
+export AWS_ACCESS_KEY_ID="{{ DO_access_key }}"
+export AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}"
+export RESTIC_PASSWORD="{{ restic_password }}"
+
+
+# for debian etch, replace "media" by "data/media" as per https://github.com/php/systems/blob/master/backup-wiki-php-net#L57
+# Compress wiki data
+tar cf - data | bzip2 -9 > {{ backup_name_data }}.tar.bz2
+echo "[$(date)] Data compression completed."
+
+# Compress wiki media
+tar cf - media | bzip2 -9 > {{ backup_name_media }}.tar.bz2
+echo "[$(date)] Media compression completed."
+
+# S3 Upload: wiki data
+restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data backup {{ backup_name_data }}.tar.bz2
+echo "[$(date)] S3 upload wiki data completed."
+echo
+# S3 Upload: wiki data
+restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media backup {{ backup_name_media }}.tar.bz2
+echo "[$(date)] S3 upload wiki data completed."
+echo
+
+# Remove local backup data
+rm -rf {{ wiki_backup_dir }}/*
+echo "[$(date)] Cleanup completed."
+
+echo "[$(date)] Backup process finished successfully."
+

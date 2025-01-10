@@ -20,6 +20,9 @@ echo "[$(date)] Compression completed."
 # S3 Upload
 restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_name }}.tar.bz2
 echo "[$(date)] S3 upload completed."
+
+# Remove local backup data
+rm -rf {{ backup_dir }}/*
+echo "[$(date)] Cleanup completed."
 echo
 echo "[$(date)] Backup process finished successfully."
-
