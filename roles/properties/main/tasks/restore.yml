@@ -15,7 +15,7 @@
 
 - name: Extract the .tar backup file
   unarchive:
-    src: "{{ restore_dir }}/main-{{ ansible_date_time.date }}/local/backups/main-{{ ansible_date_time.date }}.tar.bz2"
+    src: "{{ restore_dir }}/main-{{ ansible_date_time.date }}/main-{{ ansible_date_time.date }}.tar.bz2"
     dest: "{{ restore_dir }}"
     remote_src: yes
 

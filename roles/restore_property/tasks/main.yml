@@ -6,9 +6,13 @@
 #   vars:
 #     property: property-name
 
+- name: Setting backup name
+  set_fact:
+    restore_name: "{{ property }}-{{ ansible_date_time.date }}"
+
 - name: Create temporary local restore directory if it doesn't exist
   file:
-    path: "{{ restore_dir }}"
+    path: "{{ restore_dir }}/{{ restore_name }}"
     state: directory
     mode: '755'
 
@@ -22,14 +26,16 @@
 
 - name: Extract the .tar backup file
   unarchive:
-    src: "{{ restore_dir }}/local/backups/{{ property }}-{{ ansible_date_time.date }}.tar.bz2"
-    dest: "{{ restore_dir }}"
+    src: "{{ restore_dir }}/{{ restore_name }}.tar.bz2"
+    dest: "{{ restore_dir }}/{{ restore_name }}"
     remote_src: yes
 
-# TODO: need to move data from restore_dir to doc_root
-# Then remove the restore_dir
+- name: Copy restored data to the doc root
+  copy:
+    src: "{{ restore_dir }}/{{ restore_name }}"
+    dest: "{{ doc_root }}"
 
-# - name: Remove temporary restore directory
-#   file:
-#     path: "{{ restore_dir }}/main-{{ ansible_date_time.date }}"
-#     state: absent
+- name: Remove temporary restore directory
+  file:
+    path: "{{ restore_dir }}/{{ restore_name }}"
+    state: absent
