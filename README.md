@@ -10,8 +10,48 @@ A control machine is set up with the Ansible software, which then communicates w
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
+
+## Initialize machines
+
+> [!WARNING]
+> COMMENT OUT ansibe.cfg ssh_connection BEFORE RUNNING THIS
+
+
+To initialize your machines, you need a `yml` file with all admins you want to add.
+An admin user has do have a `name`, `GA_file` is the absolute path to it's `.google_authenticator` file and the public keys are defined at `pubkeys`.
+
+The format looks like this, but there is also an example at `etc/admins.yml`:
+
+```yml
+admins:
+  - name: rocko
+    GA_file: /home/rocko/.google_authenticator
+    pubkeys:
+      - ssh-rsa abcxyz rocko.artischocko@mail.com
+      - ssh-ed25519 abcxyz artischocko@rocko.ie
+```
+
+You can add several publick keys, but you don't have to.
+Once you have set this up, you can run the playbook to intialise _all_ machines.
+This means: jumphosts, rsync and the services where the properties live on.
+
+```sh
+ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
+```
+
+It does the following:
+  1. Define all admin users (name, pubkey, Google Authenticator file)
+  2. Disable root login
+  3. Google Auth set up
+  4. Set up firewall rules to only log in via jump host IPs
+  
+
 ## Using Ansible
 
+> [!WARNING]
+> WE NEED A WAY TO DO THIS BETTER:
+> COMMENT IN ansibe.cfg ssh_connection BEFORE RUNNING THIS
+> 
 Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
 
 To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
@@ -32,42 +72,9 @@ ansible-playbook playbook.yml
 
 If you have more than one inventory (say one to try things out with and a live one), you can overwrite the default inventory of `inventory/php` (set in `ansible.cfg`) like so: `ansible-playbook -i inventory/other ...`
 
-## Prerequisites
-
-1. Create vault password 
-2. Create admins.yml file with GA files and pubkeys
-
-## Initialize machines
-
-To initialize your machines, run this playbook:
-
-```sh
-ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
-```
 > [!IMPORTANT]
-> You have to pass a file with all admins you want to add.
-> The format looks like this, but there is also an example at `etc/admins.yml`:
->
-
-```yml
-admins:
-  - name: rocko
-    GA_file: /home/rocko/.google_authenticator
-    pubkeys:
-      - ssh-rsa abcxyz rocko.artischocko@mail.com
-      - ssh-ed25519 abcxyz artischocko@rocko.ie
-```
-
-You can add several publick keys, but you don't have to.
-
-### What this does
-
-Initialise _all_ machines. This means: jumphosts, services where the properties live on and the rsync machine.
-
-  1. Define all admin users (name, pubkey, Google Authenticator file)
-  2. Disable root login
-  3. Google Auth set up
-  4. Set up firewall rules to only log in via jump host IPs
+> Before you start, you have to create a vault password. This can be anything.
+> See [the ansible user guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html) for details.
 
 
 ## Set up services
