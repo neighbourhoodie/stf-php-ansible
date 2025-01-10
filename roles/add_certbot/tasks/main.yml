@@ -36,12 +36,19 @@
     mode: '644'
 
 # Use certonly option to obtain the certificate without modifying the Apache configuration
-    # certbot certonly --apache --expand -n --agree-tos --email {{ email }} -d {{ domain | join(' -d ') }}
-- name: Get LetsEncrypt certificates
+- name: Get LetsEncrypt certificate for multiple domains
+  shell: |
+    certbot certonly --apache --expand -n --agree-tos --email {{ email }} -d {{ domain | join(' -d ') }}
+  args:
+    creates: "/etc/letsencrypt/live/{{ domain[0] }}/fullchain.pem"
+  when: domain is iterable and not domain is string
+
+- name: Get LetsEncrypt certificate for a single domain
   shell: |
     certbot certonly --apache --expand -n --agree-tos --email {{ email }} -d {{ domain }}
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+  when: domain is string
 
 - name: Set up renewal cron job
   cron:
