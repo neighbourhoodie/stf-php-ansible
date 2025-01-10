@@ -24,16 +24,22 @@ echo "[$(date)] Media compression completed."
 
 # S3 Upload: wiki data
 restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data backup {{ backup_name_data }}.tar.bz2
-echo "[$(date)] S3 upload wiki data completed."
-echo
-# S3 Upload: wiki data
+exit_status_data=$?
+echo "restic status for data: " $exit_status_data
+
+# S3 Upload: wiki media
 restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media backup {{ backup_name_media }}.tar.bz2
-echo "[$(date)] S3 upload wiki data completed."
-echo
+exit_status_media=$?
+echo "restic status for media: " $exit_status_media
 
-# Remove local backup data
-rm -rf {{ wiki_backup_dir }}/*
-echo "[$(date)] Cleanup completed."
+if [ $exit_status_data -eq 0 ] && [ $exit_status_media -eq 0 ]; then
+  echo "[$(date)] S3 upload completed."
 
-echo "[$(date)] Backup process finished successfully."
+  # Remove local backup data
+  rm -rf {{ wiki_backup_dir }}/*
+  echo "[$(date)] Cleanup completed."
+  echo "[$(date)] Backup process finished successfully."
 
+else
+  echo "[$(date)] Could not upload data."
+fi

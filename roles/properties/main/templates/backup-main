@@ -27,12 +27,18 @@ echo "[$(date)] Cleanup completed."
 
 # S3 Upload
 restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} backup {{ backup_name }}.tar.bz2
-echo "[$(date)] S3 upload completed."
+exit_status=$?
+echo "restic status: " $exit_status
 
-# Remove local backup data
-rm -rf {{ backup_dir }}/*
-echo "[$(date)] Cleanup completed."
+if [ $exit_status -eq 0 ]; then
+  echo "[$(date)] S3 upload completed."
 
-echo
-echo "[$(date)] Backup process finished successfully."
+  # Remove local backup data
+  rm -rf {{ backup_dir }}/*
+  echo "[$(date)] Cleanup completed."
+  echo "[$(date)] Backup process finished successfully."
+
+else
+  echo "[$(date)] Could not upload data."
+fi
 
