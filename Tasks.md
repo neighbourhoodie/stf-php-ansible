@@ -1,8 +1,9 @@
-- [Add a new user](#add-a-new-user)
-  - [prerequisites](#prerequisites)
-  - [Add an admin user](#add-an-admin-user)
-  - [Add a release-manager user](#add-a-release-manager-user)
-- [Delete a user](#delete-a-user)
+- [Utility tasks](#utility-tasks)
+  - [Add a new user](#add-a-new-user)
+    - [prerequisites](#prerequisites)
+    - [Add an admin user](#add-an-admin-user)
+    - [Add a release-manager user](#add-a-release-manager-user)
+    - [Delete a user](#delete-a-user)
 
 
 # Utility tasks
@@ -40,12 +41,15 @@ A release manager has only access to the downloads machine.
 ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
 ```
 
-This playbook creates a new user on jumphosts and the download-service.
+This playbook creates a new user on jumphosts and the downloads service.
 User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to the downloads service.
 
 ### Delete a user
 
-To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory.
+To delete a user you can run the `deleteUser` playbook.
+
+> [!NOTE]
+> You have to add the `username` of the user you want to delete, this is mandatory.
 
 You can also add the name of the host from where you want to delete the user e.g. `jumphost`, `museum`.
 If no host is provided it will be deleted from `all` by default.
