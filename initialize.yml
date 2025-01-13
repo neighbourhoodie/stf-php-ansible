@@ -52,6 +52,12 @@
       state: enabled
       policy: deny
 
+  - name: Create local directory
+    file:
+      state: directory
+      dest: /local
+      mode: '755'
+
   # This is the place for all the scripts
   - name: Create local systems directory
     file:
