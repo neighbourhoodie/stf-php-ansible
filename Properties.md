@@ -20,6 +20,12 @@ On the Rsync.php.net machine are 4 directories located:
 #### Content workflow
 rsync.php.net is a property. It pulls content from GitHub and puts the file to `/local/mirrors/{property}` on the rsync-machine. The property itself pulls the data from this folder via `rsync`. All this is handled by cronjobs.
 
+To initialize `rsync` run the following playbook.
+
+```sh
+ansible-playbook initRsync.yml
+```
+
 ```mermaid
 graph TD
     A[Git Repository] -->|Cronjob: Pull updates| B[Rsync Service]
@@ -34,19 +40,39 @@ graph TD
   ServiceMain --> Main[main]
   ServiceMain --> Gcov[gcov]
   ServiceMain --> Lxr[lxr]
-  
+
   ServiceWiki[Wiki Service] --> Wiki[wiki]
   ServiceMuseum[Museum Service] --> Museum[museum]
-  
+
   ServiceDownloads[Downloads Service] --> Downloads[downloads]
   ServiceDownloads --> Shared[shared]
 ```
 
 ### downloads
 
+The `downloads` service contains the property `downloads.php.net`. It has Apache 2 with mod_php and PHP 8.2.20 installed.
+
+To initialize `downloads` service run the following playbook to set up your machine:
+
 ```sh
-ansible-playbook addDownloads.yml
+ansible-playbook initServiceDownloads.yml
 ```
+
+`shared.php.net` property is initialized as part of the `downloads` playbook.
+
+#### Certificates
+
+`downloads` uses certbot SSL certificates.
+
+#### Cronjobs
+
+`update-downloads` script is run hourly to update the data for this property.
+
+#### Data and backup
+
+For `downloads` the entire downloads home directory is backed up. The disk is full of windows downloads and RC downloads, which are stored in people’s home directories.
+
+This is a redirect to `php.net`.
 
 <details>
   <summary>
@@ -61,7 +87,7 @@ ansible-playbook addDownloads.yml
 
 ### wiki
 
-This playbook installs the following:
+`wiki` is the PHP Wiki running dokuwiki for `wiki.php.net`. The playbook installs the following:
 
 - apache2
 - libapache2-mod-php8.2
@@ -69,19 +95,80 @@ This playbook installs the following:
 - certbot
 - python3-certbot-apache
 
+To initialize `wiki` service run the following playbook to set up your machine:
+
+```sh
+ansible-playbook initServiceWiki.yml
+```
+
 It copies the apache config file to wiki.conf and creates letsencrypt certificates.
 The domain and email is saved as variables.
 
+#### Certificates
+
+`wiki` uses certbot SSL certificates.
+
+#### Cronjobs
+
+`update-wiki` script is run daily to update data for this property.
+
+#### Data and backup
+
+For `wiki` the `data` and `media` folders from home root are backed up.
+
 ### museum
+
+The `museum` playbook sets up the property `museum.php.net` with NGINX together with the fancyindex module.
+
+To initialize `museum` service run the following playbook to set up your machine:
+
+```sh
+ansible-playbook initServiceMuseum.yml
+```
+
+#### Certificates
+
+`museum` uses self-signed SSL certificate.
+
+#### Data and backup
+
+Currently there is no Ansible task to add data to the service. Data is added manually to the local folder.
 
 ### main
 
+The `main` playbook sets up the `main.php.net` service. It has Apache 2 with mod_php and PHP 8.2.20 installed as well as the mariadb-server as its primary database.
+
+To initialize `main` service run the following playbook to set up your machine:
+
+```sh
+ansible-playbook initServiceMain.yml
+```
+
+The following properties are all initialized as part of the `main` property:
+
+- lxr.php.net
+- status.php.net
+- gcov.php.net
+
+#### Certificates
+
+Properties `main`, `lxr`, `status`, and `gcov` all have the same certificates as `lxr`. `lxr` uses certbot SSL certificates.
+
+#### Cronjobs
+
+`maintain-main` script is run hourly and weekly to update data for this property.
+
+#### Data and backup
+
+The backup done for the `phpmasterdb` MariaDB database using mysqldump. Currently the Ansible task creates an empty database and initially data have to be added manually.
 
 ## Backups
 
 Backups are run as part of the property role tasks.
 
 Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
+
+Backup tasks are run daily using a cronjob.
 
 ## Restore backup
 
