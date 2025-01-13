@@ -37,21 +37,21 @@
     dest: /tmp/ngx-fancyindex
 
 # We use self signed SSL certs, so --with-http_ssl_module is needed
-# Specify the installation paths via --sbin-path
+# default user is nobody
 - name: Compile and install Nginx with ngx-fancyindex
   shell: |
     cd /tmp/nginx-{{ nginx_version }}
-    ./configure --sbin-path=/usr/sbin/nginx --pid-path=/run/nginx.pid --with-http_ssl_module --add-module=/tmp/ngx-fancyindex
+    ./configure --user=www-data --group=www-data --with-http_ssl_module --add-module=/tmp/ngx-fancyindex
     make
     make install
   args:
     chdir: /tmp
-    creates: /usr/sbin/nginx
+    creates: /usr/local/nginx/sbin/nginx
 
-# Nice to have: make `nginx` available in Terminal
+# Make `nginx` available in Terminal
 - name: Make nginx available in PATH
   file:
-    src: /usr/sbin/nginx
+    src: /usr/local/nginx/sbin/nginx
     dest: /usr/bin/nginx
     state: link
 
@@ -64,17 +64,76 @@
   args:
     creates: /etc/ssl/certs/dhparam.pem
 
+# - name: Ensure Nginx user is set in nginx.conf
+#   lineinfile:
+#     path: /usr/local/nginx/conf/nginx.conf
+#     regexp: '^#?user'
+#     line: 'user www-data;'
+#     state: present
+
+- name: Set permissions for Nginx log and temp directory
+  file:
+    path: /usr/local/nginx
+    state: directory
+    mode: '755'
+    owner: www-data
+    group: www-data
+    recurse: yes
+
+- name: Set permissions for ssl certs
+  file:
+    path: "{{ item }}"
+    mode: '600'
+    owner: www-data
+    group: www-data
+  loop:
+    - /etc/ssl/certs/php-self-signed.key
+    - /etc/ssl/certs/php-self-signed.crt
+
+- name: Create Nginx systemd service file
+  template:
+    dest: /etc/systemd/system/nginx.service
+    src: templates/nginx.service
+    mode: '644'
+
+- name: Reload systemd daemon
+  command: systemctl daemon-reload
+
+- name: Create sites-enabled directory
+  file:
+    state: directory
+    dest: /usr/local/nginx/conf/sites-enabled
+    mode: '750'
+    owner: www-data
+    group: www-data
+
+# - name: Create Nginx error log file
+#   file:
+#     path: /usr/local/nginx/logs/error.log
+#     state: touch
+#     owner: www-data
+#     group: www-data
+#     mode: '644'
+
+# - name: Create Nginx client_body_temp directory
+#   file:
+#     path: /usr/local/nginx/client_body_temp
+#     state: directory
+#     owner: www-data
+#     group: www-data
+#     mode: '700'
+
 - name: Add museum nginx config file
   template:
     src: templates/museumweb.conf
-    dest: /etc/nginx/sites-enabled/default
+    dest: /usr/local/nginx/conf/sites-enabled/default
   notify: reload nginx
 
 - name: Include museum config in nginx.conf
   blockinfile:
     path: /usr/local/nginx/conf/nginx.conf
     block: |
-      include /etc/nginx/sites-enabled/*;
+      include /usr/local/nginx/conf/sites-enabled/*;
     insertafter: '^http\s*{'
     state: present
   notify: reload nginx
@@ -107,10 +166,10 @@
     property: museum
     backup_path: '{{ museum_docroot }}/{{ museum_domain }}'
 
-# Run restore
-- name: Run restore tasks
-  include_role:
-    name: restore_property
-  vars:
-    property: museum
-    backup_path: '{{ museum_docroot }}/{{ museum_domain }}'
+# This won't work on the first run
+# - name: Run restore tasks
+#   include_role:
+#     name: restore_property
+#   vars:
+#     property: museum
+#     backup_path: '{{ museum_docroot }}/{{ museum_domain }}'
