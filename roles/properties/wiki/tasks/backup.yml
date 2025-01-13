@@ -64,7 +64,7 @@
 
 - name: Create backup script
   template:
-    src: templates/backup-property
+    src: templates/backup-wiki
     dest: "/local/systems/backup-wiki"
     mode: "755"
 
