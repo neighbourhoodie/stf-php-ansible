@@ -31,7 +31,7 @@
 - name: Enable modules in Apache
   command: a2enmod {{ item }}
   args:
-    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+    creates: /etc/apache2/mods-enabled/{{ item }}.load
   loop:
     - ssl
     - php8.2

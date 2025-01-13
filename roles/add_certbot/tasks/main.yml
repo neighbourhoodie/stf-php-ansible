@@ -25,7 +25,7 @@
 - name: Enable SSL module in Apache
   command: a2enmod ssl
   args:
-    creates: /etc/apache2/mods-enabled/ssl.conf
+    creates: /etc/apache2/mods-enabled/ssl.load
   notify: reload apache
 
 # I don't like it, but I have no idea how to do it better

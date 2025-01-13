@@ -28,7 +28,7 @@
 - name: Enable Apache PHP module
   command: a2enmod {{ item }}
   args:
-    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+    creates: /etc/apache2/mods-enabled/{{ item }}.load
   loop:
     - php8.2
     - headers

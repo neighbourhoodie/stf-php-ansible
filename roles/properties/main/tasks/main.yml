@@ -32,7 +32,7 @@
 - name: Enable Apache modules
   command: a2enmod {{ item }}
   args:
-    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+    creates: /etc/apache2/mods-enabled/{{ item }}.load
   loop:
     - rewrite
     - php8.2
