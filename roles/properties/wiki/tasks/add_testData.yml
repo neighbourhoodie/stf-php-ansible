@@ -1,0 +1,26 @@
+# the next 3 tasks are for test purposes and can be removed once proper data is added to the machine
+- name: Test - Create test data directory
+  file:
+    path: "{{ wiki_home_path }}/{{item}}"
+    state: directory
+    mode: '755'
+  loop:
+    - data
+    - data/archive
+    - data/daily
+    - media
+    - media/archive
+    - media/daily
+
+- name: Test - Create test data in base directory
+  copy:
+    dest: "{{ wiki_home_path }}/data/test_data.txt"
+    content: |
+      This is test data for {{ wiki_home_path }}/data.
+
+- name: Test - Create test data in wiki home directory
+  copy:
+    dest: "{{ wiki_home_path }}/media/test_media.txt"
+    content: |
+      This is test data for {{ wiki_home_path }}/media.
+
