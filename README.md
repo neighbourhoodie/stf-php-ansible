@@ -6,35 +6,32 @@ We created this project as a shadow infra for [Ansible](https://docs.ansible.com
 
 Ansible is a configuration management tool that facilitates the task of setting up and maintaining remote servers.
 Ansible doesn’t require any special software to be installed on the nodes that will be managed with this tool.
-Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
+Ansible organizes system administration operations into a hierarchy of playbooks containing roles containing tasks.
 A control machine is set up with the Ansible software, which then communicates with the nodes via standard SSH.
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
-# NInette 
+## Prerequisite
 
-## prerequi
-- ansivbl config
-- jumphost domains at /bin/auth-jump0-1 and /etc/ssh_config_jump0-1
-- create vault password
-- Check the domain names at [inventory/php/group_vars/service.yml](inventory/php/group_vars/service.yml)
+- Ansible configuration: Before running the initialization script, comment out the `ssh_connection` setting in the ansible.cfg file. This ensures the initialization process is performed using the root user.
+- Update jumphost domains: Modify domains in /bin/auth-jump0-1 and /etc/ssh_config_jump0-1.
+- Create vault password: Before starting, you need to create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). You can run the following to change the password. You’ll be prompted to enter the old password and the new password.
+You can update the variable values as required.
 
-> [!WARNING]
-> COMMENT OUT ansible.cfg ssh_connection BEFORE RUNNING THIS
+```sh
+ansible-vault rekey inventory/php/group_vars/all.yml
+```
 
-> [!IMPORTANT]
-> Before you start, you have to create a vault password. This can be anything.
-> See [the ansible user guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html) for details.
-
+- Update Domain Names: Edit the domain names of the services in `inventory/php/group_vars/service.yml`.
 
 ## Initialize machines
 
 > [!NOTE]
-> This won't work when you haven't commented out the ssh_connection config in ansible.cfg
+> This won't work when the ssh_connection config in ansible.cfg is not commented out.
 >
 
 To initialize your machines, you need a `yml` file with all admins you want to add.
-An admin user has do have a `name`, `GA_file` is the absolute path to it's `.google_authenticator` file and the public keys are defined at `pubkeys`.
+An admin user has do have a `name`, `GA_file` which is the absolute path to it's `.google_authenticator` file and the public keys are defined at `pubkeys`.
 
 The format looks like this, but there is also an example at `etc/admins.yml`:
 
@@ -47,8 +44,8 @@ admins:
       - ssh-ed25519 abcxyz artischocko@rocko.ie
 ```
 
-You can add several publick keys, but you don't have to.
-Once you have set this up, you can run the playbook to intialise _all_ machines.
+You can add several public keys, but you don't have to.
+Once you have set this up, you can run the playbook to initialize _all_ machines.
 This means: jumphosts, rsync and the services where the properties live on.
 
 ```sh
@@ -60,16 +57,14 @@ It does the following:
   2. Disable root login
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
-  
+
 
 ## Using Ansible
 
-# Ninette
-
 Now the fun begins!
 
-- comment in ssh-config again
-- since root-ssh is disabled on all machines, ansible logs in as local user
+> [!NOTE]
+> Uncomment and re-enable the ssh_connection setting in the ansible.cfg file. After initialization, root SSH access is disabled on all machines. Since Ansible runs its tasks as a local user, you need to configure the ssh_connection setting to ensure proper functionality.
 
 To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
 
@@ -96,7 +91,7 @@ If you have more than one inventory (say one to try things out with and a live o
 > Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
 >
 
-If you wanna read more about the services, please do so at our [Services readme](Services.md).
+If you want to read more about the services, please do so at our [Services readme](Services.md).
 
 To set them up, run:
 
@@ -110,18 +105,14 @@ Now you are ready to go! :tada:
 
 ## Access control
 
-# Ninette
+Access control to the jumphost and service machines is easily configured using the initialize playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
 
-Access control
-set up easily with ansible
-ssh keys and Google Authenticator 
+Some user management tasks are also handled via Ansible, including:
 
-How to run the tasks:
-- add User admin or release manager
-- delete this user 
+- Adding an admin user and a release manager user.
+- Deleting a specified user.
 
-There is a subset of User Management Tasks at [Users.md](Users.md).
-
+Details of the user management tasks are outlined in [Users.md](Users.md).
 
 # Additional tasks
 
@@ -151,4 +142,3 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 ```
 
 And then you initialise the authentication with `bin/auth-jump1` like before.
-
