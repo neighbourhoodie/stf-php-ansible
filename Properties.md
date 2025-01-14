@@ -2,11 +2,9 @@
 
 Each property is implemented as an Ansible role located in the [roles/properties](roles/properties) directory.
 
-Some properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
+All properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
 
-## Jumphosts
-
-## Rsync
+## Rsync Service
 
 This service keeps repositories up-to-date by performing a git checkout via a cron job.
 The update process is automated to ensure the latest version of the code is always available.
@@ -19,64 +17,187 @@ On the Rsync.php.net machine are 4 directories located:
 
 `/local/repos`: Another directory where the repositories are stored and updated.
 
-`/local/museumweb`: This is the content of museum. It is not a git repository and not be handled by the update scripts.
-
-### Workflow
+#### Content workflow
+rsync.php.net is a property. It pulls content from GitHub and puts the file to `/local/mirrors/{property}` on the rsync-machine.
+The property itself pulls the data from this folder via `rsync`. All this is handled by cronjobs:
 
 ```mermaid
-%%{init: {"flowchart": {"htmlLabels": false}} }%%
-flowchart TD
-  A[Start: Cron Job] -- triggers --> B["/local/systems/update-everything"]
-  B --> C[Rsync Pulls Latest Changes from GitHub]
-  C --> D[Repositories are up-to-date]
+graph TD
+    A[Git Repository] -->|Cronjob: Pull updates| B[Rsync Service]
+    B -->|Cronjob: Pull updates| C[Property Local Repository]
+    C -->|Deploy to| D[Document Root]
+```
+
+To initialize `rsync` run the following playbook.
+```sh
+ansible-playbook initRsync.yml
 ```
 
 ## Services
+
+### Main Service
+
+`main` is the PHP service running for `downloads.php.net` and `shared.php.net`.
+
+The `main` property is at [roles/properties/main](roles/properties/main).
+The `status` property is at [roles/properties/status](roles/properties/status).
+The `gcov` property is at [roles/properties/gcov](roles/properties/gcov).
+The `lxr` property is at [roles/properties/lxr](roles/properties/lxr).
+
 ```mermaid
-graph TD
-  ServiceMain[Main Service] --> Status[status]
-  ServiceMain --> Main[main]
-  ServiceMain --> Gcov[gcov]
-  ServiceMain --> Lxr[lxr]
-  
-  ServiceWiki[Wiki Service] --> Wiki[wiki]
-  ServiceMuseum[Museum Service] --> Museum[museum]
-  
-  ServiceDownloads[Downloads Service] --> Downloads[downloads]
-  ServiceDownloads --> Shared[shared]
+classDiagram
+  class MainService { 
+    ansible-playbook initServiceMain.yml
+    All properties use the same certbot SSL certificate (lxr) }
+  class main {
+    ✦ Services ✦:
+    - apache2
+    - libapache2-mod-php8.2
+    - php8.2
+    - mariadb-server
+
+    ✦ Cronjobs ✦:
+    hourly: maintain-main script
+    daily: backup-main script
+    daily: prune backups older than 7 days on S3
+    weekly: maintain-main script
+
+    ✦ Backup ✦:
+    Backups for phpmasterdb using mysqldump
+  }
+  class status { php.net(redirect) }
+  class gcov { app.codecov.io/gh/php/php-src(redirect) }
+  class lxr { heap.space(redirect) }
+
+  MainService --> status
+  MainService --> main
+  MainService --> gcov
+  MainService --> lxr
 ```
 
-### downloads
+### Downloads Service
 
-```sh
-ansible-playbook addDownloads.yml
+`downloads` is the PHP service running for `downloads.php.net` and `shared.php.net`.
+
+The `downloads` property is at [roles/properties/downloads](roles/properties/downloads).
+The `shared` property is at [roles/properties/shared](roles/properties/shared).
+
+```mermaid
+classDiagram
+  class DownloadsService { ansible-playbook initServiceDownloads.yml }
+  class Downloads {
+    ✦ Services ✦: 
+    - apache2
+    - libapache2-mod-php8.2
+    - php8.2
+    - certbot
+    - python3-certbot-apache
+
+    ✦ SSL ✦:
+    Certbot
+
+    ✦ Cronjobs ✦:
+    hourly: update-downloads script
+    daily: backup-downloads
+    daily: prune backups older than 7 days on S3
+
+    ✦ Backup ✦:
+    Backups for downloads home directory
+  }
+  class Shared {
+    ✦ Services ✦:
+    - apache2
+    - libapache2-mod-php8.2
+    - php8.2
+    - apache2-utils
+
+    ✦ SSL ✦:
+    Self-signed SSL certs
+
+    ✦ Cronjobs ✦:
+    hourly update-shared script
+    php.net(redirect)
+  }
+
+  DownloadsService --> Downloads 
+  DownloadsService --> Shared 
 ```
 
-<details>
-  <summary>
-    <h3>What this does</h3>
-  </summary>
 
-  It puts the `apache.conf`, a file with some secrets to `/local/this-box`.
-  Further, it copies the apache config files for `downloads.php.net` and `shared.php.net`.
-  It creates letsencrypt-certs for `downloads.php.net` and self-signed SSL certs for `shared.php.net`.
+### Wiki Service
 
-</details>
+`wiki` is the PHP Wiki running dokuwiki for `wiki.php.net`.
+The wiki property is at [roles/properties/wiki](roles/properties/wiki).
 
-### wiki
+```mermaid
+classDiagram
+  class WikiService { ansible-playbook initServiceWiki.yml }
+  
+  class Wiki {
+    ✦ Services ✦:
+    - apache2
+    - libapache2-mod-php8.2
+    - php8.2
+    - certbot
+    - python3-certbot-apache
 
-This playbook installs the following:
+    ✦ SSL ✦:
+    Certbot
 
-- apache2
-- libapache2-mod-php8.2
-- php8.2
-- certbot
-- python3-certbot-apache
+    ✦ Cronjobs ✦:
+    daily: update-wiki script
+    daily: backup-wiki script
+    daily: prune backups on S3 so there are always 2 backups there
+    ✦ Backup ✦:
+    data and media folders backed up
+  }
 
-It copies the apache config file to wiki.conf and creates letsencrypt certificates.
-The domain and email is saved as variables.
+  WikiService --> Wiki
+```
 
-### museum
 
-### main
+### Museum Service
 
+`museum` is the PHP Museum running on `museum.php.net`.
+The museum property is at [roles/properties/museum](roles/properties/museum).
+
+```mermaid
+classDiagram
+  class MuseumService { ansible-playbook initServiceMuseum.yml }
+  
+  class Museum {
+    Note that data is manually added to /local/www/museum_domain(via scp)
+    ✦ Services ✦:
+    - Nginx with fancyindex module
+    - libapache2-mod-php8.2
+    - php8.2
+    - certbot
+    - python3-certbot-apache
+
+    ✦ SSL ✦:
+    Self-signed SSL
+    
+    ✦ Cronjobs ✦:
+    daily: backup-museum
+    daily: prune backups older than 7 days on S3
+
+    ✦ Backup ✦:
+    files folder backed up
+  }
+
+  MuseumService --> Museum
+```
+
+## Backups
+
+Backups are run as part of the property role tasks. The tasks are located at `[property-name]/tasks/backup.yml`.
+
+Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
+
+Backup tasks are run daily using a cronjob.
+
+## Restore backup
+
+Restores are run as part of deployment tasks of the properties. They are initially commented out so that they are not run on the first deployment of the property.
+
+Once the first deployment and backup is done, the restore tasks can be commented in so that when next time deployment is run data can be restored directly from the backup.

@@ -8,7 +8,7 @@
 # - name: Enable SSL module in Apache
 #   command: a2enmod ssl
 #     args:
-#       creates: /etc/apache2/mods-enabled/ssh.conf
+#       creates: /etc/apache2/mods-enabled/ssh.load
 #   notify: reload apache
 #
 # When you use it with Nginx, you have to add the DH group

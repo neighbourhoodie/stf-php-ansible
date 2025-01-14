@@ -1,4 +1,5 @@
 # This role is being used by multiple properties. It creates a local restore directory and restore backup using Restic.
+
 # Example usage:
 # - name: Run restore tasks
 #   include_role:

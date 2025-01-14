@@ -10,7 +10,7 @@
 - name: Check if users ssh_key exists in repo
   local_action:
     module: stat
-    path: "{{role_path}}/templates/ssh_keys/{{ username }}"
+    path: "{{ role_path }}/templates/ssh_keys/{{ username }}"
   register: ssh_key
   vars:
     ansible_become: false

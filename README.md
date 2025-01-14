@@ -10,8 +10,48 @@ A control machine is set up with the Ansible software, which then communicates w
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
+
+## Initialize machines
+
+> [!WARNING]
+> COMMENT OUT ansible.cfg ssh_connection BEFORE RUNNING THIS
+
+
+To initialize your machines, you need a `yml` file with all admins you want to add.
+An admin user has do have a `name`, `GA_file` is the absolute path to it's `.google_authenticator` file and the public keys are defined at `pubkeys`.
+
+The format looks like this, but there is also an example at `etc/admins.yml`:
+
+```yml
+admins:
+  - name: rocko
+    GA_file: /home/rocko/.google_authenticator
+    pubkeys:
+      - ssh-rsa abcxyz rocko.artischocko@mail.com
+      - ssh-ed25519 abcxyz artischocko@rocko.ie
+```
+
+You can add several publick keys, but you don't have to.
+Once you have set this up, you can run the playbook to intialise _all_ machines.
+This means: jumphosts, rsync and the services where the properties live on.
+
+```sh
+ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
+```
+
+It does the following:
+  1. Define all admin users (name, pubkey, Google Authenticator file)
+  2. Disable root login
+  3. Google Auth set up
+  4. Set up firewall rules to only log in via jump host IPs
+  
+
 ## Using Ansible
 
+> [!WARNING]
+> WE NEED A WAY TO DO THIS BETTER:
+> COMMENT IN ansible.cfg ssh_connection BEFORE RUNNING THIS
+> 
 Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
 
 To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
@@ -32,37 +72,10 @@ ansible-playbook playbook.yml
 
 If you have more than one inventory (say one to try things out with and a live one), you can overwrite the default inventory of `inventory/php` (set in `ansible.cfg`) like so: `ansible-playbook -i inventory/other ...`
 
-## Initialize machines
-
-To initialize your machines, run this playbook:
-
-```sh
-ansible-playbook initialize.yml --extra-vars "@/path/to/admins.yml"
-```
 > [!IMPORTANT]
-> You have to pass a file with all admins you want to add.
-> The format looks like this, but there is also an example at `etc/admins.yml`:
->
+> Before you start, you have to create a vault password. This can be anything.
+> See [the ansible user guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html) for details.
 
-```yml
-admins:
-  - name: rocko
-    GA_file: /home/rocko/.google_authenticator
-    pubkeys:
-      - ssh-rsa abcxyz rocko.artischocko@mail.com
-      - ssh-ed25519 abcxyz artischocko@rocko.ie
-```
-
-You can add several publick keys, but you don't have to.
-
-### What this does
-
-Initialise _all_ machines. This means: jumphosts, services where the properties live on and the rsync machine.
-
-  1. Define all admin users (name, pubkey, Google Authenticator file)
-  2. Disable root login
-  3. Google Auth set up
-  4. Set up firewall rules to only log in via jump host IPs
 
 ## Set up services
 
@@ -79,6 +92,28 @@ To set them up, run:
 - museum: `ansible-playbook initServiceMuseum.yml`
 - main: `ansible-playbook initServiceMain.yml`
 
+Now you are ready to go! :tada:
+
+> [!TIP]
+> There is a subset of Utility Tasks at [Tasks.md](Tasks.md).
+> 
+
+
+# Additional tasks
+
+## Using encrypted vars
+
+Edit the all.yml file:
+
+```shell
+EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml
+```
+
+You will be prompted for your vault password.
+
+Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
+
+
 ## Changing the Jumphost
 
 By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is .gitignored) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
@@ -89,74 +124,6 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 ```
 
 And then you initialise the authentication with `bin/auth-jump1` like before.
-
-
-# Utility tasks
-
-## Add a new user
-
-To add a new user, an admin or a release-manager, you use the related playbooks.
-
-### prerequisites
-
-- You need the `.google_authenticator` file somewhere on your local machine
-- You have to put the ssh key to `roles/add_ssh_key/templates/ssh_keys/username`.
-
-The playbooks take the required parameters `username` and `path_to_google_auth`:
-
-> [!NOTE]
-> The name of the ssh_key file has to be the same as the username.
-
-It creates a linux user and copies the `.google_authenticator` file and the `authorized_keys` to the user's homedir.
-
-### Add an admin user
-
-```shell
-ansible-playbook addAdminUser.yml --extra-vars "username=rocko path_to_google_auth=absolute/path/to/.google_authenticator"
-```
-
-This playbook creates a new user on jumphosts and all services.
-User group is `sudo`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to everywhere.
-
-### Add a release-manager user
-
-A release manager has only access to the downloads machine.
-
-```shell
-ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_to_google_auth=absolute/path/to/.google_authenticator"
-```
-
-This playbook creates a new user on jumphosts and the download-service.
-User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to the downloads service.
-
-### Delete a user
-
-To delete a user you can run the `deleteUser` playbook. You have to add the `username` of the user you want to delete, this is mandatory.
-
-You can also add the name of the host from where you want to delete the user e.g. `jumphost`, `museum`.
-If no host is provided it will be deleted from `all` by default.
-
-```shell
-ansible-playbook deleteUser.yml --extra-vars "username=USERNAME host=HOSTNAME"
-```
-
----
-
-## Backups
-
-Backups are run as part of the property role tasks.
-
-Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
-
-## Using encrypted vars
-
-1. create file `EDITOR=nano ansible-vault create inventory/php/group_vars/all.yml`
-2. edit file `EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml`
-
-(Password was added by the create command: - 123)
-
-Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
-
 
 ## Using different jumphosts
 

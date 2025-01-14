@@ -10,6 +10,13 @@
     state: present
     update_cache: yes
 
+- name: Run certbot tasks
+  include_role:
+    name: add_certbot
+  vars:
+    domain: "{{ downloads_domain }}"
+    email: "{{ systems_email }}"
+
 - name: create local box
   file:
     state: directory
@@ -35,7 +42,7 @@
 - name: Enable Apache php and rewrite modules
   command: a2enmod {{ item }}
   args:
-    creates: /etc/apache2/mods-enabled/{{ item }}.conf
+    creates: /etc/apache2/mods-enabled/{{ item }}.load
   loop:
     - rewrite
     - php8.2
@@ -44,13 +51,6 @@
 - name: Enable config file
   command: a2ensite downloads.php.net.conf
   notify: reload apache
-
-- name: Run certbot tasks
-  include_role:
-    name: add_certbot
-  vars:
-    domain: "{{ downloads_domain }}"
-    email: "{{ systems_email }}"
 
 - name: Ensure Apache is started and enabled
   service:

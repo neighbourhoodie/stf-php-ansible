@@ -37,7 +37,7 @@
 
 - name: Create backup script
   template:
-    src: templates/backup-property
+    src: "{{ role_path }}/templates/backup-property"
     dest: "/local/systems/backup-{{ property }}"
     mode: "755"
 

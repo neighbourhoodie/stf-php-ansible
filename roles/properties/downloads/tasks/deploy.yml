@@ -16,9 +16,11 @@
     special_time: hourly
     job: "/local/systems/update-downloads"
 
-- name: Run restore tasks
-  include_role:
-    name: restore_property
-  vars:
-    property: downloads
-    backup_path: '{{ downloads_home_dir }}'
+# The restore role is commented out when initializing the property for the first time
+# This can be commented in when backup data is run at least once and available foe restore
+# - name: Run restore tasks
+#   include_role:
+#     name: restore_property
+#   vars:
+#     property: downloads
+#     backup_path: '{{ downloads_home_dir }}'
