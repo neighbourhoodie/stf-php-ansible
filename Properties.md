@@ -129,7 +129,7 @@ classDiagram
 `wiki` is the PHP Wiki running dokuwiki for `wiki.php.net`.
 The wiki property is at [roles/properties/wiki](roles/properties/wiki).
 
-<div class="mermaid">
+```mermaid
 classDiagram
   class WikiService { ansible-playbook initServiceWiki.yml }
   
@@ -141,9 +141,9 @@ classDiagram
     - certbot
     - python3-certbot-apache
 
-    <strong>SSL</strong>:
+    **SSL**:
     Certbot
-<hr>
+
     **Cronjobs**:
     daily: update-wiki script
     daily: backup-wiki script
@@ -153,7 +153,7 @@ classDiagram
   }
 
   WikiService --> Wiki
-</div>
+```
 
 
 ### Museum Service
@@ -163,7 +163,7 @@ The museum property is at [roles/properties/museum](roles/properties/museum).
 
 ```mermaid
 classDiagram
-  class MuseumService {  ansible-playbook initServiceMuseum.yml }
+  class MuseumService { ansible-playbook initServiceMuseum.yml }
   
   class Museum {
     Note that data is manually added to /local/www/museum_domain(via scp)
@@ -176,8 +176,8 @@ classDiagram
 
     **SSL**:
     Self-signed SSL
-
-    **Cronjobs**:
+    
+    "`**Cronjobs**:`"
     daily: backup-museum
     daily: prune backups older than 7 days on S3
 
