@@ -50,19 +50,19 @@ classDiagram
     ansible-playbook initServiceMain.yml
     All properties use the same certbot SSL certificate (lxr) }
   class main {
-    **Services**:
+    ✦ Services ✦:
     - apache2
     - libapache2-mod-php8.2
     - php8.2
     - mariadb-server
 
-    **Cronjobs**:
+    ✦ Cronjobs ✦:
     hourly: maintain-main script
     daily: backup-main script
     daily: prune backups older than 7 days on S3
     weekly: maintain-main script
 
-    **Backup**:
+    ✦ Backup ✦:
     Backups for phpmasterdb using mysqldump
   }
   class status { php.net(redirect) }
@@ -86,35 +86,35 @@ The `shared` property is at [roles/properties/shared](roles/properties/shared).
 classDiagram
   class DownloadsService { ansible-playbook initServiceDownloads.yml }
   class Downloads {
-    **Services**: 
+    ✦ Services ✦: 
     - apache2
     - libapache2-mod-php8.2
     - php8.2
     - certbot
     - python3-certbot-apache
 
-    **SSL**:
+    ✦ SSL ✦:
     Certbot
 
-    **Cronjobs**:
+    ✦ Cronjobs ✦:
     hourly: update-downloads script
     daily: backup-downloads
     daily: prune backups older than 7 days on S3
 
-    **Backup**:
+    ✦ Backup ✦:
     Backups for downloads home directory
   }
   class Shared {
-    **Services**:
+    ✦ Services ✦:
     - apache2
     - libapache2-mod-php8.2
     - php8.2
     - apache2-utils
 
-    **SSL**:
+    ✦ SSL ✦:
     Self-signed SSL certs
 
-    **Cronjobs**:
+    ✦ Cronjobs ✦:
     hourly update-shared script
     php.net(redirect)
   }
@@ -134,21 +134,21 @@ classDiagram
   class WikiService { ansible-playbook initServiceWiki.yml }
   
   class Wiki {
-    **Services**:
+    ✦ Services ✦:
     - apache2
     - libapache2-mod-php8.2
     - php8.2
     - certbot
     - python3-certbot-apache
 
-    **SSL**:
+    ✦ SSL ✦:
     Certbot
 
-    **Cronjobs**:
+    ✦ Cronjobs ✦:
     daily: update-wiki script
     daily: backup-wiki script
     daily: prune backups on S3 so there are always 2 backups there
-    **Backup**:
+    ✦ Backup ✦:
     data and media folders backed up
   }
 
@@ -167,21 +167,21 @@ classDiagram
   
   class Museum {
     Note that data is manually added to /local/www/museum_domain(via scp)
-    **Services**:
+    ✦ Services ✦:
     - Nginx with fancyindex module
     - libapache2-mod-php8.2
     - php8.2
     - certbot
     - python3-certbot-apache
 
-    **SSL**:
+    ✦ SSL ✦:
     Self-signed SSL
     
-    "`**Cronjobs**:`"
+    ✦ Cronjobs ✦:
     daily: backup-museum
     daily: prune backups older than 7 days on S3
 
-    **Backup**:
+    ✦ Backup ✦:
     files folder backed up
   }
 
