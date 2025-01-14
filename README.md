@@ -125,14 +125,3 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 
 And then you initialise the authentication with `bin/auth-jump1` like before.
 
-## Using different jumphosts
-
-You can specify different hosts that you want to run your playbook on.
-Currently we have two jumphosts set up: one in Europe (ams3) and one in North America (nyc1).
-By default the host is set to the jumphost in Europe (ams3).
-
-To change jumphost to a different one use the `--extra-vars` argument as follows:
-
-```shell
-ansible-playbook [Add playbook yml file] --extra-vars "host=[ADD HOST e.g. nyc1]"
-```
