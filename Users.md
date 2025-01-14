@@ -1,12 +1,4 @@
-- [Utility tasks](#utility-tasks)
-  - [Add a new user](#add-a-new-user)
-    - [prerequisites](#prerequisites)
-    - [Add an admin user](#add-an-admin-user)
-    - [Add a release-manager user](#add-a-release-manager-user)
-    - [Delete a user](#delete-a-user)
-
-
-# Utility tasks
+# Access control
 
 ## Add a new user
 

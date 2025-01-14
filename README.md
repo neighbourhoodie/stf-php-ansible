@@ -6,16 +6,32 @@ We created this project as a shadow infra for [Ansible](https://docs.ansible.com
 
 Ansible is a configuration management tool that facilitates the task of setting up and maintaining remote servers.
 Ansible doesn’t require any special software to be installed on the nodes that will be managed with this tool.
+Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
 A control machine is set up with the Ansible software, which then communicates with the nodes via standard SSH.
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
+# NInette 
 
-## Initialize machines
+## prerequi
+- ansivbl config
+- jumphost domains at /bin/auth-jump0-1 and /etc/ssh_config_jump0-1
+- create vault password
+- Check the domain names at [inventory/php/group_vars/service.yml](inventory/php/group_vars/service.yml)
 
 > [!WARNING]
 > COMMENT OUT ansible.cfg ssh_connection BEFORE RUNNING THIS
 
+> [!IMPORTANT]
+> Before you start, you have to create a vault password. This can be anything.
+> See [the ansible user guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html) for details.
+
+
+## Initialize machines
+
+> [!NOTE]
+> This won't work when you haven't commented out the ssh_connection config in ansible.cfg
+>
 
 To initialize your machines, you need a `yml` file with all admins you want to add.
 An admin user has do have a `name`, `GA_file` is the absolute path to it's `.google_authenticator` file and the public keys are defined at `pubkeys`.
@@ -48,11 +64,12 @@ It does the following:
 
 ## Using Ansible
 
-> [!WARNING]
-> WE NEED A WAY TO DO THIS BETTER:
-> COMMENT IN ansible.cfg ssh_connection BEFORE RUNNING THIS
-> 
-Ansible organises system administration operations into a hierarchy of playbooks containing roles containing tasks.
+# Ninette
+
+Now the fun begins!
+
+- comment in ssh-config again
+- since root-ssh is disabled on all machines, ansible logs in as local user
 
 To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
 
@@ -72,10 +89,6 @@ ansible-playbook playbook.yml
 
 If you have more than one inventory (say one to try things out with and a live one), you can overwrite the default inventory of `inventory/php` (set in `ansible.cfg`) like so: `ansible-playbook -i inventory/other ...`
 
-> [!IMPORTANT]
-> Before you start, you have to create a vault password. This can be anything.
-> See [the ansible user guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html) for details.
-
 
 ## Set up services
 
@@ -83,7 +96,8 @@ If you have more than one inventory (say one to try things out with and a live o
 > Before you run this, you should modify the domain names at `inventory/php/group_vars/service.yml`
 >
 
-If you wanna read more about the services, please do so at our [Properties readme](Properties.md).
+If you wanna read more about the services, please do so at our [Services readme](Services.md).
+
 To set them up, run:
 
 - rsync: `ansible-playbook initRsync.yml`
@@ -94,16 +108,29 @@ To set them up, run:
 
 Now you are ready to go! :tada:
 
-> [!TIP]
-> There is a subset of Utility Tasks at [Tasks.md](Tasks.md).
-> 
+## Access control
+
+# Ninette
+
+Access control
+set up easily with ansible
+ssh keys and Google Authenticator 
+
+How to run the tasks:
+- add User admin or release manager
+- delete this user 
+
+There is a subset of User Management Tasks at [Users.md](Users.md).
 
 
 # Additional tasks
 
 ## Using encrypted vars
 
-Edit the all.yml file:
+Ansible Vault encrypts variables and files so you can protect sensitive content such as passwords or keys rather than leaving it visible as plaintext in playbooks or roles.
+The encrypted passwords for _all_ hosts are at [inventory/php/group_vars/all.yml](inventory/php/group_vars/all.yml).
+
+To edit the all.yml file do:
 
 ```shell
 EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml
