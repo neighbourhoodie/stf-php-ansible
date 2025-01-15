@@ -27,6 +27,7 @@ ansible-vault rekey inventory/php/group_vars/all.yml
   - If you don't want to add the password as plain text in the file system you can edit `ansible.cfg`.
   - There's also the option to read the secret from a password manager. Let us know if you are interested in that.
 - Update Domain Names: Edit the domain names of the services in `inventory/php/group_vars/service.yml`.
+- Update the encrypted variables in the vault. You can do so by running `ansible-vault edit inventory/php/group_vars/all.yml`
 
 
 ## Initialize machines

@@ -2,10 +2,11 @@
   file:
     state: directory
     dest: "{{ museum_docroot }}/{{ museum_domain }}"
-    mode: '750'
+    mode: '755'
+    recurse: yes
 
 - name: Fetch content for museum
   command: "scp -r {{ museum_source }}/files {{ museum_docroot }}/{{ museum_domain }}"
 
 - name: Fetch files.txt for museum
-  command: "scp {{ museum_souce }}/files.txt {{ museum_docroot }}/{{ museum_domain }}"
+  command: "scp {{ museum_source }}/files.txt {{ museum_docroot }}/{{ museum_domain }}"
