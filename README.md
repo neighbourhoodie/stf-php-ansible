@@ -131,7 +131,6 @@ You will be prompted for your vault password.
 
 Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
 
-
 ## Changing the Jumphost
 
 By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is .gitignored) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
@@ -141,4 +140,8 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 +ssh_common_args = -F etc/ssh_config_jump1
 ```
 
-And then you initialise the authentication with `bin/auth-jump1` like before.
+And then you initialize the authentication with `bin/auth-jump1` like before.
+
+## Scripts
+
+The [PHP Systems](https://github.com/php/systems) repository hosts a number of scripts to maintain the services. Some of these scripts have been added to the service playbooks. A full list of the scripts and their usage are outlined in the [SystemScripts.md](SystemScripts.md). This can act as a reference for future additions to the Ansible playbooks.
