@@ -7,9 +7,10 @@
   file:
     state: directory
     dest: /local/mirrors/php-main-web/public/fetch
-    mode: '644'
+    mode: '755'
     group: 'www-data'
     owner: 'www-data'
+    recurse: yes
 
 - name: Add php.net.zone
   template:
@@ -29,6 +30,9 @@
     - maintain-main
     - maintain-master-dns.php
     - process-main-zone-file
+
+- name: Fetch main content
+  command: /local/systems/maintain-main
 
 # Cron jobs for maintain-main
 - name: Create a cron job to run maintain-main hourly
