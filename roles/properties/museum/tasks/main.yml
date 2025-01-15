@@ -158,6 +158,9 @@
 #     src: "{{ item }}"
 #     loop: "{{ myra_hosts }}"
 
+# fetch the content from the encrypted museum source
+- include_tasks: deploy.yml
+
 # Run backup cronjob
 - name: Run backup tasks
   include_role:

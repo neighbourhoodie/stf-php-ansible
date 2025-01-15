@@ -1,0 +1,11 @@
+- name: Create local directory to store museum content
+  file:
+    state: directory
+    dest: "{{ museum_docroot }}/{{ museum_domain }}"
+    mode: '750'
+
+- name: Fetch content for museum
+  command: "scp -r {{ museum_source }}/files {{ museum_docroot }}/{{ museum_domain }}"
+
+- name: Fetch files.txt for museum
+  command: "scp {{ museum_souce }}/files.txt {{ museum_docroot }}/{{ museum_domain }}"
