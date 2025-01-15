@@ -1,5 +1,6 @@
 # Ansible for PHP with STA project
 
+
 ## Proposal
 
 We created this project as a shadow infra for [Ansible](https://docs.ansible.com/ansible/latest/index.html) to automate server infrastructure setup.
@@ -10,6 +11,7 @@ Ansible organizes system administration operations into a hierarchy of playbooks
 A control machine is set up with the Ansible software, which then communicates with the nodes via standard SSH.
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
+
 
 ## Prerequisite
 
@@ -24,11 +26,13 @@ ansible-vault rekey inventory/php/group_vars/all.yml
 
 - Update Domain Names: Edit the domain names of the services in `inventory/php/group_vars/service.yml`.
 
+
 ## Initialize machines
 
 > [!NOTE]
 > This won't work when the ssh_connection config in ansible.cfg is not commented out.
 >
+
 
 ### Host key checking
 
@@ -81,7 +85,7 @@ It does the following:
 
 ## Using Ansible
 
-Now the fun begins!
+Now the fun begins! 🥳
 
 > [!NOTE]
 > Uncomment and re-enable the ssh_connection setting in the ansible.cfg file. After initialization, root SSH access is disabled on all machines. Since Ansible runs its tasks as a local user, you need to configure the ssh_connection setting to ensure proper functionality.
@@ -123,6 +127,7 @@ To set them up, run:
 
 Now you are ready to go! :tada:
 
+
 ## Access control
 
 Access control to the jumphost and service machines is easily configured using the initialize playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
@@ -134,7 +139,9 @@ Some user management tasks are also handled via Ansible, including:
 
 Details of the user management tasks are outlined in [Users.md](Users.md).
 
+
 # Additional tasks
+
 
 ## Using encrypted vars
 
@@ -151,6 +158,7 @@ You will be prompted for your vault password.
 
 Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
 
+
 ## Changing the Jumphost
 
 By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is .gitignored) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
@@ -161,6 +169,7 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 ```
 
 And then you initialize the authentication with `bin/auth-jump1` like before.
+
 
 ## Scripts
 

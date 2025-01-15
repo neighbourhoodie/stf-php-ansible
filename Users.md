@@ -1,8 +1,10 @@
 # Access control
 
+
 ## Add a new user
 
 To add a new user, an admin or a release-manager, you use the related playbooks.
+
 
 ### prerequisites
 
@@ -16,6 +18,7 @@ The playbooks take the required parameters `username` and `path_to_google_auth`:
 
 It creates a linux user and copies the `.google_authenticator` file and the `authorized_keys` to the user's homedir.
 
+
 ### Add an admin user
 
 ```shell
@@ -24,6 +27,7 @@ ansible-playbook addAdminUser.yml --extra-vars "username=rocko path_to_google_au
 
 This playbook creates a new user on jumphosts and all services.
 User group is `sudo`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to everywhere.
+
 
 ### Add a release-manager user
 
@@ -35,6 +39,7 @@ ansible-playbook addReleaseManagerUser.yml --extra-vars "username=tacocat path_t
 
 This playbook creates a new user on jumphosts and the downloads service.
 User group is `release-manager`. It puts the `.google_authenticator` file to the jumphost and the ssh-key to the downloads service.
+
 
 ### Delete a user
 

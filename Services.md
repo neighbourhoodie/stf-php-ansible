@@ -4,6 +4,7 @@ Each property is implemented as an Ansible role located in the [roles/properties
 
 All properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
 
+
 ## Rsync Service
 
 This service keeps repositories up-to-date by performing a git checkout via a cron job.
@@ -33,7 +34,9 @@ To initialize `rsync` run the following playbook.
 ansible-playbook initRsync.yml
 ```
 
+
 ## Services
+
 
 ### Main Service
 
@@ -74,6 +77,7 @@ classDiagram
   MainService --> gcov
   MainService --> lxr
 ```
+
 
 ### Downloads Service
 
@@ -188,6 +192,7 @@ classDiagram
   MuseumService --> Museum
 ```
 
+
 ## Backups
 
 Backups are run as part of the property role tasks. The tasks are located at `[property-name]/tasks/backup.yml`.
@@ -195,6 +200,7 @@ Backups are run as part of the property role tasks. The tasks are located at `[p
 Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
 
 Backup tasks are run daily using a cronjob.
+
 
 ## Restore backup
 
