@@ -64,13 +64,6 @@
   args:
     creates: /etc/ssl/certs/dhparam.pem
 
-# - name: Ensure Nginx user is set in nginx.conf
-#   lineinfile:
-#     path: /usr/local/nginx/conf/nginx.conf
-#     regexp: '^#?user'
-#     line: 'user www-data;'
-#     state: present
-
 - name: Set permissions for Nginx log and temp directory
   file:
     path: /usr/local/nginx
@@ -107,22 +100,6 @@
     owner: www-data
     group: www-data
 
-# - name: Create Nginx error log file
-#   file:
-#     path: /usr/local/nginx/logs/error.log
-#     state: touch
-#     owner: www-data
-#     group: www-data
-#     mode: '644'
-
-# - name: Create Nginx client_body_temp directory
-#   file:
-#     path: /usr/local/nginx/client_body_temp
-#     state: directory
-#     owner: www-data
-#     group: www-data
-#     mode: '700'
-
 - name: Add museum nginx config file
   template:
     src: templates/museumweb.conf
@@ -157,6 +134,9 @@
 #     proto: tcp
 #     src: "{{ item }}"
 #     loop: "{{ myra_hosts }}"
+
+# fetch the content from the encrypted museum source
+- include_tasks: deploy.yml
 
 # Run backup cronjob
 - name: Run backup tasks
