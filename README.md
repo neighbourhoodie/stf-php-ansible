@@ -16,7 +16,7 @@ A control machine is set up with the Ansible software, which then communicates w
 - Ansible configuration: Before running the initialization script, comment out the `ssh_connection` setting in the ansible.cfg file. This ensures the initialization process is performed using the root user.
 - Update jumphost domains: Modify domains in /bin/auth-jump0-1 and /etc/ssh_config_jump0-1.
 - Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password.
-You can update the variable values as required.
+Then update the variable values as required.
 
 ```sh
 ansible-vault rekey inventory/php/group_vars/all.yml
