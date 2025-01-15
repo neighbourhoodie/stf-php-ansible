@@ -37,17 +37,17 @@
 # Cron jobs for maintain-main
 - name: Create a cron job to run maintain-main hourly
   cron:
-    name: "Run maintain-main hourly"
+    name: Run maintain-main hourly
     special_time: hourly
-    job: "/local/systems/maintain-main"
+    job: /local/systems/maintain-main
 
 - name: Create a cron job to run maintain-main weekly
   cron:
-    name: "Run maintain-main weekly"
+    name: Run maintain-main weekly
     special_time: weekly
-    job: "/local/systems/maintain-main"
+    job: /local/systems/maintain-main
 
 # Add restore tasks
 # The restore role is commented out when initializing the property for the first time
-# This can be commented in when backup data is run at least once and available foe restore
+# This can be commented in when backup data is run at least once and available for restore
 # - include_tasks: restore.yml
