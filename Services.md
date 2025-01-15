@@ -114,6 +114,7 @@ classDiagram
     - libapache2-mod-php8.2
     - php8.2
     - apache2-utils
+    - openssl
 
     ✦ SSL ✦:
     Self-signed SSL certs
@@ -173,10 +174,8 @@ classDiagram
     Note that data is manually added to /local/www/museum_domain(via scp)
     ✦ Services ✦:
     - Nginx with fancyindex module
-    - libapache2-mod-php8.2
-    - php8.2
-    - certbot
-    - python3-certbot-apache
+    - git
+    - openssl
 
     ✦ SSL ✦:
     Self-signed SSL
