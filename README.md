@@ -30,6 +30,26 @@ ansible-vault rekey inventory/php/group_vars/all.yml
 > This won't work when the ssh_connection config in ansible.cfg is not commented out.
 >
 
+### Host key checking
+
+When connecting to a remote server via SSH for the first time, you need to confirm the host key check by typing 'yes'.
+So before you run ansible the very first time, you should do this for all machines. In our case it is:
+
+```sh
+ssh root@rsync0.ams3.do.php.backend.lol
+ssh root@jumphost0.ams3.do.php.backend.lol
+ssh root@jumphost1.nyc1.do.php.backend.lol
+ssh root@service0.ams3.do.php.backend.lol
+ssh root@service1.ams3.do.php.backend.lol
+ssh root@service2.ams3.do.php.backend.lol
+ssh root@service3.ams3.do.php.backend.lol
+```
+
+Alternatively, you can disable manual host key checks by setting `host_key_checking = False` in your [Ansible configuration file](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#host-key-checking), but be aware that this reduces security and should be done with caution.
+
+
+### Start initializing
+
 To initialize your machines, you need a `yml` file with all admins you want to add.
 An admin user has do have a `name`, `GA_file` which is the absolute path to it's `.google_authenticator` file and the public keys are defined at `pubkeys`.
 
