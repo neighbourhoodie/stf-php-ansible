@@ -201,3 +201,7 @@ Backup tasks are run daily using a cronjob.
 Restores are run as part of deployment tasks of the properties. They are initially commented out so that they are not run on the first deployment of the property.
 
 Once the first deployment and backup is done, the restore tasks can be commented in so that when next time deployment is run data can be restored directly from the backup.
+
+## Scripts
+
+The [PHP Systems](https://github.com/php/systems) repository hosts a number of scripts to maintain the services. Some of these scripts have been added to the service playbooks outlined above. A full list of the scripts and their usage are outlined in the [SystemScripts.md](SystemScripts.md). This can act as a reference for future additions to the Ansible playbooks.

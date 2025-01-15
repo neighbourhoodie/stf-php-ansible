@@ -2,7 +2,7 @@
 
 There are many script files used in the [PHP Systems](https://github.com/php/systems) repository to maintain the different properties. Some of these scripts have been converted to Ansible scripts and moved to the roles of this respository.
 
-Following are the list of all the scripts are used in the Systems repository and they are marked as whether they are moved to Ansible scripts or left in the existing Systems repo.
+Following are the list of all the scripts used in the Systems repository and they are marked as whether they are moved to Ansible scripts or left in the existing Systems repo.
 
 | Script | PHP Systems | Ansible project |
 |--------|-------------| --------------- |

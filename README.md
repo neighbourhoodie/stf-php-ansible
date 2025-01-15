@@ -141,4 +141,4 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 +ssh_common_args = -F etc/ssh_config_jump1
 ```
 
-And then you initialise the authentication with `bin/auth-jump1` like before.
+And then you initialize the authentication with `bin/auth-jump1` like before.
