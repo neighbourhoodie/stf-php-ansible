@@ -127,9 +127,9 @@ To set them up, as its used by the other services, first run:
 And then run:
 
 - downloads: `ansible-playbook initServiceDownloads.yml`
-- wiki: `ansible-playbook initServiceWiki.yml`
-- museum: `ansible-playbook initServiceMuseum.yml`
-- main: `ansible-playbook initServiceMain.yml`
+- wiki:      `ansible-playbook initServiceWiki.yml`
+- museum:    `ansible-playbook initServiceMuseum.yml`
+- main:      `ansible-playbook initServiceMain.yml`
 
 Now you are ready to go! :tada:
 

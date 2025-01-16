@@ -20,7 +20,8 @@
 
 - name: Enable config file
   shell: a2ensite lxr.php.net.conf
-  creates: /etc/apache2/sites-enabled/lxr.php.net.conf
+  args:
+    creates: /etc/apache2/sites-enabled/lxr.php.net.conf
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

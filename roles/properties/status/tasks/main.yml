@@ -20,6 +20,7 @@
 
 - name: Enable config file
   shell: a2ensite status.php.net.conf
-  creates: "/etc/apache2/sites-enabled/status.php.net.conf"
+  args:
+    creates: "/etc/apache2/sites-enabled/status.php.net.conf"
   notify: reload apache
 

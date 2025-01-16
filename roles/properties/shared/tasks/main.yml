@@ -40,7 +40,8 @@
 
 - name: Enable config file
   shell: "a2ensite {{ shared_config_file }}"
-  creates: "/etc/apache2/sites-enabled/{{ shared_config_file }}"
+  args:
+    creates: "/etc/apache2/sites-enabled/{{ shared_config_file }}"
   notify: reload apache
 
 - name: Ensure Apache is started and enabled
