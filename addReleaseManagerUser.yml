@@ -22,7 +22,7 @@
       user:
         name: "{{ username }}"
         create_home: yes
-        groups: "release-manager"
+        groups: release-manager
         append: yes
         state: present
         shell: /bin/bash
@@ -54,7 +54,7 @@
         name: "{{ username }}"
         create_home: yes
         state: present
-        groups: "release-manager"
+        groups: release-manager
         append: yes
         shell: /bin/bash
 
