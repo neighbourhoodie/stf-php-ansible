@@ -20,14 +20,14 @@
 - name: create local box
   file:
     state: directory
-    dest: /local/this-box
-    mode: '750'
+    dest: "{{ downloads_box }}"
+    mode: "750"
 
 - name: Store secrets file
   template:
     src: templates/secrets.conf
-    dest: /local/this-box/apache.conf
-    mode: '600'
+    dest: "{{ downloads_box }}/apache.conf"
+    mode: "600"
     owner: www-data
     group: www-data
 
@@ -67,4 +67,4 @@
     name: backup_property
   vars:
     property: downloads
-    backup_path: '{{ downloads_home_dir }}'
+    backup_path: "{{ downloads_home_dir }}"

@@ -2,19 +2,19 @@
   file:
     state: directory
     dest: "{{ downloads_docroot }}/{{ downloads_domain }}"
-    mode: '750'
+    mode: "750"
 
 - name: Copy update-downloads script to the server
   template:
     src: templates/update-downloads
     dest: /local/systems/update-downloads
-    mode: '700'
+    mode: "700"
 
 - name: Create a cron job to run hourly
   cron:
-    name: "Run update-downloads hourly"
+    name: Run update-downloads hourly
     special_time: hourly
-    job: "/local/systems/update-downloads"
+    job: /local/systems/update-downloads
 
 # The restore role is commented out when initializing the property for the first time
 # This can be commented in when backup data is run at least once and available foe restore

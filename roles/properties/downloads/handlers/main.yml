@@ -4,6 +4,7 @@
     name: apache2
     state: restarted
 
+# This reloads the Apache service
 - name: reload apache
   service:
     name: apache2

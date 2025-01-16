@@ -8,9 +8,6 @@ myra_hosts: ["192.666.6.666", "192.777.7.777"]
 # using *.php.backend.lol for test purposes
 downloads_domain: downloads.php.backend.lol
 shared_domain: shared.php.backend.lol
-downloads_docroot: /local/www/sites
-shared_docroot: /local/www/sites
-downloads_home_dir: /home
 
 backup_dir: /local/backups
 restore_dir: /local/restore
