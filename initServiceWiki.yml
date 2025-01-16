@@ -1,5 +1,5 @@
 # Run this playbook to set up your wiki machine
-# ansible-playbook initServiceWiki.yml"
+# ansible-playbook initServiceWiki.yml
 
 - hosts:
   - wiki

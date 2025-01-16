@@ -1,5 +1,5 @@
 # Run this playbook to set up your main machine
-# ansible-playbook initServiceMain.yml"
+# ansible-playbook initServiceMain.yml
 
 - hosts:
   - main
