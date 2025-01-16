@@ -132,7 +132,6 @@
 # fetch the content from the encrypted museum source
 - include_tasks: deploy.yml
 
-# Run backup cronjob
 - name: Run backup tasks
   include_role:
     name: backup_property
@@ -146,4 +145,4 @@
 #     name: restore_property
 #   vars:
 #     property: museum
-#     backup_path: '{{ museum_docroot }}/{{ museum_domain }}'
+#     backup_path: "{{ museum_docroot }}/{{ museum_domain }}"
