@@ -2,21 +2,22 @@
   apt:
     name: bzip2
     state: present
+    update_cache: yes
 
 - name: Create local directory to store php-main-web
   file:
     state: directory
     dest: /local/mirrors/php-main-web/public/fetch
-    mode: '755'
-    group: 'www-data'
-    owner: 'www-data'
+    mode: "755"
+    group: www-data
+    owner: www-data
     recurse: yes
 
 - name: Add php.net.zone
   template:
     src: templates/php.net.zone
     dest: "{{ item }}"
-    mode: '700'
+    mode: "700"
   loop:
     - /local/systems/php.net.zone
     - /local/mirrors/php-main-web/public/fetch/php.net.zone
@@ -25,7 +26,7 @@
   template:
     src: templates/{{ item }}
     dest: /local/systems/{{ item }}
-    mode: '700'
+    mode: "700"
   loop:
     - maintain-main
     - maintain-master-dns.php

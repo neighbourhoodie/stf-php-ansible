@@ -68,7 +68,7 @@
   file:
     path: /usr/local/nginx
     state: directory
-    mode: '755'
+    mode: "755"
     owner: www-data
     group: www-data
     recurse: yes
@@ -76,7 +76,7 @@
 - name: Set permissions for ssl certs
   file:
     path: "{{ item }}"
-    mode: '600'
+    mode: "600"
     owner: www-data
     group: www-data
   loop:
@@ -96,7 +96,7 @@
   file:
     state: directory
     dest: /usr/local/nginx/conf/sites-enabled
-    mode: '750'
+    mode: "750"
     owner: www-data
     group: www-data
 

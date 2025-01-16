@@ -13,13 +13,13 @@
   file:
     state: directory
     dest: /local/this-box
-    mode: '750'
+    mode: "750"
 
 - name: Store secrets file
   template:
     src: templates/secrets.conf
     dest: /local/this-box/apache.conf
-    mode: '600'
+    mode: "600"
     owner: www-data
     group: www-data
 
@@ -51,25 +51,21 @@
 - include_tasks: deploy.yml
 
 - name: Set mysql root password
-  shell: |
-    mysqladmin -u root password "{{ db_root_password }}"
+  command: mysqladmin -u root password "{{ db_root_password }}"
 
 - name: Create MariaDB database
-  shell: |
-    mysql -u root -p{{ db_root_password }} -e "CREATE DATABASE IF NOT EXISTS {{ db_name }}"
+  command: mysql -u root -p{{ db_root_password }} -e "CREATE DATABASE IF NOT EXISTS {{ db_name }}"
   args:
     creates: "/var/lib/mysql/{{ db_name }}"
 
 - name: Create MySQL user 'nobody' if not exists
-  shell: |
-    mysql -u root -p{{ db_root_password }} -e "CREATE USER IF NOT EXISTS 'nobody'@'localhost' IDENTIFIED BY '';"
+  command: mysql -u root -p{{ db_root_password }} -e "CREATE USER IF NOT EXISTS 'nobody'@'localhost' IDENTIFIED BY '';"
 
 - name: Grant privileges to 'nobody' for the specified database
-  shell: |
-    mysql -u root -p{{ db_root_password }} -e "GRANT SELECT, LOCK TABLES ON {{ db_name }}.* TO 'nobody'@'localhost'; FLUSH PRIVILEGES;"
+  command: mysql -u root -p{{ db_root_password }} -e "GRANT SELECT, LOCK TABLES ON {{ db_name }}.* TO 'nobody'@'localhost'; FLUSH PRIVILEGES;"
 
-# Add backup cronjob
 - include_tasks: backup.yml
-  vars:
-    property: main
+
+# This needs to be commented out on the initial run
+#- include_tasks: restore.yml
 

@@ -2,7 +2,7 @@
   file:
     state: directory
     dest: "{{ museum_docroot }}/{{ museum_domain }}"
-    mode: '755'
+    mode: "755"
     recurse: yes
 
 - name: Fetch content for museum
