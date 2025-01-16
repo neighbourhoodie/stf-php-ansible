@@ -1,22 +1,20 @@
+# These tasks create a /local/backup folder.
+# Create a cronjob to compress the data from wiki's homedir into it, loads the compesses data up to S3 and removes it afterwards.
+# Create another cron to prune backups, to keep only the last 2 ones on S3 storage
+
 # Reference backup script: https://github.com/php/systems/blob/master/backup-wiki-php-net
+
 - name: Install bzip2
   apt:
     name: bzip2
     state: present
     update_cache: yes
 
-- name: Ensure backup directories exist
+- name: Ensure backup directory exist
   file:
-    path: "{{ backup_dir }}/{{ item }}"
+    path: "{{ backup_dir }}"
     state: directory
     mode: "755"
-  loop:
-    - data
-    - data/archive
-    - data/daily
-    - media
-    - media/archive
-    - media/daily
 
 # the next tasks are for test purposes and can be removed once proper data is added to the machine
 - include_tasks: add_testData.yml
