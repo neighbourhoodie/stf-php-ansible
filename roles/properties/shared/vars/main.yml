@@ -1,1 +1,2 @@
 shared_docroot: /local/www/sites
+shared_config_file: shared.php.net.conf

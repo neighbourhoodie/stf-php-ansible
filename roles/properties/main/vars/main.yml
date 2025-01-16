@@ -1,5 +1,7 @@
+main_config_file: main.php.net.conf
 
 main_docroot: /local/mirrors/php-main-web
+main_box: /local/this-box
 
 db_name: phpmasterdb
 

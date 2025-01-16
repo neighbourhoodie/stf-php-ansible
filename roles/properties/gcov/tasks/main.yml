@@ -19,7 +19,8 @@
   notify: reload apache
 
 - name: Enable config file
-  command: a2ensite gcov.php.net.conf
+  shell: a2ensite gcov.php.net.conf
+  creates: /etc/apache2/sites-enabled/gcov.php.net.conf
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

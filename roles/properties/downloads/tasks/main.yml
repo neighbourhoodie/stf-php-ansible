@@ -34,7 +34,7 @@
 - name: Add Apache config for downloads.php.net
   template:
     src: templates/downloads.php.net.conf
-    dest: /etc/apache2/sites-available/downloads.php.net.conf
+    dest: "/etc/apache2/sites-available/{{ downloads_config_file }}"
   notify: reload apache
 
 # because we run certbot with certonly, and we use Rewrite in our apache config
@@ -49,7 +49,8 @@
   notify: reload apache
 
 - name: Enable config file
-  command: a2ensite downloads.php.net.conf
+  shell: a2ensite {{ downloads_config_file }}
+  creates: "/etc/apache2/sites-enabled/{{ downloads_config_file }}"
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

@@ -18,7 +18,7 @@
 - name: Add Apache config for shared.php.net
   template:
     src: templates/shared.php.net.conf
-    dest: /etc/apache2/sites-available/shared.php.net.conf
+    dest: "/etc/apache2/sites-available/{{ shared_config_file }}"
   notify: reload apache
 
 # This is needed for 'ExpiresActive On' at shared.config
@@ -39,7 +39,8 @@
   notify: reload apache
 
 - name: Enable config file
-  command: a2ensite shared.php.net.conf
+  shell: "a2ensite {{ shared_config_file }}"
+  creates: "/etc/apache2/sites-enabled/{{ shared_config_file }}"
   notify: reload apache
 
 - name: Ensure Apache is started and enabled

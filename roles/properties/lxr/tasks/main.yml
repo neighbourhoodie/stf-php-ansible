@@ -19,7 +19,8 @@
   notify: reload apache
 
 - name: Enable config file
-  command: a2ensite lxr.php.net.conf
+  shell: a2ensite lxr.php.net.conf
+  creates: /etc/apache2/sites-enabled/lxr.php.net.conf
   notify: reload apache
 
 - name: Ensure Apache is started and enabled
