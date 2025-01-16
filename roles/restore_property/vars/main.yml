@@ -1,0 +1,2 @@
+
+restore_name: "{{ property }}-{{ ansible_date_time.date }}"

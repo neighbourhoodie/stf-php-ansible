@@ -8,19 +8,16 @@
 #     property: property-name
 #     backup_path: "{{ property_document_root_path }}"
 
-- name: Setting backup name
-  set_fact:
-    restore_name: "{{ property }}-{{ ansible_date_time.date }}"
-
 - name: Create temporary local restore directory if it doesn't exist
   file:
     path: "{{ restore_dir }}/{{ restore_name }}"
     state: directory
-    mode: '755'
+    mode: "755"
 
 - name: Restore backup
-  shell: |
-    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }} restore latest --target {{ restore_dir }}
+  command: >
+    restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/{{ property }}
+    restore latest --target {{ restore_dir }}
   environment:
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
@@ -35,7 +32,7 @@
 - name: Copy restored data to the doc root
   copy:
     src: "{{ restore_dir }}/{{ restore_name }}"
-    dest: '{{ backup_path }}'
+    dest: "{{ backup_path }}"
 
 - name: Remove temporary restore directory
   file:
