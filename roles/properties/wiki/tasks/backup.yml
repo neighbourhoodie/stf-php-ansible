@@ -1,6 +1,7 @@
 # These tasks create a /local/backup folder.
 # Create a cronjob to compress the data from wiki's homedir into it, loads the compesses data up to S3 and removes it afterwards.
 # Create another cron to prune backups, to keep only the last 2 ones on S3 storage
+# Backup logs can be found at /local/systems/backup.log
 
 # Reference backup script: https://github.com/php/systems/blob/master/backup-wiki-php-net
 
