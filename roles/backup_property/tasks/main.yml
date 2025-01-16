@@ -7,24 +7,30 @@
 #     property: property-name
 #     backup_path: "{{ property_document_root_path }}"
 
-- name: Setting backup name
-  set_fact:
-    backup_name: "{{ property }}-{{ ansible_date_time.date }}"
-
 - name: Create temporary local backup directory if it doesn't exist
   file:
     path: "{{ backup_dir }}"
     state: directory
-    mode: '755'
+    mode: "755"
 
-- name: Remove old backup file if it exists
-  command:
-    cmd: "rm -rf {{ backup_dir }}/*"
+- name: Find everything in the backup directory
+  find:
+    paths: "{{ backup_dir }}"
+    recurse: yes
+  register: files_to_remove
+
+- name: Remove old backup files and directories
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ files_to_remove.files }}"
+  when: files_to_remove.matched > 0
 
 - name: Install bzip2
   apt:
     name: bzip2
     state: present
+    update_cache: yes
 
 - name: Initialize Restic
   command:

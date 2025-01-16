@@ -1,0 +1,3 @@
+# Setting backup name
+
+backup_name: "{{ property }}-{{ ansible_date_time.date }}"
