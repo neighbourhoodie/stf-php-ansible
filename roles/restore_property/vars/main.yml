@@ -1,2 +1,3 @@
 
 restore_name: "{{ property }}-{{ ansible_date_time.date }}"
+restore_dir: /local/restore

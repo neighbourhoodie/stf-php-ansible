@@ -9,8 +9,6 @@ myra_hosts: ["192.666.6.666", "192.777.7.777"]
 downloads_domain: downloads.php.backend.lol
 shared_domain: shared.php.backend.lol
 
-restore_dir: /local/restore
-
 wiki_domain: wiki.php.backend.lol
 wiki_alias: wiki2.php.backend.lol
 
