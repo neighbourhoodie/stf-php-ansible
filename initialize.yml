@@ -56,14 +56,14 @@
     file:
       state: directory
       dest: /local
-      mode: '755'
+      mode: "755"
 
   # This is the place for all the scripts
   - name: Create local systems directory
     file:
       state: directory
       dest: /local/systems
-      mode: '750'
+      mode: "750"
 
 
 - hosts:
@@ -128,7 +128,7 @@
   - name: Configure sudoers
     copy:
       dest: /etc/sudoers.d/20-sudo-password
-      content: '%sudo ALL=(ALL) NOPASSWD: ALL'
+      content: "%sudo ALL=(ALL) NOPASSWD: ALL"
 
   - name: Copy admin's ssh-keys
     loop: "{{ admins }}"
@@ -167,8 +167,8 @@
   - name: Disable root login
     lineinfile:
       path: /etc/ssh/sshd_config
-      regexp: '^PermitRootLogin'
-      line: 'PermitRootLogin no'
+      regexp: ^PermitRootLogin
+      line: PermitRootLogin no
     notify: restart ssh
 
   handlers:
