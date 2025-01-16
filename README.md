@@ -180,3 +180,13 @@ And then you initialize the authentication with `bin/auth-jump1` like before.
 ## Scripts
 
 The [PHP Systems](https://github.com/php/systems) repository hosts a number of scripts to maintain the services. Some of these scripts have been added to the service playbooks. A full list of the scripts and their usage are outlined in the [SystemScripts.md](SystemScripts.md). This can act as a reference for future additions to the Ansible playbooks.
+
+
+## Myra Integration and Port Configuration
+
+As part of the Myra setup, we are transitioning to using only port 443 with self-signed certificates for services.
+This involves blocking access to port 80 and restricting access to port 443 only from Myra hosts.
+
+For the `museum` and `shared`, which are specifically integrated with Myra, this configuration has already been prepared.
+The variable `myra_hosts` is added to the service.yml file, where you can define the Myra host(s).
+In the dedicated roles for these services, you will find commented-out tasks which manage firewall settings.
