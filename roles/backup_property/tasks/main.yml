@@ -1,4 +1,9 @@
-# This role is being used by multiple properties. It creates a local backup directory and makes a backup of the root folder using Restic.
+# This role is being used by multiple properties.
+# It creates a local backup directory and makes a backup of the root folder using Restic.
+# After the compressed data us backed up to S3, it gets removed from the system again.
+# Backup logs can be found at /local/systems/backup.log
+# The {{ property }} var has to match the bucket's folder.
+
 # Example usage:
 # - name: Run backup tasks
 #   include_role:
@@ -12,19 +17,6 @@
     path: "{{ backup_dir }}"
     state: directory
     mode: "755"
-
-- name: Find everything in the backup directory
-  find:
-    paths: "{{ backup_dir }}"
-    recurse: yes
-  register: files_to_remove
-
-- name: Remove old backup files and directories
-  file:
-    path: "{{ item.path }}"
-    state: absent
-  loop: "{{ files_to_remove.files }}"
-  when: files_to_remove.matched > 0
 
 - name: Install bzip2
   apt:

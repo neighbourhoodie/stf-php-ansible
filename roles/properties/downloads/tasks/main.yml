@@ -62,11 +62,20 @@
 
 - include_tasks: deploy.yml
 
-# Run backup cronjob
-# Backup entire downloads home directory as the disk is full of windows downloads and RC downloads, which are stored in people’s home directories
+# Backup entire downloads home directory as the disk is full of windows downloads and RC downloads,
+# which are stored in people’s home directories
 - name: Run backup tasks
   include_role:
     name: backup_property
   vars:
     property: downloads
     backup_path: "{{ downloads_home_dir }}"
+
+# The restore role is commented out when initializing the property for the first time
+# This can be commented in when backup data is run at least once and available for restore
+# - name: Run restore tasks
+#   include_role:
+#     name: restore_property
+#   vars:
+#     property: downloads
+#     backup_path: "{{ downloads_home_dir }}"
