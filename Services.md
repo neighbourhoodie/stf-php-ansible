@@ -206,7 +206,7 @@ classDiagram
   class MuseumService { ansible-playbook initServiceMuseum.yml }
   
   class Museum {
-    Note that data is manually added to /local/www/museum_domain(via scp)
+    Note that data is manually added to /local/www/museum_domain(via rsync)
     ✦ Services ✦:
     - Nginx with fancyindex module
     - git
