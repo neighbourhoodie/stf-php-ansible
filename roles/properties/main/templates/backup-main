@@ -3,7 +3,7 @@
 cd {{ backup_dir }}
 
 # Redirect all output to the backup.log
-exec > "backup.log" 2>&1
+exec > "/local/systems/backup.log" 2>&1
 
 echo "[$(date)] Starting backup process..."
 
@@ -14,16 +14,12 @@ export RESTIC_PASSWORD="{{ restic_password }}"
 
 
 # Dump MySQL database to backup directory
-mysqldump -u nobody -Q phpmasterdb > {{ backup_name }}/phpmasterdb.sql
+mysqldump -u nobody -Q {{ db_name }} > {{ backup_name }}/{{ db_name }}.sql
 echo "[$(date)] Database dump completed."
 
 # Compress backup
 tar cf - {{ backup_name }} | bzip2 -9 > {{ backup_name }}.tar.bz2
 echo "[$(date)] Compression completed."
-
-# Remove uncompressed backup directory
-rm -rf {{ backup_name }}
-echo "[$(date)] Cleanup completed."
 
 # S3 Upload
 restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/main backup {{ backup_name }}.tar.bz2

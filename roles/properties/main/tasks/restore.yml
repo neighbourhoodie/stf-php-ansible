@@ -19,8 +19,7 @@
     remote_src: yes
 
 - name: Restore MySQL database from the dump
-  command: |
-    mysql -u nobody phpmasterdb < {{ restore_dir }}/{{ backup_name }}/phpmasterdb.sql
+  command: "mysql -u nobody {{ db_name }} < {{ restore_dir }}/{{ backup_name }}/{{ db_name }}.sql"
 
 - name: Remove temporary restore directory
   file:
