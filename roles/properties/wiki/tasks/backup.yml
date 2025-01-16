@@ -3,17 +3,13 @@
   apt:
     name: bzip2
     state: present
-
-- name: Setting backup name
-  set_fact:
-    backup_name_data: "data-{{ ansible_date_time.date }}"
-    backup_name_media: "media-{{ ansible_date_time.date }}"
+    update_cache: yes
 
 - name: Ensure backup directories exist
   file:
     path: "{{ backup_dir }}/{{ item }}"
     state: directory
-    mode: '755'
+    mode: "755"
   loop:
     - data
     - data/archive
@@ -41,19 +37,19 @@
 - name: Create backup script
   template:
     src: templates/backup-wiki
-    dest: "/local/systems/backup-wiki"
+    dest: /local/systems/backup-wiki
     mode: "755"
 
 - name: Create daily property backup
   cron:
     name: Daily property backup
-    job: "/local/systems/backup-wiki"
+    job: /local/systems/backup-wiki
     special_time: daily
     state: present
 
 - name: Daily prune wiki/data, keep only the last 2 backups
   cron:
-    name: Daily prune files
+    name: Daily prune wiki/data
     job: |
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/data forget --keep-last 2 --prune
     state: present
@@ -61,7 +57,7 @@
 
 - name: Daily prune wiki/media, keep only the last 2 backups
   cron:
-    name: Daily prune files
+    name: Daily prune wiki/media
     job: |
       AWS_ACCESS_KEY_ID="{{ DO_access_key }}" AWS_SECRET_ACCESS_KEY="{{ DO_secret_key }}" RESTIC_PASSWORD="{{ restic_password }}" restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/media forget --keep-last 2 --prune
     state: present

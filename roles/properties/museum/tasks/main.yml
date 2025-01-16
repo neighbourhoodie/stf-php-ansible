@@ -1,10 +1,4 @@
 # This role sets up the property museum.php.net with NGINX together with the fancyindex module
-# The content is put by hand to /local/www/museum_domain/
-
-# Change version number to update nginx
-- name: Set NGINX version
-  set_fact:
-    nginx_version: "1.24.0"
 
 - name: Install Software
   apt:
@@ -68,7 +62,7 @@
   file:
     path: /usr/local/nginx
     state: directory
-    mode: '755'
+    mode: "755"
     owner: www-data
     group: www-data
     recurse: yes
@@ -76,7 +70,7 @@
 - name: Set permissions for ssl certs
   file:
     path: "{{ item }}"
-    mode: '600'
+    mode: "600"
     owner: www-data
     group: www-data
   loop:
@@ -87,7 +81,7 @@
   template:
     dest: /etc/systemd/system/nginx.service
     src: templates/nginx.service
-    mode: '644'
+    mode: "644"
 
 - name: Reload systemd daemon
   command: systemctl daemon-reload
@@ -96,7 +90,7 @@
   file:
     state: directory
     dest: /usr/local/nginx/conf/sites-enabled
-    mode: '750'
+    mode: "750"
     owner: www-data
     group: www-data
 

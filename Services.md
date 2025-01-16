@@ -2,7 +2,43 @@
 
 Each property is implemented as an Ansible role located in the [roles/properties](roles/properties) directory.
 
-All properties have a `templates` directory. This is for files such as cron scripts or configuration files needed by the property.
+
+## Overview
+
+Each service is managed by its own dedicated playbook, which calls a role for each property associated with that service.
+The flow of the roles follows a consistent structure across all services.
+This includes basically:
+
+- install software
+- generate SSL certificates
+- set up configurations
+- deploy content
+- manage backups and restores
+
+
+### Directory Structure
+
+Configuration files and scripts for each property are stored in the `templates` directory, while property-specific variables can be found in `vars/main.yml`. Handlers for reloading and restarting Apache or Nginx are located in `handlers/main.yml`.
+
+
+### Backups
+
+For backup tasks, we created dedicated folder for each property on a DigitalOcean Bucket. The content for each property is backed up to this folder using `restic`. This process can be easily customized by adjusting the restic backup command.
+
+Backups are run as part of the property role tasks. The tasks are located at [roles/backup_property](roles/backup_property).
+For the `main` and `wiki` properties, a specialized task list `backup.yml` is employed within their respective roles ( at `/tasks`).
+
+Backup tasks run as a cronjob. There is an additional cron, that prunes backup files based on different conditions.
+
+
+### Restore backup
+
+The restore process follows a similar structure to backup, providing a reliable way to recover data. When restoring, content is fetched from the backup folders on the DigitalOcean Bucket and returned to the appropriate locations.
+
+Restores are run as part of deployment tasks of the properties. They are initially commented out so that they are not run on the first deployment of the property.
+
+Once the first deployment and backup is done, the restore tasks can be commented in so that when next time deployment is run data can be restored directly from the backup.
+
 
 ## Rsync Service
 
@@ -33,7 +69,9 @@ To initialize `rsync` run the following playbook.
 ansible-playbook initRsync.yml
 ```
 
+
 ## Services
+
 
 ### Main Service
 
@@ -75,6 +113,7 @@ classDiagram
   MainService --> lxr
 ```
 
+
 ### Downloads Service
 
 `downloads` is the PHP service running for `downloads.php.net` and `shared.php.net`.
@@ -110,6 +149,7 @@ classDiagram
     - libapache2-mod-php8.2
     - php8.2
     - apache2-utils
+    - openssl
 
     ✦ SSL ✦:
     Self-signed SSL certs
@@ -169,10 +209,8 @@ classDiagram
     Note that data is manually added to /local/www/museum_domain(via scp)
     ✦ Services ✦:
     - Nginx with fancyindex module
-    - libapache2-mod-php8.2
-    - php8.2
-    - certbot
-    - python3-certbot-apache
+    - git
+    - openssl
 
     ✦ SSL ✦:
     Self-signed SSL
@@ -187,17 +225,3 @@ classDiagram
 
   MuseumService --> Museum
 ```
-
-## Backups
-
-Backups are run as part of the property role tasks. The tasks are located at `[property-name]/tasks/backup.yml`.
-
-Backup process is different for `main` and other properties. For `main` backup is done for mysql database and apache2 config as per: https://github.com/php/systems/blob/master/backup-main and for other properties a tar file of the docroot folder is created and is backed up.
-
-Backup tasks are run daily using a cronjob.
-
-## Restore backup
-
-Restores are run as part of deployment tasks of the properties. They are initially commented out so that they are not run on the first deployment of the property.
-
-Once the first deployment and backup is done, the restore tasks can be commented in so that when next time deployment is run data can be restored directly from the backup.

@@ -3,7 +3,7 @@
 
 - name: Check google auth path and username params
   fail:
-    msg: "Please provide the path to .google_authenticator file and a username for the new user"
+    msg: Please provide the path to .google_authenticator file and a username for the new user
   when: (path_to_google_auth is undefined) or (username is undefined)
 
 - name: Check if path_to_google_auth exists
@@ -16,7 +16,7 @@
 
 - name: Fail if path_to_google_auth points to nothing
   fail:
-    msg: "path_to_google_auth does not provide the correct path. Please check if the file exists"
+    msg: path_to_google_auth does not provide the correct path. Please check if the file exists
   when: not path_to_google_auth_exists.stat.exists
 
 # Check if the file exists on server
@@ -31,6 +31,6 @@
     dest: "/home/{{ username }}/.google_authenticator"
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '600'
+    mode: "600"
   when: not google_auth.stat.exists
 

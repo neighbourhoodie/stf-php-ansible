@@ -3,7 +3,7 @@
   file:
     path: "{{ wiki_home_path }}/{{item}}"
     state: directory
-    mode: '755'
+    mode: "755"
   loop:
     - data
     - data/archive

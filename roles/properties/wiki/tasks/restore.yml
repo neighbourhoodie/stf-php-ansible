@@ -1,20 +1,14 @@
-# Restore backup in local restore directory
-- name: Setting backup name
-  set_fact:
-    restore_name_data: "data-{{ ansible_date_time.date }}"
-    restore_name_media: "media-{{ ansible_date_time.date }}"
-
 - name: Create a local restore directory with today's date
   file:
     path: "{{ restore_dir }}/{{ item }}"
     state: directory
-    mode: '755'
+    mode: "755"
   loop:
     - restore_name_data
     - restore_name_media
 
 - name: Restore backup
-  shell: |
+  command: |
     restic -r s3:{{ DO_bucket_url }}/{{ DO_bucket_name }}/wiki/{{ item }} restore latest --target {{ restore_dir }}/{{ item }}
   environment:
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"

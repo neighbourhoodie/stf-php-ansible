@@ -20,21 +20,21 @@
 - name: create local box
   file:
     state: directory
-    dest: /local/this-box
-    mode: '750'
+    dest: "{{ downloads_box }}"
+    mode: "750"
 
 - name: Store secrets file
   template:
     src: templates/secrets.conf
-    dest: /local/this-box/apache.conf
-    mode: '600'
+    dest: "{{ downloads_box }}/apache.conf"
+    mode: "600"
     owner: www-data
     group: www-data
 
 - name: Add Apache config for downloads.php.net
   template:
     src: templates/downloads.php.net.conf
-    dest: /etc/apache2/sites-available/downloads.php.net.conf
+    dest: "/etc/apache2/sites-available/{{ downloads_config_file }}"
   notify: reload apache
 
 # because we run certbot with certonly, and we use Rewrite in our apache config
@@ -49,7 +49,9 @@
   notify: reload apache
 
 - name: Enable config file
-  command: a2ensite downloads.php.net.conf
+  shell: "a2ensite {{ downloads_config_file }}"
+  args:
+    creates: "/etc/apache2/sites-enabled/{{ downloads_config_file }}"
   notify: reload apache
 
 - name: Ensure Apache is started and enabled
@@ -67,4 +69,4 @@
     name: backup_property
   vars:
     property: downloads
-    backup_path: '{{ downloads_home_dir }}'
+    backup_path: "{{ downloads_home_dir }}"

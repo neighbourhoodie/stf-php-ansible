@@ -1,5 +1,6 @@
 # Ansible for PHP with STA project
 
+
 ## Proposal
 
 We created this project as a shadow infra for [Ansible](https://docs.ansible.com/ansible/latest/index.html) to automate server infrastructure setup.
@@ -11,24 +12,30 @@ A control machine is set up with the Ansible software, which then communicates w
 
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
+
 ## Prerequisite
 
 - Ansible configuration: Before running the initialization script, comment out the `ssh_connection` setting in the ansible.cfg file. This ensures the initialization process is performed using the root user.
 - Update jumphost domains: Modify domains in `/bin/auth-jump0-1` and `/etc/ssh_config_jump0-1`.
-- Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password.
-Then update the variable values as required.
+- Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password. Then update the variable values as required.
 
 ```sh
 ansible-vault rekey inventory/php/group_vars/all.yml
 ```
 
+- Once the new password is created, add it to the password secret file: `~/.ansible/stf-php-ansible.secret`.
+  - If you don't want to add the password as plain text in the file system you can edit `ansible.cfg`.
+  - There's also the option to read the secret from a password manager. Let us know if you are interested in that.
 - Update Domain Names: Edit the domain names of the services in `inventory/php/group_vars/service.yml`.
+- Update the encrypted variables in the vault. You can do so by running `ansible-vault edit inventory/php/group_vars/all.yml`
+
 
 ## Initialize machines
 
 > [!NOTE]
 > This won't work when the ssh_connection config in ansible.cfg is not commented out.
 >
+
 
 ### Host key checking
 
@@ -81,7 +88,7 @@ It does the following:
 
 ## Using Ansible
 
-Now the fun begins!
+Now the fun begins! 🥳
 
 > [!NOTE]
 > Uncomment and re-enable the ssh_connection setting in the ansible.cfg file. After initialization, root SSH access is disabled on all machines. Since Ansible runs its tasks as a local user, you need to configure the ssh_connection setting to ensure proper functionality.
@@ -113,15 +120,19 @@ If you have more than one inventory (say one to try things out with and a live o
 
 If you want to read more about the services, please do so at our [Services readme](Services.md).
 
-To set them up, run:
+To set them up, as its used by the other services, first run:
 
 - rsync: `ansible-playbook initRsync.yml`
+
+And then run:
+
 - downloads: `ansible-playbook initServiceDownloads.yml`
-- wiki: `ansible-playbook initServiceWiki.yml`
-- museum: `ansible-playbook initServiceMuseum.yml`
-- main: `ansible-playbook initServiceMain.yml`
+- wiki:      `ansible-playbook initServiceWiki.yml`
+- museum:    `ansible-playbook initServiceMuseum.yml`
+- main:      `ansible-playbook initServiceMain.yml`
 
 Now you are ready to go! :tada:
+
 
 ## Access control
 
@@ -134,7 +145,9 @@ Some user management tasks are also handled via Ansible, including:
 
 Details of the user management tasks are outlined in [Users.md](Users.md).
 
+
 # Additional tasks
+
 
 ## Using encrypted vars
 
@@ -151,6 +164,7 @@ You will be prompted for your vault password.
 
 Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
 
+
 ## Changing the Jumphost
 
 By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is .gitignored) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
@@ -162,6 +176,17 @@ By default, jumphost0 is used, to change this, you have to copy your `ansible.cf
 
 And then you initialize the authentication with `bin/auth-jump1` like before.
 
+
 ## Scripts
 
 The [PHP Systems](https://github.com/php/systems) repository hosts a number of scripts to maintain the services. Some of these scripts have been added to the service playbooks. A full list of the scripts and their usage are outlined in the [SystemScripts.md](SystemScripts.md). This can act as a reference for future additions to the Ansible playbooks.
+
+
+## Myra Integration and Port Configuration
+
+As part of the Myra setup, we are transitioning to using only port 443 with self-signed certificates for services.
+This involves blocking access to port 80 and restricting access to port 443 only from Myra hosts.
+
+For the `museum` and `shared`, which are specifically integrated with Myra, this configuration has already been prepared.
+The variable `myra_hosts` is added to the service.yml file, where you can define the Myra host(s).
+In the dedicated roles for these services, you will find commented-out tasks which manage firewall settings.

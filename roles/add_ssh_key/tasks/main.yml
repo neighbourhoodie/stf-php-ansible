@@ -4,7 +4,7 @@
 
 - name: Add user - check google auth path param
   fail:
-    msg: "Please provide a username for the new user"
+    msg: Please provide a username for the new user
   when: username is undefined
 
 - name: Check if users ssh_key exists in repo
@@ -17,7 +17,7 @@
 
 - name: Fail if there is no ssh_key for the new user
   fail:
-    msg: "Please add the user's public ssh key to roles/add_GA_file/templates/ssh_keys!"
+    msg: Please add the user's public ssh key to roles/add_GA_file/templates/ssh_keys!
   when: (pubkeys is not defined) and (not ssh_key.stat.exists)
 
 - name: create ssh folder
@@ -26,7 +26,7 @@
     dest: /home/{{ username }}/.ssh
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '700'
+    mode: "700"
 
 - name: Create authorized_keys
   template:
@@ -34,7 +34,7 @@
     dest: /home/{{ username }}/.ssh/authorized_keys
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '600'
+    mode: "600"
   when: ssh_key.stat.exists and pubkeys is not defined
 
 - name: Create authorized_keys from init
@@ -42,7 +42,7 @@
     dest: /home/{{ username }}/.ssh/authorized_keys
     owner: "{{ username }}"
     group: "{{ username }}"
-    mode: '600'
+    mode: "600"
     content: "{{ pubkeys | join('\n') }}"
   when: pubkeys is defined
 

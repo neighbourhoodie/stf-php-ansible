@@ -10,7 +10,7 @@
 
 - name: Check if all params are set
   fail:
-    msg: "Please provide email and at least one domain to this role"
+    msg: Please provide email and at least one domain to this role
   when: (email is undefined) or (domain is undefined)
 
 - name: Install certbot for apache
@@ -33,27 +33,30 @@
   copy:
     src: files/options-ssl-apache.conf
     dest: /etc/letsencrypt/options-ssl-apache.conf
-    mode: '644'
+    mode: "644"
 
 # Use certonly option to obtain the certificate without modifying the Apache configuration
 - name: Get LetsEncrypt certificate for multiple domains
-  shell: |
-    certbot certonly --apache --expand -n --agree-tos --email {{ email }} -d {{ domain | join(' -d ') }}
+  command: >
+    certbot certonly --apache --expand -n --agree-tos
+    --email {{ email }}
+    -d {{ domain | join(' -d ') }}
   args:
     creates: "/etc/letsencrypt/live/{{ domain[0] }}/fullchain.pem"
   when: domain is iterable and not domain is string
 
 - name: Get LetsEncrypt certificate for a single domain
-  shell: |
-    certbot certonly --apache --expand -n --agree-tos --email {{ email }} -d {{ domain }}
+  command: >
+    certbot certonly --apache --expand -n --agree-tos
+    --email {{ email }} -d {{ domain }}
   args:
     creates: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
   when: domain is string
 
 - name: Set up renewal cron job
   cron:
-    name: "Renew Let's Encrypt certificates"
-    job: "certbot renew --quiet" # 'quiet' is used to suppress the outputs
+    name: Renew letsencrypt certificates
+    job: certbot renew --quiet
     state: present
     special_time: weekly
   notify: reload apache

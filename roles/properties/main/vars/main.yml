@@ -1,0 +1,11 @@
+main_config_file: main.php.net.conf
+
+main_docroot: /local/mirrors/php-main-web
+main_box: /local/this-box
+
+db_name: phpmasterdb
+
+backup_dir: /local/backups
+backup_name: "main-{{ ansible_date_time.date }}"
+
+restore_dir: /local/restore

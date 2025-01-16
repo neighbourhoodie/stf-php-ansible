@@ -19,6 +19,8 @@
   notify: reload apache
 
 - name: Enable config file
-  command: a2ensite status.php.net.conf
+  shell: a2ensite status.php.net.conf
+  args:
+    creates: "/etc/apache2/sites-enabled/status.php.net.conf"
   notify: reload apache
 

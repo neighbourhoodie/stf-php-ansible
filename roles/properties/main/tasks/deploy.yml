@@ -2,20 +2,22 @@
   apt:
     name: bzip2
     state: present
+    update_cache: yes
 
 - name: Create local directory to store php-main-web
   file:
     state: directory
     dest: /local/mirrors/php-main-web/public/fetch
-    mode: '644'
-    group: 'www-data'
-    owner: 'www-data'
+    mode: "755"
+    group: www-data
+    owner: www-data
+    recurse: yes
 
 - name: Add php.net.zone
   template:
     src: templates/php.net.zone
     dest: "{{ item }}"
-    mode: '700'
+    mode: "700"
   loop:
     - /local/systems/php.net.zone
     - /local/mirrors/php-main-web/public/fetch/php.net.zone
@@ -24,26 +26,29 @@
   template:
     src: templates/{{ item }}
     dest: /local/systems/{{ item }}
-    mode: '700'
+    mode: "700"
   loop:
     - maintain-main
     - maintain-master-dns.php
     - process-main-zone-file
 
+- name: Fetch main content
+  command: /local/systems/maintain-main
+
 # Cron jobs for maintain-main
 - name: Create a cron job to run maintain-main hourly
   cron:
-    name: "Run maintain-main hourly"
+    name: Run maintain-main hourly
     special_time: hourly
-    job: "/local/systems/maintain-main"
+    job: /local/systems/maintain-main
 
 - name: Create a cron job to run maintain-main weekly
   cron:
-    name: "Run maintain-main weekly"
+    name: Run maintain-main weekly
     special_time: weekly
-    job: "/local/systems/maintain-main"
+    job: /local/systems/maintain-main
 
 # Add restore tasks
 # The restore role is commented out when initializing the property for the first time
-# This can be commented in when backup data is run at least once and available foe restore
+# This can be commented in when backup data is run at least once and available for restore
 # - include_tasks: restore.yml
