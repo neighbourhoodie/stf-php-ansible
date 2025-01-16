@@ -1,0 +1,3 @@
+
+backup_dir: /local/backups
+backup_name: "main-{{ ansible_date_time.date }}"
