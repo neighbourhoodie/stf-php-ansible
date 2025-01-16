@@ -5,8 +5,12 @@
     mode: "755"
     recurse: yes
 
-- name: Fetch content for museum
-  command: "scp -r {{ museum_source }}/files {{ museum_docroot }}/{{ museum_domain }}"
+# This copies the files dir and files.txt from the souce
+- name: Fetch content for museum using rsync
+  ansible.builtin.rsync:
+    src: "{{ museum_source }}/"
+    dest: "{{ museum_docroot }}/{{ museum_domain }}/"
+    archive: yes
+    compress: yes
+    recursive: yes
 
-- name: Fetch files.txt for museum
-  command: "scp {{ museum_source }}/files.txt {{ museum_docroot }}/{{ museum_domain }}"

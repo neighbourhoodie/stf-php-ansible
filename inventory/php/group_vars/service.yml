@@ -17,7 +17,6 @@ wiki_docroot: /srv/web-wiki/dokuwiki/dokuwiki
 wiki_home_path: /home/web/{{ wiki_domain }}/public_html # Reference: https://github.com/php/systems/blob/master/backup-wiki-php-net#L8
 
 museum_domain: museum.php.backend.lol
-museum_docroot: /local/www
 
 main_domain: main.php.backend.lol
 main_domain_alias: master.php.backend.lol
