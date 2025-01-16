@@ -2,7 +2,7 @@
   file:
     state: directory
     dest: "{{ wiki_docroot }}"
-    mode: '755'
+    mode: "755"
     owner: www-data
     group: www-data
     recurse: yes
@@ -11,7 +11,7 @@
   template:
     src: templates/update-wiki
     dest: /local/systems/update-wiki
-    mode: '700'
+    mode: "700"
 
 - name: Fetch wiki content
   command: /local/systems/update-wiki
@@ -19,7 +19,7 @@
 - name: Update permission of wiki doc root
   file:
     dest: "{{ wiki_docroot }}"
-    mode: '755'
+    mode: "755"
     owner: www-data
     group: www-data
     recurse: yes
@@ -27,8 +27,8 @@
 - name: Create local directory for dokuwiki data log
   file:
     state: directory
-    dest: /srv/web-wiki/dokuwiki/dokuwiki/data/log
-    mode: '755'
+    dest: "{{ wiki_docroot }}/data/log"
+    mode: "755"
     owner: www-data
     group: www-data
     recurse: yes
