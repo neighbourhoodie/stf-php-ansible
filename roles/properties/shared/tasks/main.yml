@@ -25,7 +25,7 @@
 - name: Enable expires module
   lineinfile:
     dest: /etc/apache2/apache2.conf
-    line: 'LoadModule expires_module /usr/lib/apache2/modules/mod_expires.so'
+    line: LoadModule expires_module /usr/lib/apache2/modules/mod_expires.so
     state: present
 
 - name: Enable modules in Apache
