@@ -38,7 +38,7 @@
 
 - name: Copy restored data to the doc root
   copy:
-    src: "{{ restore_dir }}/{{ item }}"
+    src: "{{ restore_dir }}/{{ item }}/{{ wiki_home_path }}/{{ item }}/"
     dest: "{{ wiki_home_path }}/{{ item }}"
     remote_src: yes
   loop:

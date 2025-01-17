@@ -38,8 +38,9 @@
 
 - name: Copy restored data to the doc root
   copy:
-    src: "{{ restore_dir }}"
+    src: "{{ restore_dir }}/{{ backup_path }}/"
     dest: "{{ backup_path }}"
+    remote_src: yes
 
 - name: Remove temporary restore directory
   file:
