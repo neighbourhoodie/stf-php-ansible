@@ -49,5 +49,8 @@
 
 - include_tasks: deploy.yml
 
-# Run backup cronjob
 - include_tasks: backup.yml
+
+# The restore role is commented out when initializing the property for the first time
+# This can be commented in when backup data is run at least once and available for restore
+- include_tasks: restore.yml

@@ -9,5 +9,3 @@ backup_name_media: "media-{{ ansible_date_time.date }}"
 
 # Restore backup in local restore directory
 restore_dir: /local/restore
-restore_name_data: "data-{{ ansible_date_time.date }}"
-restore_name_media: "media-{{ ansible_date_time.date }}"

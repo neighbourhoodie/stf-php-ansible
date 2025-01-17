@@ -9,16 +9,16 @@
 
   roles:
     # Note: Properties main, lxr, status, and gcov all have the same certificates as lxr
-    # - role: add_certbot
-    #   vars:
-    #     domain:
-    #     - "{{ lxr_domain }}"
-    #     - "{{ main_domain }}"
-    #     - "{{ gcov_domain }}"
-    #     - "{{ status_domain }}"
-    #     email: "{{ master_email }}"
-    # - role: properties/lxr
+    - role: add_certbot
+      vars:
+        domain:
+        - "{{ lxr_domain }}"
+        - "{{ main_domain }}"
+        - "{{ gcov_domain }}"
+        - "{{ status_domain }}"
+        email: "{{ master_email }}"
+    - role: properties/lxr
     - role: properties/main
-    # - role: properties/status
-    # - role: properties/gcov
+    - role: properties/status
+    - role: properties/gcov
 
