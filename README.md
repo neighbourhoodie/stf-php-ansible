@@ -13,11 +13,16 @@ A control machine is set up with the Ansible software, which then communicates w
 [Here are some tips for making the most of Ansible and Ansible playbooks.](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html#best-practices)
 
 
+## General information
+
+System setup is done in two phases. Phase 1 uses ssh connections backed by SSH keys for the `root` user on each machine. In our case these are provisioned by DigitalOcean on droplet creation. In this phase, admin accounts with their own SSH keys as well as Google Authenticator are set up. In Phase 2, the accounts and 2FA set up in Phase 1 are used to connect to all machines.
+
+
 ## Prerequisite
 
 - Ansible configuration: Before running the initialization script, comment out the `ssh_connection` setting in the ansible.cfg file. This ensures the initialization process is performed using the root user.
 - Update jumphost domains: Modify domains in `/bin/auth-jump0-1` and `/etc/ssh_config_jump0-1`.
-- Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password. Then update the variable values as required.
+- Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password. Then update the variable values as required. The password for the placeholder secrets in this repo is `123`. These are not used in any production systems anywhere.
 
 ```sh
 ansible-vault rekey inventory/php/group_vars/all.yml
@@ -33,7 +38,7 @@ ansible-vault rekey inventory/php/group_vars/all.yml
 ## Initialize machines
 
 > [!NOTE]
-> This won't work when the ssh_connection config in ansible.cfg is not commented out.
+> This won't work when the `ssh_connection` config in `ansible.cfg` is not commented out.
 >
 
 
@@ -91,7 +96,9 @@ It does the following:
 Now the fun begins! 🥳
 
 > [!NOTE]
-> Uncomment and re-enable the ssh_connection setting in the ansible.cfg file. After initialization, root SSH access is disabled on all machines. Since Ansible runs its tasks as a local user, you need to configure the ssh_connection setting to ensure proper functionality.
+> Uncomment and re-enable the `ssh_connection` setting in the `ansible.cfg` file. After initialization, root SSH access is disabled on all machines. Since Ansible runs its tasks as a local user, you need to configure the `ssh_connection` setting to ensure proper functionality.
+
+All tasks that are set up in this repository are organised by what Ansible calls a `playbook`.
 
 To run any playbook, we first have to establish an SSH connection to one of the jumphosts:
 
@@ -99,7 +106,7 @@ To run any playbook, we first have to establish an SSH connection to one of the 
 bin/auth-jump0
 ```
 
-This creates an SSH control channel to jumphost0 that will remain valid for 4 hours. Re-run this when connections start failing after 4 hours.
+This creates an SSH control channel to `jumphost0` that will remain valid for 4 hours. Re-run this when connections start failing after 4 hours. The 4 hour timeout can be adjusted in `etc/ssh_config_jump0` and `etc/ssh_config_jump1` respectively.
 
 There is a corresponding `bin/auth-jump1`.
 
@@ -137,7 +144,6 @@ And then run:
 
 Now you are ready to go! :tada:
 
-
 ## How to validate things
 
 You can run your playbooks with verbose flags to see more details about the error and the commands run by Ansible. For example `ansible-playbook examplePlaybook.yml -vv`.
@@ -154,7 +160,7 @@ Documentation on other Ansible debugging modules can be found [here](https://doc
 
 ## Access control
 
-Access control to the jumphost and service machines is easily configured using the initialize playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
+Access control to the jumphost and service machines is configured using the `initialize.yml` playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
 
 Some user management tasks are also handled via Ansible, including:
 
@@ -175,17 +181,17 @@ The encrypted passwords for _all_ hosts are at [inventory/php/group_vars/all.yml
 To edit the all.yml file do:
 
 ```shell
-EDITOR=nano ansible-vault edit inventory/php/group_vars/all.yml
+ansible-vault edit inventory/php/group_vars/all.yml
 ```
 
-You will be prompted for your vault password.
+You will be prompted for your vault password and your configured `EDITOR` will be opened.
 
 Further details on encryption can be found in [ansible documentation](https://docs.ansible.com/ansible/latest/vault_guide/vault_encrypting_content.html).
 
 
 ## Changing the Jumphost
 
-By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is .gitignored) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
+By default, jumphost0 is used, to change this, you have to copy your `ansible.cfg` to `local.ansible.cfg` (which is `.gitignored`) and set the shell environment variable `ANSIBLE_CONFIG` to `local.ansible.cfg`. Then you change this line in `local.ansible.cfg`:
 
 ```diff
 -ssh_common_args = -F etc/ssh_config_jump0
@@ -206,5 +212,5 @@ As part of the Myra setup, we are transitioning to using only port 443 with self
 This involves blocking access to port 80 and restricting access to port 443 only from Myra hosts.
 
 For the `museum` and `shared`, which are specifically integrated with Myra, this configuration has already been prepared.
-The variable `myra_hosts` is added to the service.yml file, where you can define the Myra host(s).
+The variable `myra_hosts` is added to the `service.yml` file, where you can define the Myra host(s).
 In the dedicated roles for these services, you will find commented-out tasks which manage firewall settings.
