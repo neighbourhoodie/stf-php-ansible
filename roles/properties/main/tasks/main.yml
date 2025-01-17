@@ -50,8 +50,6 @@
     state: started
     enabled: yes
 
-- include_tasks: deploy.yml
-
 - name: Set mysql root password
   command: mysqladmin -u root password "{{ db_root_password }}"
 
@@ -66,8 +64,9 @@
 - name: Grant privileges to 'nobody' for the specified database
   command: mysql -u root -p{{ db_root_password }} -e "GRANT SELECT, LOCK TABLES ON {{ db_name }}.* TO 'nobody'@'localhost'; FLUSH PRIVILEGES;"
 
+
+- include_tasks: deploy.yml
+# This can be commented in when backup data is run at least once and available for restore
+# The restore role is commented out when initializing the property for the first time
+# - include_tasks: restore.yml
 - include_tasks: backup.yml
-
-# This needs to be commented out on the initial run
-#- include_tasks: restore.yml
-

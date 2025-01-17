@@ -1,5 +1,8 @@
-# Restore backup in local restore directory
-- name: Create a local restore directory with today's date
+# These tasks create a /local/restore folder.
+# It calls restic to take the latest backup and restore it to /local/restore.
+# It extracts it, restores the db and deletes the restore folder again.
+
+- name: Create a local restore directory
   file:
     path: "{{ restore_dir }}"
     state: directory
@@ -26,10 +29,10 @@
   loop: "{{ tar_files.files | map(attribute='path') | list }}"
 
 - name: Restore MySQL database from the dump
-  shell: "mysql -u nobody {{ db_name }} < {{ item | regex_replace('(.tar.bz2)$', '')}}/{{ db_name }}.sql"
-  loop: "{{ tar_files.files | map(attribute='path') | list }}"
+  shell: "mysql -u nobody {{ db_name }} < {{ restore_dir }}/{{ backup_name }}/{{ db_name }}.sql"
 
-- name: Remove temporary restore directory
-  file:
-    path: "{{ restore_dir }}"
-    state: absent
+# - name: Remove temporary restore directory
+#   file:
+#     path: "{{ restore_dir }}"
+#     state: absent
+
