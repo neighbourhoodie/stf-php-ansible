@@ -23,7 +23,7 @@ Configuration files and scripts for each property are stored in the `templates` 
 
 ### Backups
 
-For backup tasks, we created dedicated folder for each property on a DigitalOcean Bucket. The content for each property is backed up to this folder using `restic`. This process can be easily customized by adjusting the restic backup command.
+For backup tasks, we created dedicated folder for each property on a DigitalOcean Bucket. The content for each property is backed up to this folder using [restic](https://restic.readthedocs.io/en/stable/index.html). This process can be easily customized by adjusting the restic backup command.
 
 Backups are run as part of the property role tasks. The tasks are located at [roles/backup_property](roles/backup_property).
 For the `main` and `wiki` properties, a specialized task list `backup.yml` is employed within their respective roles ( at `/tasks`).
