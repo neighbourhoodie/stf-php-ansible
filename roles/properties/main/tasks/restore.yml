@@ -31,8 +31,8 @@
 - name: Restore MySQL database from the dump
   shell: "mysql -u nobody {{ db_name }} < {{ restore_dir }}/{{ backup_name }}/{{ db_name }}.sql"
 
-# - name: Remove temporary restore directory
-#   file:
-#     path: "{{ restore_dir }}"
-#     state: absent
+- name: Remove temporary restore directory
+  file:
+    path: "{{ restore_dir }}"
+    state: absent
 
