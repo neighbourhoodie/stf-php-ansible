@@ -138,6 +138,20 @@ And then run:
 Now you are ready to go! :tada:
 
 
+## How to validate things
+
+You can run your playbooks with verbose flags to see more details about the error and the commands run by Ansible. For example `ansible-playbook examplePlaybook.yml -vv`.
+
+The debug module can also be used to display variables or messages at specific points in the playbook. For example:
+```yml
+- name: Debug message
+  debug:
+    msg: "The value of the variable is {{ variable }}"
+```
+
+Documentation on other Ansible debugging modules can be found [here](https://docs.ansible.com/ansible/latest/dev_guide/debugging.html).
+
+
 ## Access control
 
 Access control to the jumphost and service machines is easily configured using the initialize playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
