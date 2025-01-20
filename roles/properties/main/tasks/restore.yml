@@ -29,7 +29,8 @@
   loop: "{{ tar_files.files | map(attribute='path') | list }}"
 
 - name: Restore MySQL database from the dump
-  shell: "mysql -u nobody {{ db_name }} < {{ restore_dir }}/{{ backup_name }}/{{ db_name }}.sql"
+  shell: "mysql -u nobody {{ db_name }} < {{ item | regex_replace('(.tar.bz2)$', '')}}/{{ db_name }}.sql"
+  loop: "{{ tar_files.files | map(attribute='path') | list }}"
 
 - name: Remove temporary restore directory
   file:
