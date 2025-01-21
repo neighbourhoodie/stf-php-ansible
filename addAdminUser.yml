@@ -1,5 +1,5 @@
 # This playbook adds an admin user with the given name to all machines.
-# It creates a linux user, add it to sudo group and puts the ssh key to all machines.
+# It creates a linux user, adds it to sudo group and puts the ssh key to all machines.
 # The Google Authenticator file is only put to the jumphosts.
 
 # The parameters `username` and `path_to_google_auth` are required.

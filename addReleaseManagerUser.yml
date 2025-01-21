@@ -1,5 +1,5 @@
 # This playbook adds an release-manager user with the given name to the downloads machine.
-# It creates a linux user, add it to release-manager group and puts the ssh key to downloads and jumphosts.
+# It creates a linux user, adds it to release-manager group and puts the ssh key to downloads and jumphosts.
 # The Google Authenticator file is only put to the jumphosts.
 
 # The parameters `username` and `path_to_google_auth` are required.
