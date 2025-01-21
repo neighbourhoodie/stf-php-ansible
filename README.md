@@ -131,7 +131,25 @@ And then run:
 - museum:    `ansible-playbook initServiceMuseum.yml`
 - main:      `ansible-playbook initServiceMain.yml`
 
+> [!IMPORTANT]
+> When the above service playbooks are ran for the first time, make sure to add `--extra-vars "first_run=true"` so that the restore tasks are skipped. Details are [here](Services.md#restore-backup).
+>
+
 Now you are ready to go! :tada:
+
+
+## How to validate things
+
+You can run your playbooks with verbose flags to see more details about the error and the commands run by Ansible. For example `ansible-playbook examplePlaybook.yml -vv`.
+
+The debug module can also be used to display variables or messages at specific points in the playbook. For example:
+```yml
+- name: Debug message
+  debug:
+    msg: "The value of the variable is {{ variable }}"
+```
+
+Documentation on other Ansible debugging modules can be found [here](https://docs.ansible.com/ansible/latest/dev_guide/debugging.html).
 
 
 ## Access control

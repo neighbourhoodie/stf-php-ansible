@@ -35,9 +35,9 @@ Backup tasks run as a cronjob. There is an additional cron, that prunes backup f
 
 The restore process follows a similar structure to backup, providing a reliable way to recover data. When restoring, content is fetched from the backup folders on the DigitalOcean Bucket and returned to the appropriate locations.
 
-Restores are run as part of deployment tasks of the properties. They are initially commented out so that they are not run on the first deployment of the property.
+The restore tasks are skipped initially on the first deployment of the property. The following should be passed to ensure the restore tasks are not run `--extra-vars "first_run=true"`. This is because on the first run there won't be any backed up data to restore from.
 
-Once the first deployment and backup is done, the restore tasks can be commented in so that when next time deployment is run data can be restored directly from the backup.
+After the first deployment and a successful backup is done, next time when deployment is run data can be restored directly from the backup. When `first_run` variable is not passed or passed as `false` the restore tasks are run.
 
 
 ## Rsync Service

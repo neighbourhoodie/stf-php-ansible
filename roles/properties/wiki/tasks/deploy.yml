@@ -39,7 +39,3 @@
     special_time: daily
     job: /local/systems/update-wiki
 
-# Run restore
-# The restore role is commented out when initializing the property for the first time
-# This can be commented in when backup data is run at least once and available foe restore
-# - include_tasks: restore.yml

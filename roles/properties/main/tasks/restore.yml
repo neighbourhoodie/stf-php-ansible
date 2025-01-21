@@ -1,5 +1,8 @@
-# Restore backup in local restore directory
-- name: Create a local restore directory with today's date
+# These tasks create a /local/restore folder.
+# It calls restic to take the latest backup and restore it to /local/restore.
+# It extracts it, restores the db and deletes the restore folder again.
+
+- name: Create a local restore directory
   file:
     path: "{{ restore_dir }}"
     state: directory
@@ -33,3 +36,4 @@
   file:
     path: "{{ restore_dir }}"
     state: absent
+
