@@ -1,5 +1,5 @@
 # Run this playbook to initialise your machines: The jumphosts, the rsync machine and all services.
-# It sets up the firewall, diables root login, creates admin users, puts their ssh keys to the machines.
+# It sets up the firewall, disables root login, creates admin users, puts their ssh keys to the machines.
 # It installs GA and the Google Authenticator file to the jumphosts.
 
 # Example run:
