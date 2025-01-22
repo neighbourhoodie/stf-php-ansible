@@ -161,10 +161,11 @@ Documentation on other Ansible debugging modules can be found [here](https://doc
 
 Access control to the jumphost and service machines is easily configured using the initialize playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
 
-Some user management tasks are also handled via Ansible, including:
+Once the machines are initialized, user management tasks are also handled via Ansible, including:
 
-- Adding an admin user and a release manager user.
-- Deleting a specified user.
+- Adding an admin user
+- Adding a release manager user
+- Deleting a specified user
 
 Details of the user management tasks are outlined in [Users.md](Users.md).
 
