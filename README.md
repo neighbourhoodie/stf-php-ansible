@@ -221,3 +221,11 @@ This involves blocking access to port 80 and restricting access to port 443 only
 For the `museum` and `shared`, which are specifically integrated with Myra, this configuration has already been prepared.
 The variable `myra_hosts` is added to the `service.yml` file, where you can define the Myra host(s).
 In the dedicated roles for these services, you will find commented-out tasks which manage firewall settings.
+
+
+## Next steps
+
+* Implement automatic renewal for self-signed SSL certificates.
+* Improve user creation by combining SSH key setup and GA file configuration.
+* Configure Docker for the `wiki`, ensuring the vendor directory is excluded during `rsync`.
+* Streamline the restore property functionality to support multiple directories, so that it can be used by `wiki` (refer to the certbot role as example).
