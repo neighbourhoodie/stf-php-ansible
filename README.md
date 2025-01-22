@@ -141,7 +141,11 @@ Now you are ready to go! :tada:
 
 ## How to validate things
 
-You can run your playbooks with verbose flags to see more details about the error and the commands run by Ansible. For example `ansible-playbook examplePlaybook.yml -vv`.
+You can run your playbooks with verbose flags, `-v` or `--verbose`, to see more details about the error and the commands run by Ansible.
+
+Adding multiple `-v` will increase the verbosity, the builtin plugins currently evaluate up to `-vvvvvv`.
+A reasonable level to start is `-vvv`, connection debugging might require `-vvvv`.
+For example `ansible-playbook examplePlaybook.yml -vvv`.
 
 The debug module can also be used to display variables or messages at specific points in the playbook. For example:
 ```yml
