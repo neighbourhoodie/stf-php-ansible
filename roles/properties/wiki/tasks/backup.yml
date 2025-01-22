@@ -1,3 +1,6 @@
+# The wiki property doesn't use the global `backup_property` role because the case is a bit special here:
+# 2 folders are backed up and the prune also differs.
+
 # These tasks create a /local/backup folder.
 # Create a cronjob to compress the data from wiki's homedir into it, loads the compesses data up to S3 and removes it afterwards.
 # Create another cron to prune backups, to keep only the last 2 ones on S3 storage

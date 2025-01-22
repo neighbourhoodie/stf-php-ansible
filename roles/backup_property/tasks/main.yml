@@ -1,4 +1,6 @@
-# This role is being used by multiple properties.
+# This general role is being used by multiple properties.
+# `main` and `wiki` have their own backup tasks due to special requirements.
+
 # It creates a local backup directory and makes a backup of the root folder using Restic.
 # After the compressed data us backed up to S3, it gets removed from the system again.
 # Backup logs can be found at /local/systems/backup.log
