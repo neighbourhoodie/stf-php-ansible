@@ -1,3 +1,5 @@
+# The wiki property doesn't use the global `restore_property` role because 2 folders are restored.
+
 # Add restore backup tasks
 # These tasks create a /local/restore folder.
 # It calls restic to take the latest backup and restore it to /local/restore.

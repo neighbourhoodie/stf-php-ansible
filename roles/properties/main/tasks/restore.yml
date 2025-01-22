@@ -1,3 +1,5 @@
+# The main property doesn't use the global `restore_property` role because the msql dump restore is special.
+
 # These tasks create a /local/restore folder.
 # It calls restic to take the latest backup and restore it to /local/restore.
 # It extracts it, restores the db and deletes the restore folder again.
