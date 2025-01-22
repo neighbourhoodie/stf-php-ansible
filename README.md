@@ -85,6 +85,7 @@ It does the following:
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
+You can add more or delete admins later as well. All user management tasks are outlined in [Users.md](Users.md).
 
 ## Using Ansible
 
