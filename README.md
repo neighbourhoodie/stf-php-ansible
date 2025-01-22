@@ -225,7 +225,9 @@ In the dedicated roles for these services, you will find commented-out tasks whi
 
 ## Next steps
 
+There are some outstanding tasks that can be done to further improve the project.
+
+* Configure Docker for the `wiki` in Ansible, ensuring the vendor directory is excluded during `rsync`. This needs to be done for the `wiki` service to properly.
 * Implement automatic renewal for self-signed SSL certificates.
 * Improve user creation by combining SSH key setup and GA file configuration.
-* Configure Docker for the `wiki`, ensuring the vendor directory is excluded during `rsync`.
 * Streamline the restore property functionality to support multiple directories, so that it can be used by `wiki` (refer to the certbot role as example).
