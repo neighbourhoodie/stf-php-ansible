@@ -85,6 +85,8 @@ It does the following:
   3. Google Auth set up
   4. Set up firewall rules to only log in via jump host IPs
 
+You can add more or delete admins later as well. All user management tasks are outlined in [Users.md](Users.md).
+
 
 ## Using Ansible
 
@@ -140,7 +142,11 @@ Now you are ready to go! :tada:
 
 ## How to validate things
 
-You can run your playbooks with verbose flags to see more details about the error and the commands run by Ansible. For example `ansible-playbook examplePlaybook.yml -vv`.
+You can run your playbooks with verbose flags, `-v` or `--verbose`, to see more details about the error and the commands run by Ansible.
+
+Adding multiple `-v` will increase the verbosity, the builtin plugins currently evaluate up to `-vvvvvv`.
+A reasonable level to start is `-vvv`, connection debugging might require `-vvvv`.
+For example `ansible-playbook examplePlaybook.yml -vvv`.
 
 The debug module can also be used to display variables or messages at specific points in the playbook. For example:
 ```yml
@@ -156,10 +162,11 @@ Documentation on other Ansible debugging modules can be found [here](https://doc
 
 Access control to the jumphost and service machines is easily configured using the initialize playbook. Each user's SSH keys are added to the machines, along with their respective Google Authenticator files, ensuring secure access management.
 
-Some user management tasks are also handled via Ansible, including:
+Once the machines are initialized, user management tasks are also handled via Ansible, including:
 
-- Adding an admin user and a release manager user.
-- Deleting a specified user.
+- Adding an admin user
+- Adding a release manager user
+- Deleting a specified user
 
 Details of the user management tasks are outlined in [Users.md](Users.md).
 

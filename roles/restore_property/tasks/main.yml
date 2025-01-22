@@ -1,4 +1,7 @@
-# This role is being used by multiple properties. It creates a local restore directory and restore backup using Restic.
+# This general role is being used by multiple properties.
+# `main` and `wiki` have their own backup tasks due to special requirements.
+
+# It creates a local restore directory and restores the backup using Restic.
 
 # Example usage:
 # - name: Run restore tasks

@@ -90,7 +90,7 @@
   file:
     state: directory
     dest: /usr/local/nginx/conf/sites-enabled
-    mode: "750"
+    mode: "755"
     owner: www-data
     group: www-data
 

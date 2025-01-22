@@ -1,3 +1,6 @@
+# The main property doesn't use the global `backup_property` role because the case is a bit special here:
+# It needs a unique backup script, including the mysql dump
+
 # These tasks create a /local/backup folder.
 # Create a cronjob creates a sql dump, loads the compesses dump up to S3 and removes it afterwards.
 # Create another cron to prune backups, to keep only data that is not older than 7 days S3 storage
@@ -24,7 +27,12 @@
     AWS_ACCESS_KEY_ID: "{{ DO_access_key }}"
     AWS_SECRET_ACCESS_KEY: "{{ DO_secret_key }}"
     RESTIC_PASSWORD: "{{ restic_password }}"
-  ignore_errors: yes # it throws an error when it is already initialized
+  # Only fail when the error is not: already initialized
+  register: restic_init_result
+  failed_when: >
+    restic_init_result.rc != 0 and
+    'repository master key and config already initialized' not in restic_init_result.stderr
+  changed_when: restic_init_result.rc == 0
 
 - name: Create backup script
   template:

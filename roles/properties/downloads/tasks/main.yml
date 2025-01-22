@@ -21,7 +21,7 @@
   file:
     state: directory
     dest: "{{ downloads_box }}"
-    mode: "750"
+    mode: "755"
 
 - name: Store secrets file
   template:

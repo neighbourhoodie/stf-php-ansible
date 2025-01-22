@@ -2,7 +2,7 @@
   file:
     state: directory
     dest: "{{ downloads_docroot }}/{{ downloads_domain }}"
-    mode: "750"
+    mode: "755"
 
 - name: Copy update-downloads script to the server
   template:

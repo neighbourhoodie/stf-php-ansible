@@ -8,7 +8,7 @@
   file:
     state: directory
     dest: /local/{{ item }}
-    mode: "750"
+    mode: "755"
   loop:
     - mirrors
     - repos
@@ -17,7 +17,7 @@
   template:
     src: templates/{{ item }}
     dest: /local/systems/
-    mode: "750"
+    mode: "755"
   loop:
     - update-everything
     - update-mirrors
