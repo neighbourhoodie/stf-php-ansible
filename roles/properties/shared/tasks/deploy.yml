@@ -2,7 +2,7 @@
   file:
     state: directory
     dest: "{{ shared_docroot }}/{{ shared_domain }}"
-    mode: "750"
+    mode: "755"
 
 - name: Copy update-shared script to the server
   template:

@@ -13,7 +13,7 @@
   file:
     state: directory
     dest: "{{ main_box }}"
-    mode: "750"
+    mode: "755"
 
 - name: Store secrets file
   template:

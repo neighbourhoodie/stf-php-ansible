@@ -63,7 +63,7 @@
     file:
       state: directory
       dest: /local/systems
-      mode: "750"
+      mode: "755"
 
 
 - hosts:
