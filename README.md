@@ -133,16 +133,16 @@ To set them up, as its used by the other services, first run:
 
 - rsync: `ansible-playbook initRsync.yml`
 
-And then run:
-
-- downloads: `ansible-playbook initServiceDownloads.yml`
-- wiki:      `ansible-playbook initServiceWiki.yml`
-- museum:    `ansible-playbook initServiceMuseum.yml`
-- main:      `ansible-playbook initServiceMain.yml`
-
 > [!IMPORTANT]
 > When the above service playbooks are ran for the first time, make sure to add `--extra-vars "first_run=true"` so that the restore tasks are skipped. Details are [here](Services.md#restore-backup).
 >
+
+And then run:
+
+- downloads: `ansible-playbook initServiceDownloads.yml`
+- museum:    `ansible-playbook initServiceMuseum.yml`
+- main:      `ansible-playbook initServiceMain.yml`
+- wiki:      `ansible-playbook initServiceWiki.yml`
 
 Now you are ready to go! :tada:
 
