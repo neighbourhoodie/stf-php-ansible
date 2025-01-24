@@ -22,7 +22,7 @@ System setup is done in two phases. Phase 1 uses ssh connections backed by SSH k
 
 - Ansible configuration: Before running the initialization script, comment out the `ssh_connection` setting in the ansible.cfg file. This ensures the initialization process is performed using the root user.
 - Update jumphost domains: Modify domains in `/bin/auth-jump0-1` and `/etc/ssh_config_jump0-1`.
-- Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password. Then update the variable values as required. The password for the placeholder secrets in this repo will be shared separately. These are not used in any production systems anywhere.
+- Create a vault password: Before starting, you must create a vault password. This password can be anything you choose. Refer to the [Ansible Vault Guide](https://docs.ansible.com/ansible/2.8/user_guide/vault.html). Run the following to change the password. You’ll be prompted to enter the old password and the new password. To get the passpword prompt, set `ask_vault_pass = true` in `ansible.cfg`. The password for the placeholder secrets in this repo will be shared separately. These are not used in any production systems anywhere.
 
 ```sh
 ansible-vault rekey inventory/php/group_vars/all.yml
@@ -133,16 +133,16 @@ To set them up, as its used by the other services, first run:
 
 - rsync: `ansible-playbook initRsync.yml`
 
-And then run:
-
-- downloads: `ansible-playbook initServiceDownloads.yml`
-- wiki:      `ansible-playbook initServiceWiki.yml`
-- museum:    `ansible-playbook initServiceMuseum.yml`
-- main:      `ansible-playbook initServiceMain.yml`
-
 > [!IMPORTANT]
 > When the above service playbooks are ran for the first time, make sure to add `--extra-vars "first_run=true"` so that the restore tasks are skipped. Details are [here](Services.md#restore-backup).
 >
+
+And then run:
+
+- downloads: `ansible-playbook initServiceDownloads.yml`
+- museum:    `ansible-playbook initServiceMuseum.yml`
+- main:      `ansible-playbook initServiceMain.yml`
+- wiki:      `ansible-playbook initServiceWiki.yml`
 
 Now you are ready to go! :tada:
 
