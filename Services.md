@@ -75,7 +75,7 @@ ansible-playbook initRsync.yml
 
 ### Main Service
 
-`main` is the PHP service running for `downloads.php.net` and `shared.php.net`.
+`main` is the PHP service running for `main.php.net`, `status.php.net`, `gcov.php.net` and `lxr.php.net`.
 
 The `main` property is at [roles/properties/main](roles/properties/main).
 The `status` property is at [roles/properties/status](roles/properties/status).

@@ -10,6 +10,9 @@
     dest: /local/systems/update-shared
     mode: "700"
 
+- name: Fetch shared content
+  command: /local/systems/update-shared
+
 - name: Create a cron job to run hourly
   cron:
     name: Run update-shared hourly
